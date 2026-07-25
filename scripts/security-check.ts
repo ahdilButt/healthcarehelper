@@ -105,41 +105,35 @@ async function appChecks(base: string) {
   console.log(`\nRunning app at ${base}`)
 
   const noSecret = await fetch(`${base}/api/cron/tick`, { method: 'POST' })
-  noSecret.status === 401
-    ? pass('cron tick without the secret', '401')
-    : fail('cron tick without the secret', `got ${noSecret.status}`)
+  if (noSecret.status === 401) pass('cron tick without the secret', '401')
+  else fail('cron tick without the secret', `got ${noSecret.status}`)
 
   const badSecret = await fetch(`${base}/api/cron/tick`, {
     method: 'POST',
     headers: { 'x-cron-secret': 'not-the-secret' },
   })
-  badSecret.status === 401
-    ? pass('cron tick with a wrong secret', '401')
-    : fail('cron tick with a wrong secret', `got ${badSecret.status}`)
+  if (badSecret.status === 401) pass('cron tick with a wrong secret', '401')
+  else fail('cron tick with a wrong secret', `got ${badSecret.status}`)
 
   const webhook = await fetch(`${base}/api/webhooks/twilio-status`, {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded', 'x-twilio-signature': 'nope' },
     body: 'MessageSid=SM1&MessageStatus=delivered',
   })
-  webhook.status === 401
-    ? pass('twilio webhook with a bad signature', '401')
-    : fail('twilio webhook with a bad signature', `got ${webhook.status}`)
+  if (webhook.status === 401) pass('twilio webhook with a bad signature', '401')
+  else fail('twilio webhook with a bad signature', `got ${webhook.status}`)
 
   const capsule = await fetch(`${base}/c/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`, { redirect: 'follow' })
-  capsule.status === 404
-    ? pass('invented capsule token', '404')
-    : fail('invented capsule token', `got ${capsule.status}`)
+  if (capsule.status === 404) pass('invented capsule token', '404')
+  else fail('invented capsule token', `got ${capsule.status}`)
 
   const timeline = await fetch(`${base}/api/persons/00000000-0000-0000-0000-000000000000/timeline`)
-  timeline.status === 401 || timeline.status === 403
-    ? pass('another person’s timeline without a session', String(timeline.status))
-    : fail('another person’s timeline without a session', `got ${timeline.status}`)
+  if (timeline.status === 401 || timeline.status === 403) pass('another person’s timeline without a session', String(timeline.status))
+  else fail('another person’s timeline without a session', `got ${timeline.status}`)
 
   const documents = await fetch(`${base}/api/documents`, { method: 'POST', body: new FormData() })
-  documents.status === 400 || documents.status === 401
-    ? pass('upload without a session', String(documents.status))
-    : fail('upload without a session', `got ${documents.status}`)
+  if (documents.status === 400 || documents.status === 401) pass('upload without a session', String(documents.status))
+  else fail('upload without a session', `got ${documents.status}`)
 }
 
 async function main() {
