@@ -21,23 +21,62 @@ Last updated: end of Stage 10. Every feature stage is built; Stage 11's M3 "unpl
 | 8 · Routines / Today / SMS / cron | ✅ done | 7 doses, patch rotation, badge, tick sends to both members and is idempotent |
 | 9 · Capsules + `/c/[token]` | ✅ done | 3 presets verified with curl and no cookies; revoked → 410; unconfirmed facts absent |
 | 10 · Watch-cards + Chase this | ✅ done | overdue nephrology referral drafts a letter carrying the real reference number |
-| 11 · M3 self-test + runbook | 🟡 partial | `RUNBOOK.md` written; security checklist passes 10/10; **the wipe-and-live-ingest has not been run** |
+| 11 · M3 self-test + runbook | ✅ done | wiped, onboarded and uploaded through the UI, 15 artefacts ingested live; 4 defects found and fixed; `RUNBOOK.md`; security checklist 10/10 |
 
-**Next action:** decide on the M3 unplug (flag 1), then run it.
+**Next action:** the conditions gap (flag 2), then a remote so this can deploy.
+
+---
+
+## The M3 unplug, and what it found
+
+Database wiped, onboarding walked in the browser, one letter photographed
+through the app, then all 15 artefacts ingested in document-date order through
+the real pipeline. Four defects the seeded record could never have surfaced —
+the seed writes with the service role, in one pass, in the right order:
+
+1. **Creating a person failed.** `memberships` has no insert policy; the owner
+   row was refused by RLS. Fixed on the server-side path the schema names.
+2. **Uploading a letter failed.** The bucket has no policies for authenticated
+   users. All storage now goes through `lib/storage.ts` with the service role,
+   after the membership check.
+3. **A mention became a dose.** "dose not stated" overwrote Metformin's "1 g
+   twice daily" and invented two changes.
+4. **Every dose read "quantity 28"** — the pharmacy slip is last in and its
+   wording is longer, and `richerDose` preferred length.
+
+End state now matches DATASET-BIBLE §4: the six current medicines at the right
+doses, Amlodipine stopped, one Ramipril 2.5→5 change on 12 May, the penicillin
+allergy, Atorvastatin amber at 0.65, and — the rule the product rests on — the
+handwritten pharmacy note left Furosemide at 40mg and raised a question.
 
 ---
 
 ## Flags for you
 
-1. **M3 needs your go-ahead.** It means wiping the database, ingesting the 15 artefacts through the UI, and walking the demo. That is destructive *and* costs roughly £1–2 of Claude vision. Everything else in Stage 11 is done. Say the word and it runs.
-2. **No git remote.** Ten stages are committed locally; nothing is pushed and Vercel has not deployed. `git remote add origin <url>` and I will push.
-3. **`EMAIL_API_KEY` is a placeholder** (`re_PAS…`). `lib/notify/send.ts` treats an unusable key as dry-run, so nothing breaks — but email fallback is not real until it is replaced.
-4. **`SMS_DRY_RUN=true`.** Twilio SID/token/number are filled; flipping the flag to `false` is all that is needed. `npm run tick -- 08:00` then sends for real.
-5. **Phone numbers live on the auth user.** The frozen schema has no phone column, so `npm run set-phone -- <email> <+44…>` writes it to `user_metadata`, which is where `lib/notify/recipients.ts` looks. Without one, a member falls back to email.
-6. **pg_cron is not scheduled.** The snippet at the bottom of `supabase/schema.sql` needs running once there is a public URL.
-7. **A fresh seed makes the next tick send a burst** of what-changed messages, because every med change is "new" within the 48-hour lookback. Harmless in dry-run; worth knowing before flipping the flag.
-8. **Routes added beyond the frozen contract** (all additions, no signature moved): `POST /api/documents/:id/transcript`, `GET /api/persons/:id/duplicates`, `GET /api/loops/:id/chase`, `PATCH /api/persons/:id`.
-9. **12 npm audit warnings** are pre-existing dev-tooling transitives from `create-next-app`.
+1. **Something else is writing to this Supabase project.** Twelve documents
+   with `storage_path` ending `placeholder.pdf`, doc types this codebase does
+   not use (`gp_letter`, `blood_test_result`, `med_label`) and 2025 dates
+   appeared mid-ingest at 19:26:34. Nothing in this repo creates them. They are
+   still in the database and they pollute every count. If that is the other
+   lane sharing one project, the two lanes need separate Supabase projects
+   before the demo — I have not deleted anyone else's rows.
+2. **Conditions come out noisy: 15 where the bible says 4.** Symptoms are being
+   recorded as conditions ("Breathlessness on exertion", "Ankle swelling"), as
+   are echo findings, and "Diabetes" sits beside "Type 2 diabetes mellitus
+   (diagnosed 2015)". Deduping on the diagnosis fixed the parenthetical
+   duplicates; the rest is a Stage B prompt tightening — say what a condition
+   is and is not — plus a fixture to hold it. Not dangerous (nothing acts on
+   conditions except display and the capsule), but it reads badly on the
+   doctor brief.
+3. **No git remote.** Twelve commits are local; nothing is pushed and Vercel
+   has not deployed. Paste a URL and I will push the history.
+4. **`EMAIL_API_KEY` is a placeholder** (`re_PAS…`). `lib/notify/send.ts` treats an unusable key as dry-run, so nothing breaks — but email fallback is not real until it is replaced.
+5. **`SMS_DRY_RUN=true`.** Twilio SID/token/number are filled; flipping the flag to `false` is all that is needed. `npm run tick -- 08:00` then sends for real.
+6. **Phone numbers live on the auth user.** The frozen schema has no phone column, so `npm run set-phone -- <email> <+44…>` writes it to `user_metadata`, which is where `lib/notify/recipients.ts` looks. Without one, a member falls back to email.
+7. **pg_cron is not scheduled.** The snippet at the bottom of `supabase/schema.sql` needs running once there is a public URL.
+8. **A fresh seed makes the next tick send a burst** of what-changed messages, because every med change is "new" within the 48-hour lookback. Harmless in dry-run; worth knowing before flipping the flag.
+9. **Routes added beyond the frozen contract** (all additions, no signature moved): `POST /api/documents/:id/transcript`, `GET /api/persons/:id/duplicates`, `GET /api/loops/:id/chase`, `PATCH /api/persons/:id`.
+10. **12 npm audit warnings** are pre-existing dev-tooling transitives from `create-next-app`.
 
 ---
 
@@ -79,6 +118,8 @@ scripts/     seed · render-demo-docs · validate-dataset · test-extraction · 
 
 ```
 npm run dev
+npm run wipe -- --yes-really  # empty the record (M3)
+npm run ingest              # the 15 artefacts through the real pipeline
 npm run seed:reset          # rebuild Dad's record from the fixtures
 npm run test:extraction     # the hard gate — real pipeline vs fixtures (~£1–2)
 npm run validate:dataset    # offline dataset guard, free
