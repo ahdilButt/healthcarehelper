@@ -37,13 +37,15 @@ export function DetailSheet({
   item: TimelineItem
   onClose: () => void
   onChanged: () => void
-  onAdded: (documentIds: string[]) => void
+  /** Only the timeline can take a retake or a typed-in letter; Ask opens the
+   * same sheet from a source chip and has nowhere to put one. */
+  onAdded?: (documentIds: string[]) => void
 }) {
   return (
     <Sheet label={item.humanTitle} onClose={onClose}>
       {item.factTable ? (
         <FactPanel item={item} table={item.factTable} onChanged={onChanged} />
-      ) : item.itemType === 'needs_look' ? (
+      ) : item.itemType === 'needs_look' && onAdded ? (
         <NeedsALookPanel item={item} onAdded={onAdded} onClose={onClose} />
       ) : (
         <LetterPanel item={item} />
@@ -271,7 +273,7 @@ function FactPanel({
               label={field.label}
               value={
                 <>
-                  {field.value || '—'}
+                  {readable(field) || '—'}
                   {field.edited && <EditedMark className="ml-2 align-middle" />}
                 </>
               }
@@ -388,35 +390,106 @@ function FixThis({
   )
 }
 
+interface Translation {
+  whatItSays: string
+  whatChanged: string
+  whatHappensNext: string
+}
+
 function LetterPanel({ item }: { item: TimelineItem }) {
+  const documentId = item.sourceChip.documentId
   const [doc, setDoc] = useState<DocumentBody['document'] | null>(null)
+  const [plain, setPlain] = useState<Translation | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const live = useRef(true)
 
   useEffect(() => {
-    let live = true
-    apiJson<DocumentBody>(`/api/documents/${item.sourceChip.documentId}`)
+    live.current = true
+    return () => {
+      live.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    apiJson<DocumentBody>(`/api/documents/${documentId}`)
       .then((body) => {
-        if (live) setDoc(body.document)
+        if (live.current) setDoc(body.document)
       })
       .catch(() => {})
-    return () => {
-      live = false
-    }
-  }, [item.sourceChip.documentId])
+  }, [documentId])
 
-  const sender = doc?.sender ?? null
+  // Asked for, not assumed: most letters are never opened, and reading one
+  // back in plain English costs a real call.
+  const explain = () => {
+    setBusy(true)
+    setError('')
+    apiJson<Translation>(`/api/documents/${documentId}/translate`)
+      .then((body) => {
+        if (live.current) setPlain(body)
+      })
+      .catch((e: unknown) => {
+        if (live.current) setError(humanError(e))
+      })
+      .finally(() => {
+        if (live.current) setBusy(false)
+      })
+  }
+
+  const written = doc?.docDate ?? (item.date || null)
 
   return (
     <>
       <h2 className="text-[17px] font-semibold leading-[1.3]">{item.humanTitle}</h2>
       <div className="mt-3">
-        {sender && <FieldRow label="Who sent it" value={sender} />}
-        <FieldRow label="When it was written" value={longDate(doc?.docDate ?? item.date)} />
+        {doc?.sender && <FieldRow label="Who sent it" value={doc.sender} />}
+        {written && <FieldRow label="When it was written" value={longDate(written)} />}
       </div>
       <div className="mt-3">
         <SourceChip label={item.sourceChip.label} />
       </div>
+
+      <div className="mt-5">
+        {plain ? (
+          <div className="flex flex-col gap-4">
+            <Passage title="What this letter says" body={plain.whatItSays} />
+            <Passage title="What changed" body={plain.whatChanged} />
+            <Passage title="What happens next" body={plain.whatHappensNext} />
+          </div>
+        ) : (
+          <Button variant="quiet" onClick={explain} disabled={busy}>
+            {busy ? 'Reading it…' : 'What this letter says'}
+          </Button>
+        )}
+        {error && <p className="mt-3 text-[13px] text-[var(--hh-red)]">{error}</p>}
+      </div>
     </>
   )
+}
+
+function Passage({ title, body }: { title: string; body: string }) {
+  if (!body) return null
+  return (
+    <div>
+      <Meta>{title}</Meta>
+      <p className="mt-1 text-[15px] leading-[1.45] whitespace-pre-wrap">{body}</p>
+    </div>
+  )
+}
+
+/**
+ * "12 May 2026", not "2026-05-12". The wire format is what the date picker
+ * needs and what the API stores; nobody should have to read it.
+ */
+function readable(field: FactField): string {
+  if (!field.value) return ''
+  if (field.input === 'date') return longDate(field.value)
+  if (field.input === 'datetime') {
+    const [date, time] = field.value.replace(' ', 'T').split('T')
+    const day = longDate(date)
+    return time ? `${day}, ${time.slice(0, 5)}` : day
+  }
+  return field.value
 }
 
 function longDate(iso: string): string {

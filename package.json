@@ -16,7 +16,8 @@
     "test": "vitest run",
     "test:extraction": "tsx scripts/test-extraction.ts",
     "validate:dataset": "tsx scripts/validate-dataset.ts",
-    "magic-link": "tsx scripts/magic-link.ts"
+    "magic-link": "tsx scripts/magic-link.ts",
+    "ask": "tsx scripts/ask-probe.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
