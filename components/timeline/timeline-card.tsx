@@ -37,6 +37,9 @@ export function TimelineCard({
   const Icon = ICONS[item.itemType]
   const overdue = item.itemType === 'open_loop' && item.loopState === 'overdue'
   const attention = overdue || item.itemType === 'needs_look'
+  // A letter is the quiet backdrop; a change or a result is the thing that
+  // happened. Tone separates them so a long feed does not read as one wall.
+  const tone = attention ? 'warn' : item.itemType === 'letter' ? 'muted' : 'accent'
 
   if (item.itemType === 'processing') {
     return (
@@ -74,7 +77,7 @@ export function TimelineCard({
         )}
       >
         <div className="flex items-center gap-3">
-          <TypeIcon tone={attention ? 'warn' : 'accent'}>
+          <TypeIcon tone={tone}>
             <Icon className="size-4" />
           </TypeIcon>
           <div className="min-w-0 flex-1">

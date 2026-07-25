@@ -92,6 +92,7 @@ type ResultRow = FactBase & {
   result_date: string | null
 }
 type LoopRow = FactBase & {
+  loop_type: string
   description: string
   expected_date: string | null
   state: LoopState
@@ -226,8 +227,8 @@ export async function buildTimeline(
       itemType: 'open_loop',
       id: l.id,
       personId,
-      humanTitle: state === 'overdue' ? 'This looks overdue' : 'Something to watch',
-      payloadLine: row.description,
+      humanTitle: loopTitle(row.description, l.loop_type),
+      payloadLine: loopPayload(row.description, isoDateOrNull(row.expected_date), state),
       date: isoDateOrNull(row.expected_date) ?? dateOf(doc, l.created_at),
       confirmed: isConfirmed(Number(l.confidence), l.confirmed_at),
       sourceChip: { documentId: l.source_document_id, label: sourceLabel(doc) },
@@ -242,6 +243,59 @@ export async function buildTimeline(
 }
 
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+/**
+ * A card header has to say what the thing IS.
+ *
+ * "Something to watch" told the reader nothing — every open loop wore the same
+ * two words, so a screen full of them was a screen of identical cards. The
+ * description already contains the answer; it just needs the first clause,
+ * short enough to read at a glance.
+ */
+const LOOP_FALLBACK: Record<string, string> = {
+  referral: 'A referral to chase',
+  test: 'A test to book',
+  letter: 'A letter to expect',
+  follow_up: 'Something to keep an eye on',
+  other: 'Something to watch',
+}
+
+const TITLE_MAX = 52
+
+export function loopTitle(description: unknown, loopType: string): string {
+  const full = String(description ?? '').trim()
+  if (!full) return LOOP_FALLBACK[loopType] ?? LOOP_FALLBACK.other
+
+  // Everything before the first aside is the thing itself; what follows is
+  // usually who, where, or by when — which the card says elsewhere.
+  let head = full.split(/\s*[(;—]|,\s(?=[a-z])/)[0].trim()
+  if (head.length > TITLE_MAX) {
+    const cut = head.slice(0, TITLE_MAX)
+    head = `${cut.slice(0, cut.lastIndexOf(' ')).trim()}…`
+  }
+  return capitalise(head)
+}
+
+/** The header says what it is, so the line underneath says when. */
+export function loopPayload(
+  description: unknown,
+  expected: string | null,
+  state: LoopState
+): string {
+  const full = String(description ?? '').trim()
+  const title = loopTitle(full, 'other')
+  const rest = title.endsWith('…') || full.length > title.length ? full : ''
+
+  const when = expected
+    ? state === 'overdue'
+      ? `Was expected by ${shortDate(expected)} — nothing has come`
+      : `Expected by ${shortDate(expected)}`
+    : state === 'overdue'
+      ? 'Nothing has come of this yet'
+      : ''
+
+  return [when, rest].filter(Boolean).join(' · ')
+}
 
 /**
  * "dose went up" is only true if it did. Compare the strengths so a reduction

@@ -7,6 +7,7 @@ import { EmptyState, Meta, MonthHeader, PageTitle } from '@/components/ui/primit
 import { ShoeboxIllustration } from '@/components/ui/illustrations'
 import { TimelineCard } from './timeline-card'
 import { AddLetterButton } from './add-letter'
+import { AddVoiceButton } from './add-voice'
 import { DetailSheet } from './detail-sheet'
 import { MergePrompt } from './merge-prompt'
 
@@ -156,7 +157,12 @@ export function TimelineFeed({
           <PageTitle>The story</PageTitle>
           <Meta className="mt-1">Everything we have read, newest first</Meta>
         </div>
-        <AddLetterButton personId={personId} onAdded={added} autoOpen={autoOpen} />
+        {/* Two of the three doors from SPEC-FINAL §3. The camera opens the rear
+            lens on a phone; the microphone is the one you use in a corridor. */}
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <AddLetterButton personId={personId} onAdded={added} autoOpen={autoOpen} />
+          <AddVoiceButton personId={personId} onAdded={added} />
+        </div>
       </div>
 
       {pending && (
