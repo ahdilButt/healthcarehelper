@@ -1,6 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { PERSON_COOKIE } from '@/lib/constants'
 import { supabaseServer } from '@/lib/supabase/server'
@@ -35,4 +36,22 @@ export async function setCurrentPerson(personId: string) {
     httpOnly: true,
   })
   revalidatePath('/', 'layout')
+}
+
+/**
+ * Sign out.
+ *
+ * A magic-link session persists and refreshes itself, so without this a device
+ * stays signed in indefinitely — which is right for Dad's phone on the kitchen
+ * table, and wrong for testing, for a shared laptop, and for a demo where the
+ * second phone has to arrive as a stranger.
+ *
+ * The person cookie goes too: it is the last trace of whose record was open.
+ */
+export async function signOut() {
+  const db = await supabaseServer()
+  await db.auth.signOut()
+  ;(await cookies()).delete(PERSON_COOKIE)
+  revalidatePath('/', 'layout')
+  redirect('/signin')
 }

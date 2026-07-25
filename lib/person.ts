@@ -12,12 +12,13 @@ export async function currentPerson(): Promise<{
   person: PersonSummary | null
   people: PersonSummary[]
   userId: string | null
+  email: string | null
 }> {
   const db = await supabaseServer()
   const {
     data: { user },
   } = await db.auth.getUser()
-  if (!user) return { person: null, people: [], userId: null }
+  if (!user) return { person: null, people: [], userId: null, email: null }
 
   const { data } = await db
     .from('memberships')
@@ -33,5 +34,5 @@ export async function currentPerson(): Promise<{
 
   const wanted = (await cookies()).get(PERSON_COOKIE)?.value
   const person = people.find((p) => p.id === wanted) ?? people[0] ?? null
-  return { person, people, userId: user.id }
+  return { person, people, userId: user.id, email: user.email ?? null }
 }

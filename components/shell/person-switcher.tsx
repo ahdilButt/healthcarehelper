@@ -3,15 +3,17 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import type { PersonSummary } from '@/lib/types'
-import { setCurrentPerson } from '@/app/actions'
+import { setCurrentPerson, signOut } from '@/app/actions'
 
-/** Top-left switcher: Amira ⇄ "Dad's story" (SPEC-FINAL §9). */
+/** Top-left switcher: Amira ⇄ "Dad's story", settings behind it (SPEC-FINAL §9). */
 export function PersonSwitcher({
   current,
   people,
+  email,
 }: {
   current: PersonSummary
   people: PersonSummary[]
+  email?: string | null
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -33,10 +35,8 @@ export function PersonSwitcher({
       ? `${current.displayName}'s story`
       : current.displayName
 
-  if (people.length < 2) {
-    return <span className="text-[17px] font-semibold">{title}</span>
-  }
-
+  // Even with one person the menu has to open: it is the only way out of a
+  // session, and a magic-link session does not expire on its own.
   return (
     <div className="relative">
       <button
@@ -58,21 +58,38 @@ export function PersonSwitcher({
         </svg>
       </button>
       {open && (
-        <ul className="absolute left-0 z-30 mt-1 min-w-[200px] overflow-hidden rounded-[16px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] shadow-sm">
-          {people.map((p) => (
-            <li key={p.id}>
-              <button
-                type="button"
-                onClick={() => choose(p.id)}
-                className={`block w-full px-4 py-3 text-left text-[15px] ${
-                  p.id === current.id ? 'text-[var(--hh-accent)]' : ''
-                }`}
-              >
-                {p.displayName}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="absolute left-0 z-30 mt-1 min-w-[230px] overflow-hidden rounded-[16px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] shadow-sm">
+          {people.length > 1 && (
+            <ul className="border-b border-[var(--hh-hairline)]">
+              {people.map((p) => (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    onClick={() => choose(p.id)}
+                    className={`block min-h-[44px] w-full px-4 py-3 text-left text-[15px] ${
+                      p.id === current.id ? 'text-[var(--hh-accent)]' : ''
+                    }`}
+                  >
+                    {p.displayName}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {email && (
+            <p className="truncate px-4 pt-3 text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+              Signed in as {email}
+            </p>
+          )}
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="block min-h-[44px] w-full px-4 py-3 text-left text-[15px] text-[var(--hh-secondary)]"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       )}
     </div>
   )

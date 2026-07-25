@@ -10,7 +10,7 @@ import { PersonSwitcher } from '@/components/shell/person-switcher'
  * tab bar are resolved once, server-side.
  */
 export default async function TabsLayout({ children }: { children: React.ReactNode }) {
-  const { person, people, userId } = await currentPerson()
+  const { person, people, userId, email } = await currentPerson()
   if (!userId) redirect('/signin')
   if (!person) redirect('/onboarding')
 
@@ -22,7 +22,7 @@ export default async function TabsLayout({ children }: { children: React.ReactNo
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-[var(--hh-hairline)] bg-[var(--hh-bg)] sm:order-first">
         <div className="hh-shell flex items-center justify-between px-4 py-3">
-          <PersonSwitcher current={person} people={people} />
+          <PersonSwitcher current={person} people={people} email={email} />
         </div>
       </header>
 
