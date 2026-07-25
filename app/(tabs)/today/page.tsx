@@ -14,5 +14,5 @@ export default async function TodayPage() {
   await ensureRoutines(db, person.id)
   const { groups } = await buildToday(db, person.id)
 
-  return <TodayList personId={person.id} personName={person.displayName} initialGroups={groups} />
+  return <TodayList personId={person.id} initialGroups={groups} />
 }

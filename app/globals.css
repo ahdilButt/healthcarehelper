@@ -130,3 +130,11 @@ select {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* A row of suggestion chips scrolls sideways; the bar is noise on a phone. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

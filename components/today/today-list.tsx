@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { DueItem } from '@/lib/types'
-import { Card, CardHeader, Meta, PageTitle } from '@/components/ui/primitives'
+import { Check } from 'lucide-react'
+import { Card, CardHeader, Meta, PageTitle, StatusPill } from '@/components/ui/primitives'
+import { cn } from '@/lib/utils'
 import { BodyMap } from '@/components/ui/illustrations'
 
 export interface TodayGroups {
@@ -26,11 +28,9 @@ const PARTS: { key: keyof TodayGroups; label: string }[] = [
  */
 export function TodayList({
   personId,
-  personName,
   initialGroups,
 }: {
   personId: string
-  personName: string
   initialGroups: TodayGroups
 }) {
   const [groups, setGroups] = useState(initialGroups)
@@ -95,13 +95,22 @@ export function TodayList({
   )
 
   const all = [...groups.morning, ...groups.afternoon, ...groups.evening]
+  const left = all.filter((i) => !i.taken).length
   const patch = all.find((i) => i.form === 'patch')
 
   return (
     <div className="pb-4">
       <div className="py-4">
         <PageTitle>Today</PageTitle>
-        <Meta className="mt-1">{summary(all, personName)}</Meta>
+        <div className="mt-1 flex flex-wrap items-center gap-3">
+          <Meta>{longToday()}</Meta>
+          {all.length > 0 &&
+            (left > 0 ? (
+              <StatusPill tone="warn">{left} still to take</StatusPill>
+            ) : (
+              <StatusPill tone="good">All done for today</StatusPill>
+            ))}
+        </div>
       </div>
 
       {all.length === 0 ? (
@@ -114,11 +123,11 @@ export function TodayList({
       ) : (
         PARTS.map(({ key, label }) =>
           groups[key].length ? (
-            <section key={key} className="mb-5">
-              <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-wide text-[var(--hh-secondary)]">
+            <section key={key} className="mb-6">
+              <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                 {label}
               </h2>
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-3">
                 {groups[key].map((item) => (
                   <MedRow
                     key={`${item.routineId}@${item.dueAt}`}
@@ -150,7 +159,7 @@ export function TodayList({
         </section>
       )}
 
-      {error && <p className="mt-3 text-[15px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="mt-3 text-[15px] text-alert">{error}</p>}
     </div>
   )
 }
@@ -171,55 +180,59 @@ function MedRow({
 
   return (
     <li>
-      <Card className={`p-0 ${missed ? 'border-[var(--hh-amber)]/40' : ''}`}>
+      <Card tone={missed ? 'warn' : 'plain'} className="flex items-center gap-3 py-3">
+        {/* The tap target is the tick, not the whole row: a patch row carries a
+            link to the body map, and a row-wide button would swallow it. */}
         <button
           type="button"
           onClick={onToggle}
           disabled={busy}
           aria-pressed={item.taken}
-          className="flex w-full items-center gap-3 p-4 text-left disabled:opacity-60"
+          className={cn(
+            'flex size-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors disabled:opacity-60',
+            item.taken
+              ? 'border-good bg-good text-primary-foreground'
+              : missed
+                ? 'border-warn/50 text-transparent active:bg-warn/10'
+                : 'border-border text-transparent active:bg-muted'
+          )}
         >
-          <Tick taken={item.taken} />
-          <span className="min-w-0 flex-1">
-            <span className="block text-[17px] font-semibold leading-[1.3]">{item.humanName}</span>
-            <span className="mt-[2px] block text-[15px] leading-[1.45]">
-              {item.dose}
-              {item.form === 'patch' && item.site?.next ? ` · on the ${item.site.next}` : ''}
-            </span>
-            <span className="mt-1 block text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
-              {item.taken ? 'Taken' : missed ? 'Still to take' : `Due at ${clock(item.dueAt)}`}
-            </span>
+          <Check className="size-5" strokeWidth={2.6} />
+          <span className="sr-only">
+            {item.taken ? `${item.humanName} taken` : `Mark ${item.humanName} as taken`}
           </span>
         </button>
+
+        <div className="min-w-0 flex-1">
+          <p className="text-[17px] font-semibold leading-snug">{item.humanName}</p>
+          <Meta className="mt-0.5">{item.dose}</Meta>
+          <Meta className={cn('mt-1', missed && 'text-warn')}>
+            {item.taken
+              ? 'Taken'
+              : missed
+                ? 'Missed — still worth taking'
+                : `Due at ${clock(item.dueAt)}`}
+          </Meta>
+
+          {item.form === 'patch' && item.site?.next && (
+            <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-[13px] font-medium text-primary">
+              On the {item.site.next}
+            </span>
+          )}
+        </div>
       </Card>
     </li>
   )
 }
 
-function Tick({ taken }: { taken: boolean }) {
-  return (
-    <span
-      aria-hidden
-      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 ${
-        taken
-          ? 'border-[var(--hh-green)] bg-[var(--hh-green)]'
-          : 'border-[var(--hh-hairline)] bg-transparent'
-      }`}
-    >
-      {taken && (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="m5 13 4.5 4.5L19 7" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      )}
-    </span>
-  )
-}
-
-function summary(items: DueItem[], personName: string): string {
-  if (!items.length) return `Nothing scheduled for ${personName} today.`
-  const left = items.filter((i) => !i.taken).length
-  if (!left) return `All done — every one of ${personName}’s medicines is ticked off.`
-  return `${left} of ${items.length} still to take.`
+/** "Saturday, 25 July" — the date, the way a person says it. */
+function longToday(): string {
+  return new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'Europe/London',
+  })
 }
 
 function clock(iso: string): string {

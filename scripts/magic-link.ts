@@ -51,7 +51,7 @@ async function main() {
     }))
   }
 
-  if (error || !data) {
+  if (error || !data?.properties) {
     console.error(error?.message ?? 'Could not mint a link.')
     process.exit(1)
   }

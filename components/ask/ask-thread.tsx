@@ -1,9 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Copy, Send } from 'lucide-react'
 import type { Citation, TimelineItem } from '@/lib/types'
-import { Button, Card, CardHeader, Meta, SourceChip, Spinner } from '@/components/ui/primitives'
+import { Card, Meta, PageTitle, SourceChip, Spinner } from '@/components/ui/primitives'
 import { DetailSheet } from '@/components/timeline/detail-sheet'
+import { cn } from '@/lib/utils'
 
 export interface AskMessage {
   id: string
@@ -14,10 +16,10 @@ export interface AskMessage {
 }
 
 /**
- * The Ask tab (SPEC-FINAL §5). One conversation per person, every answer
- * carrying the letters it came from, and a closing card of questions worth
- * asking a clinician — because preparing that conversation, not replacing it,
- * is the whole point of this screen.
+ * The Ask tab (SPEC-FINAL §5), in the design lane's shape. One conversation per
+ * person, every answer carrying the letters it came from, and a closing card of
+ * questions worth asking a clinician — because preparing that conversation,
+ * not replacing it, is the whole point of this screen.
  */
 export function AskThread({
   personId,
@@ -35,6 +37,7 @@ export function AskThread({
   const [question, setQuestion] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [copied, setCopied] = useState<string | null>(null)
   const [detail, setDetail] = useState<TimelineItem | null>(null)
   const foot = useRef<HTMLDivElement>(null)
   const live = useRef(true)
@@ -99,113 +102,156 @@ export function AskThread({
     [busy, conversationId, personId]
   )
 
+  const copyQuestions = (id: string, questions: string[]) => {
+    navigator.clipboard.writeText(questions.map((q) => `• ${q}`).join('\n')).then(
+      () => {
+        setCopied(id)
+        setTimeout(() => setCopied(null), 1800)
+      },
+      () => setCopied(null)
+    )
+  }
+
+  const suggestions = [
+    `What's actually wrong with ${personName}'s kidneys?`,
+    'What changed at the last heart clinic appointment?',
+    `What is ${personName} taking, and what is each one for?`,
+  ]
+
   return (
     <div className="flex min-h-[calc(100dvh-9rem)] flex-col">
-      <div className="py-4">
-        <h1 className="text-[28px] font-semibold leading-[1.2]">Ask</h1>
-        <Meta className="mt-1">Anything about {personName}&rsquo;s letters.</Meta>
+      <div className="pt-1">
+        <PageTitle>Ask about {personName}</PageTitle>
+        <Meta className="mt-1">Answers come from the letters in {personName}&rsquo;s story</Meta>
       </div>
 
-      <div className="flex-1">
-        {messages.length === 0 ? (
-          <Opening personName={personName} onPick={ask} />
-        ) : (
-          <ul className="flex flex-col gap-4">
-            {messages.map((m) =>
-              m.role === 'user' ? (
-                <li key={m.id} className="self-end max-w-[85%]">
-                  <p className="rounded-[16px] bg-[var(--hh-accent-wash)] px-4 py-3 text-[15px] leading-[1.45]">
-                    {m.content}
+      <div className="mt-5 flex flex-1 flex-col gap-4">
+        {messages.map((m) =>
+          m.role === 'user' ? (
+            <p
+              key={m.id}
+              className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-primary px-4 py-3 text-[15px] text-primary-foreground text-pretty"
+            >
+              {m.content}
+            </p>
+          ) : (
+            <div key={m.id} className="flex flex-col gap-3">
+              <Card className="mr-auto max-w-full rounded-2xl rounded-bl-md">
+                {m.content.split(/\n{2,}/).map((para, i) => (
+                  <p
+                    key={i}
+                    className={cn('text-[15px] leading-relaxed text-pretty', i > 0 && 'mt-3')}
+                  >
+                    <Prose text={para} />
                   </p>
-                </li>
-              ) : (
-                <li key={m.id}>
-                  <Answer message={m} personId={personId} onOpen={setDetail} />
-                </li>
-              )
-            )}
-          </ul>
+                ))}
+                {m.citations.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2 border-t border-border/70 pt-3">
+                    {m.citations.map((c) => (
+                      <SourceChip
+                        key={`${c.factTable}:${c.factId}`}
+                        label={c.label}
+                        onClick={() => setDetail(itemFor(c, personId))}
+                      />
+                    ))}
+                  </div>
+                )}
+              </Card>
+
+              {m.gpQuestions.length > 0 && (
+                <Card tone="accent">
+                  <div className="flex items-start justify-between gap-3">
+                    <h2 className="text-[17px] font-semibold text-pretty">
+                      Questions you might ask the GP
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => copyQuestions(m.id, m.gpQuestions)}
+                      className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary active:bg-primary/10"
+                    >
+                      <Copy className="size-4" />
+                      <span className="sr-only">Copy these questions</span>
+                    </button>
+                  </div>
+                  <ul className="mt-2 flex flex-col gap-2">
+                    {m.gpQuestions.map((q) => (
+                      <li key={q} className="flex gap-2 text-[15px] leading-relaxed text-pretty">
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                        {q}
+                      </li>
+                    ))}
+                  </ul>
+                  <p aria-live="polite" className="mt-3 text-[13px] text-primary">
+                    {copied === m.id ? 'Copied — ready to paste or read out' : ' '}
+                  </p>
+                </Card>
+              )}
+            </div>
+          )
         )}
 
-        {busy && (
-          <div className="mt-4">
-            <Spinner label={`Reading ${personName}’s letters…`} />
-          </div>
+        {messages.length === 0 && (
+          <Card>
+            <p className="text-[15px] leading-relaxed text-pretty">
+              Ask anything about the letters in {personName}&rsquo;s story. Every answer says which
+              letter it came from, so you can read it yourself.
+            </p>
+          </Card>
         )}
-        {error && <p className="mt-4 text-[15px] text-[var(--hh-red)]">{error}</p>}
-        <div ref={foot} />
+
+        {busy && <Spinner label={`Reading ${personName}’s letters…`} />}
+        {error && <p className="text-[15px] text-alert">{error}</p>}
+        <div ref={foot} className="h-px" />
       </div>
 
-      <form
-        className="sticky bottom-0 -mx-4 mt-6 border-t border-[var(--hh-hairline)] bg-[var(--hh-bg)] px-4 pt-3 pb-2"
-        onSubmit={(e) => {
-          e.preventDefault()
-          ask(question)
-        }}
-      >
-        <label htmlFor="hh-ask" className="sr-only">
-          Your question
-        </label>
-        <div className="flex items-end gap-2">
-          <textarea
-            id="hh-ask"
-            rows={1}
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                ask(question)
-              }
-            }}
-            placeholder="Ask a question"
-            className="min-h-[44px] flex-1 resize-none rounded-[16px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] px-4 py-3 text-[15px] leading-[1.45]"
-          />
-          <Button type="submit" disabled={busy || !question.trim()}>
-            Ask
-          </Button>
-        </div>
-        {/* SPEC-FINAL §5: this line is permanent, not a dismissible notice. */}
-        <p className="mt-2 text-center text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
-          Explains and prepares questions — never diagnoses.
-        </p>
-      </form>
-
-      {detail && <DetailSheet item={detail} onClose={() => setDetail(null)} onChanged={() => {}} />}
-    </div>
-  )
-}
-
-function Answer({
-  message,
-  personId,
-  onOpen,
-}: {
-  message: AskMessage
-  personId: string
-  onOpen: (item: TimelineItem) => void
-}) {
-  return (
-    <div className="flex flex-col gap-3">
-      {message.content.split(/\n{2,}/).map((para, i) => (
-        <p key={i} className="text-[15px] leading-[1.45] whitespace-pre-wrap">
-          <Prose text={para} />
-        </p>
-      ))}
-
-      {message.citations.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          {message.citations.map((c) => (
-            <SourceChip
-              key={`${c.factTable}:${c.factId}`}
-              label={c.label}
-              onClick={() => onOpen(itemFor(c, personId))}
-            />
+      <div className="sticky bottom-0 -mx-4 mt-6 border-t border-border bg-background px-4 pt-3 pb-2">
+        <div className="no-scrollbar -mx-4 mb-3 flex gap-2 overflow-x-auto px-4">
+          {suggestions.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => ask(s)}
+              disabled={busy}
+              className="shrink-0 rounded-full border border-border bg-card px-3.5 py-2 text-[13px] font-medium text-muted-foreground active:bg-muted disabled:opacity-50"
+            >
+              {s}
+            </button>
           ))}
         </div>
-      )}
 
-      {message.gpQuestions.length > 0 && <GpQuestions questions={message.gpQuestions} />}
+        <form
+          className="flex items-end gap-2"
+          onSubmit={(e) => {
+            e.preventDefault()
+            ask(question)
+          }}
+        >
+          <label htmlFor="hh-ask" className="sr-only">
+            Your question
+          </label>
+          <input
+            id="hh-ask"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder={`Ask anything about ${personName}'s care`}
+            className="min-h-12 flex-1 rounded-full border border-border bg-card px-4 text-[15px] outline-none placeholder:text-muted-foreground/80 focus-visible:border-primary"
+          />
+          <button
+            type="submit"
+            disabled={busy || !question.trim()}
+            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground active:bg-primary/90 disabled:opacity-50"
+          >
+            <Send className="size-5" />
+            <span className="sr-only">Send</span>
+          </button>
+        </form>
+        {/* SPEC-FINAL §5: this line is permanent, not a dismissible notice. */}
+        <p className="mt-2 text-center text-[13px] text-muted-foreground">
+          Explains and prepares questions — never diagnoses.
+        </p>
+      </div>
+
+      {detail && <DetailSheet item={detail} onClose={() => setDetail(null)} onChanged={() => {}} />}
     </div>
   )
 }
@@ -228,71 +274,6 @@ function Prose({ text }: { text: string }) {
         )
       )}
     </>
-  )
-}
-
-/** The closing card (SPEC-FINAL §5) — soft, and copyable in one tap so it can
- * go into a notes app, a text to a sibling, or a pocket before an appointment. */
-function GpQuestions({ questions }: { questions: string[] }) {
-  const [copied, setCopied] = useState(false)
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(questions.map((q) => `• ${q}`).join('\n'))
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setCopied(false)
-    }
-  }
-
-  return (
-    <Card className="bg-[var(--hh-bg)]">
-      <CardHeader>Questions you might ask the GP</CardHeader>
-      <ul className="mt-2 flex flex-col gap-2">
-        {questions.map((q) => (
-          <li key={q} className="flex gap-2 text-[15px] leading-[1.45]">
-            <span aria-hidden className="text-[var(--hh-accent)]">
-              •
-            </span>
-            <span>{q}</span>
-          </li>
-        ))}
-      </ul>
-      <Button variant="ghost" className="mt-3" onClick={copy}>
-        {copied ? 'Copied' : 'Copy these'}
-      </Button>
-    </Card>
-  )
-}
-
-function Opening({ personName, onPick }: { personName: string; onPick: (q: string) => void }) {
-  const suggestions = [
-    `What&rsquo;s actually wrong with ${personName}&rsquo;s kidneys?`,
-    'What changed at the last heart clinic appointment?',
-    `What is ${personName} taking, and what is each one for?`,
-  ].map((s) => s.replace(/&rsquo;/g, '’'))
-
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="text-[15px] leading-[1.45]">
-        Ask anything about the letters in {personName}&rsquo;s story. Every answer says which letter
-        it came from, so you can read it yourself.
-      </p>
-      <ul className="flex flex-col gap-2">
-        {suggestions.map((s) => (
-          <li key={s}>
-            <button
-              type="button"
-              onClick={() => onPick(s)}
-              className="min-h-[44px] w-full rounded-[16px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] px-4 py-3 text-left text-[15px] leading-[1.45]"
-            >
-              {s}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }
 
