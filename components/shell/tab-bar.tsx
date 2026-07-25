@@ -14,7 +14,8 @@ const TABS = [
   { href: '/share', label: 'Share', icon: ShareIcon },
 ]
 
-export function TabBar() {
+/** In-app notification is a badge on Today and nothing else (SPEC-FINAL §9). */
+export function TabBar({ todayBadge = 0 }: { todayBadge?: number }) {
   const pathname = usePathname()
   return (
     <nav
@@ -33,8 +34,21 @@ export function TabBar() {
                   active ? 'text-[var(--hh-accent)]' : 'text-[var(--hh-secondary)]'
                 }`}
               >
-                <Icon />
+                <span className="relative">
+                  <Icon />
+                  {href === '/today' && todayBadge > 0 && (
+                    <span
+                      aria-hidden
+                      className="absolute -top-1 -right-2 min-w-[16px] rounded-full bg-[var(--hh-accent)] px-1 text-center text-[11px] font-semibold leading-4 text-white"
+                    >
+                      {todayBadge > 9 ? '9+' : todayBadge}
+                    </span>
+                  )}
+                </span>
                 {label}
+                {href === '/today' && todayBadge > 0 && (
+                  <span className="sr-only">{todayBadge} due</span>
+                )}
               </Link>
             </li>
           )
