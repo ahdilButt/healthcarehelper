@@ -32,14 +32,36 @@ interface DocRow {
 }
 
 /** "from the cardiology letter · 12 May" */
-export function sourceLabel(doc: Pick<DocRow, 'doc_type' | 'sender' | 'doc_date'> | undefined): string {
+export function sourceLabel(
+  doc: Partial<Pick<DocRow, 'doc_type' | 'sender' | 'doc_date' | 'kind'>> | undefined
+): string {
   if (!doc) return 'from a document'
-  const what = humanDocName(doc.doc_type, doc.sender)
+  const what = humanDocName(doc.doc_type ?? null, doc.sender ?? null, doc.kind)
   const when = doc.doc_date ? shortDate(doc.doc_date) : null
   return when ? `from the ${what} · ${when}` : `from the ${what}`
 }
 
-export function humanDocName(docType: string | null, sender: string | null): string {
+/**
+ * How the upload arrived beats how the extractor classified it. A voice note
+ * whose type came back "other" is still a voice note — we watched it being
+ * recorded — and calling it "Letter" on the card makes the one thing the user
+ * just did look like it did not happen.
+ */
+const BY_KIND: Record<string, string> = {
+  voice_note: 'voice note',
+  box_photo: 'photo of the box',
+}
+
+export function humanDocName(docType: string | null, sender: string | null, kind?: string): string {
+  const generic = !docType || docType === 'other'
+  if (kind && (generic || BY_KIND[kind])) {
+    const known = BY_KIND[kind]
+    if (known) return known
+  }
+  return docNameFromType(docType, sender)
+}
+
+function docNameFromType(docType: string | null, sender: string | null): string {
   const byType: Record<string, string> = {
     clinic_letter: 'clinic letter',
     discharge_summary: 'hospital stay summary',
@@ -162,7 +184,7 @@ export async function buildTimeline(
       itemType: 'letter',
       id: d.id,
       personId,
-      humanTitle: capitalise(humanDocName(d.doc_type, d.sender)),
+      humanTitle: capitalise(humanDocName(d.doc_type, d.sender, d.kind)),
       payloadLine: d.sender ?? 'Added to the record',
       date: dateOf(d, d.created_at),
       confirmed: true,
