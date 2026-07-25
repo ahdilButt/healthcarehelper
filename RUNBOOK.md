@@ -97,7 +97,42 @@
 
 ---
 
-## 6. Commands
+## 6. Deploying it
+
+Production is **https://healthcarehelper.vercel.app**, built from the **`master`**
+branch. `main` is the design lane and is a different application — if the site
+ever shows a page titled "Healthcare Helper - AI Task Automation", Vercel has
+reverted to building `main` and nothing below will work.
+
+Vercel → Settings → Git → **Production Branch = `master`**. Changing it does not
+move the current deployment: either promote a `master` deployment from the
+Deployments list, or push to `master` to build a fresh one.
+
+Environment variables live in Vercel, not in `.env.local`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL   NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY  ANTHROPIC_API_KEY
+CRON_SECRET                APP_URL
+SMS_DRY_RUN                TWILIO_ACCOUNT_SID
+TWILIO_AUTH_TOKEN          TWILIO_FROM_NUMBER
+EMAIL_API_KEY
+```
+
+Two that bite:
+
+- **`APP_URL`** must be the production URL with no trailing slash. It is encoded
+  into every capsule QR code — wrong here and the code you hold up on stage
+  points at localhost.
+- **Supabase → Authentication → URL Configuration** must list
+  `https://healthcarehelper.vercel.app/auth/callback` as a redirect URL, or
+  magic-link sign-in fails in production. Keep the localhost one alongside it.
+
+Then `npm run security-check -- https://healthcarehelper.vercel.app`. A healthy
+production answers 401 to `/api/persons/…/timeline` and `/api/cron/tick` — a 404
+means the wrong branch is live.
+
+## 7. Commands
 
 ```
 npm run dev                      # local
