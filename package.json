@@ -14,7 +14,8 @@
     "setup:storage": "tsx scripts/setup-storage.ts",
     "check:db": "tsx scripts/check-db.ts",
     "test": "vitest run",
-    "test:extraction": "tsx scripts/test-extraction.ts"
+    "test:extraction": "tsx scripts/test-extraction.ts",
+    "validate:dataset": "tsx scripts/validate-dataset.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

@@ -105,14 +105,30 @@ async function main() {
     'utf8'
   )
 
+  // The 12b fixture must assert ONLY what is visible in the photograph, which
+  // is page 1 of a 3-page letter. Copying 08's fixture wholesale asserts
+  // page-2/3 strings that can never be transcribed, which would fail
+  // test:extraction forever. 12b proves duplicate detection, not extraction,
+  // so it carries no fact sections at all.
   const fix08 = JSON.parse(await readFile(path.join(FIX, '08.json'), 'utf8'))
+  const page1Text = pages08[0].items
+    .filter((i): i is Extract<typeof i, { k: 'text' }> => i.k === 'text')
+    .map((i) => i.text)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .toLowerCase()
+  const visible = (fix08.transcript_must_include as string[]).filter((m) =>
+    page1Text.includes(m.replace(/\s+/g, ' ').trim().toLowerCase())
+  )
+
   await writeFile(
     path.join(FIX, '12b.json'),
     JSON.stringify(
       {
-        ...fix08,
+        doc_meta: fix08.doc_meta,
+        transcript_must_include: visible,
         duplicate_of: '08',
-        note: 'Same letter as 08, photographed at an angle. Tests duplicate detection, not extraction.',
+        note: 'Page 1 of document 08, photographed at an angle in different light. Tests duplicate detection, not extraction — hence no fact sections.',
       },
       null,
       2

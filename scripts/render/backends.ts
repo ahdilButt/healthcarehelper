@@ -1,7 +1,7 @@
 import { PDFDocument, StandardFonts, degrees, rgb } from 'pdf-lib'
 import sharp from 'sharp'
 import { PAGE_H, PAGE_W, type BoxFace, type LaidOutPage, type LayoutItem } from './types'
-import { sanitise, type Fonts } from './layout'
+import { sanitise } from './layout'
 
 /* ------------------------------------------------------------------ PDF */
 

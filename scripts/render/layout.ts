@@ -284,7 +284,6 @@ export function layoutArtefact(a: Artefact, fonts: Fonts): LaidOutPage[] {
       }
 
       case 'table': {
-        const cols = b.columns.length
         // Weight column widths by their widest cell, then normalise to the content width.
         const raw = b.columns.map((c, i) => {
           const cells = [c, ...b.rows.map((r) => r[i] ?? '')]

@@ -115,6 +115,8 @@
 
 Doc 9 acknowledges L4 but sets no appointment. **Nothing after doc 9 mentions nephrology.** That silence is the point — do not reference nephrology in docs 10, 11, 12, S1 or S2.
 
+**This table is not exhaustive.** It names the loops the demo beats depend on. Documents legitimately open other loops (doc 4's post-discharge U&E check, doc 5's repeat bloods, S1's screening-kit return, S2's dose query) and those are correct extractions, not defects — the watch-card logic must cope with loops this table never names.
+
 ## 7. Appointments
 
 | Appointment | When | Where | Source |
@@ -154,10 +156,13 @@ Doc 9 acknowledges L4 but sets no appointment. **Nothing after doc 9 mentions ne
 
 ## 10. Confidence law for fixtures
 
-`expected_confidence` is `"high"` unless the artefact genuinely makes the fact ambiguous. Exactly three facts are `"low"` across the whole dataset:
+`expected_confidence` is `"high"` unless the artefact genuinely makes the fact ambiguous. Amber facts exist in **exactly two documents**:
 
-1. **doc 12** — Atorvastatin 20 mg (blurred box label).
-2. **S2** — the handwritten dose annotation on the pharmacy slip.
-3. **doc 12b** — anything the skewed photo renders ambiguous (its fixture mirrors doc 08's, so the duplicate detector, not the extractor, is under test).
+1. **doc 12** — Atorvastatin 20 mg, read off a blurred, badly-lit box label.
+2. **S2** — the handwritten biro annotation on the pharmacy slip: both the disputed Furosemide dose and the "check this with the GP" loop it raises.
 
 Everything else must extract cleanly at `high`.
+
+**doc 12b carries no facts at all.** It is page 1 of doc 08 photographed at an angle; its fixture asserts only the strings visible on that page and exists to prove *duplicate detection*, not extraction. Copying doc 08's full fixture onto it would assert page-2 and page-3 text that the photograph cannot possibly contain.
+
+**Why the amber cases matter beyond the demo:** an unconfirmed reading must never rewrite a live dose or fire a what-changed alert (SPEC-FINAL §3). The S2 annotation is the test of that rule — the pipeline must leave Furosemide at 40 mg and raise a question, not silently record 80 mg.

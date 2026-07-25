@@ -4,12 +4,18 @@
   "render": "photo_box",
   "docType": "medicine_box",
   "humanTitle": "Photo of Dad's medicine box",
-  "meta": { "date": "2026-07-02" },
+  "meta": {
+    "date": "2026-07-02"
+  },
   "patient": {
     "name": "Mr Samuel Adeyemi",
     "dob": "14 March 1952",
     "nhsNumber": "999 471 3382",
-    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+    "addressLines": [
+      "12 Wreneley Gardens",
+      "Ashcombe Vale",
+      "ZZ99 3CZ"
+    ]
   },
   "boxFace": {
     "brand": "Atorvastatin",
@@ -21,7 +27,6 @@
     "patientLine": "MR SAMUEL ADEYEMI",
     "pharmacyLine": "Pinner Row Pharmacy, 5 Pinner Row, Ashcombe Vale  Tel 01632 960512",
     "warnings": [
-      "Keep out of the sight and reach of children.",
       "Do not take with grapefruit juice."
     ]
   },
