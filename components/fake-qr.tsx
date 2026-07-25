@@ -1,30 +1,72 @@
 import { cn } from '@/lib/utils'
 
-// A deterministic decorative QR-style pattern for the demo (no scanning).
-function pattern(size: number) {
-  const cells: boolean[] = []
-  for (let i = 0; i < size * size; i++) {
-    const x = i % size
-    const y = Math.floor(i / size)
-    const finder =
-      (x < 3 && y < 3) || (x > size - 4 && y < 3) || (x < 3 && y > size - 4)
-    cells.push(finder || (x * 7 + y * 13 + ((x * y) % 5)) % 3 === 0)
+// A deterministic decorative QR-style pattern for the demo (not a scannable code).
+// Rendered as SVG rects so it always paints, whatever the container size.
+const MODULES = 25
+
+function seedFrom(value: string) {
+  let hash = 2166136261
+  for (let i = 0; i < value.length; i++) {
+    hash ^= value.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
   }
-  return cells
+  return Math.abs(hash)
 }
 
-export function FakeQr({ className, size = 21 }: { className?: string; size?: number }) {
-  const cells = pattern(size)
+function isFinder(x: number, y: number) {
+  const inBlock = (bx: number, by: number) => x >= bx && x < bx + 7 && y >= by && y < by + 7
+  const blocks = [
+    [0, 0],
+    [MODULES - 7, 0],
+    [0, MODULES - 7],
+  ]
+  return blocks.some(([bx, by]) => inBlock(bx, by))
+}
+
+function finderOn(x: number, y: number) {
+  const bx = x < 7 ? 0 : MODULES - 7
+  const by = y < 7 ? 0 : MODULES - 7
+  const lx = x - bx
+  const ly = y - by
+  const ring = lx === 0 || lx === 6 || ly === 0 || ly === 6
+  const core = lx >= 2 && lx <= 4 && ly >= 2 && ly <= 4
+  return ring || core
+}
+
+export function FakeQr({ value = 'demo', className }: { value?: string; className?: string }) {
+  const seed = seedFrom(value)
+  const cells: { x: number; y: number }[] = []
+
+  for (let y = 0; y < MODULES; y++) {
+    for (let x = 0; x < MODULES; x++) {
+      if (isFinder(x, y)) {
+        if (finderOn(x, y)) cells.push({ x, y })
+        continue
+      }
+      const noise = Math.imul(seed ^ (x * 73856093), y * 19349663 + 1) >>> 8
+      if (noise % 100 < 48) cells.push({ x, y })
+    }
+  }
+
   return (
-    <div
+    <svg
+      viewBox={`0 0 ${MODULES} ${MODULES}`}
       role="img"
       aria-label="QR code for this shared page"
-      className={cn('grid aspect-square w-full gap-px bg-card p-2', className)}
-      style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+      shapeRendering="crispEdges"
+      className={cn('block aspect-square w-full', className)}
     >
-      {cells.map((on, i) => (
-        <span key={i} className={on ? 'bg-foreground' : 'bg-transparent'} />
+      <rect width={MODULES} height={MODULES} fill="var(--card)" />
+      {cells.map((cell) => (
+        <rect
+          key={`${cell.x}-${cell.y}`}
+          x={cell.x}
+          y={cell.y}
+          width={1}
+          height={1}
+          fill="var(--foreground)"
+        />
       ))}
-    </div>
+    </svg>
   )
 }

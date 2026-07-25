@@ -16,7 +16,7 @@ import { DetailSheet } from '@/components/detail-sheet'
 import { ShoeboxIllustration } from '@/components/illustrations'
 import { usePerson } from '@/components/person-context'
 import { Card, CardHeader, Meta, PageTitle, SourceChip, StatusPill, TypeIcon } from '@/components/ui-bits'
-import { timeline, type TimelineItem } from '@/lib/mock'
+import { type TimelineItem } from '@/lib/mock'
 
 const icons = {
   letter: FileText,
@@ -28,9 +28,8 @@ const icons = {
 }
 
 export function TimelineFeed() {
-  const { person } = usePerson()
+  const { person, items } = usePerson()
   const [selected, setSelected] = useState<TimelineItem | null>(null)
-  const items = person.id === 'dad' ? timeline : []
 
   const months: { month: string; items: TimelineItem[] }[] = []
   for (const item of items) {
@@ -44,7 +43,7 @@ export function TimelineFeed() {
       <PageTitle className="pt-1">{person.id === 'dad' ? "Dad's story" : 'Your story'}</PageTitle>
       <Meta className="mt-1">Everything we&apos;ve read, newest first</Meta>
 
-      {items.length === 0 ? <EmptyState /> : null}
+      {items.length === 0 ? <EmptyState who={person.id === 'dad' ? "Dad's story" : 'your story'} /> : null}
 
       {months.map((group) => (
         <section key={group.month} className="mt-2">
@@ -84,7 +83,7 @@ function TimelineCard({ item, onOpen }: { item: TimelineItem; onOpen: () => void
           <span className="h-3 w-3/5 animate-pulse rounded-full bg-muted" />
         </div>
         <p aria-live="polite" className="mt-4 text-[15px] text-foreground/80">
-          Reading the letter…{' '}
+          {item.payload}{' '}
           <span className="text-muted-foreground">{item.progressLine}</span>
         </p>
       </Card>
@@ -150,12 +149,12 @@ function TimelineCard({ item, onOpen }: { item: TimelineItem; onOpen: () => void
   )
 }
 
-function EmptyState() {
+function EmptyState({ who }: { who: string }) {
   return (
     <div className="mt-10 flex flex-col items-center text-center">
       <ShoeboxIllustration className="w-44 text-primary" />
       <p className="mt-6 max-w-[26ch] text-[17px] font-semibold text-pretty">
-        Add the first letter — photograph it and watch Dad&apos;s story build.
+        Add the first letter — photograph it and watch {who} build.
       </p>
       <Meta className="mt-2 max-w-[30ch]">
         Use the apricot button below. Letters, results slips and pharmacy labels all work.

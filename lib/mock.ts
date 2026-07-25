@@ -98,7 +98,7 @@ export const timeline: TimelineItem[] = [
     month: 'May 2026',
     date: '12 May',
     header: 'Heart clinic letter',
-    payload: 'Dr Ayesha Nair, cardiology — Royal Infirmary',
+    payload: 'Dr Ayesha Nair, cardiology — St Thomas’ Hospital, London',
     source: 'from the cardiology letter · 12 May',
     thumbnail: '/letter-scan.png',
     facts: [
@@ -158,7 +158,7 @@ export const timeline: TimelineItem[] = [
     statusPill: { text: 'Waiting · 8 weeks', tone: 'warn' },
     source: 'from the cardiology letter · 12 May',
     facts: [
-      { label: 'Who to', value: 'Renal clinic, Royal Infirmary' },
+      { label: 'Who to', value: 'Renal clinic, St Thomas’ Hospital, London' },
       { label: 'Sent', value: '12 May 2026' },
       { label: 'Usual wait', value: 'Around 8 weeks' },
       { label: 'Where it’s up to', value: 'Waiting for an appointment letter' },
@@ -220,6 +220,29 @@ export const timeline: TimelineItem[] = [
 
 export const timelineMonths = Array.from(new Set(timeline.map((t) => t.month)))
 
+/* ------------------------------ Adding a photo ------------------------------ */
+
+export const photoLibrary = [
+  { id: 'lib-letter', src: '/letter-scan.png', label: 'Clinic letter', when: 'Today 09:14' },
+  { id: 'lib-results', src: '/results-slip.png', label: 'Results slip', when: 'Yesterday 17:40' },
+  { id: 'lib-label', src: '/pharmacy-label.png', label: 'Pharmacy label', when: 'Fri 11:02' },
+]
+
+let captureCount = 0
+
+export function newCapture(personLabel: string): TimelineItem {
+  captureCount += 1
+  return {
+    id: `t-capture-${captureCount}`,
+    kind: 'processing',
+    month: 'May 2026',
+    date: 'Just now',
+    header: `Reading the photo you added to ${personLabel}`,
+    payload: 'Reading the photo…',
+    progressLine: 'checking the dates, doses and results',
+  }
+}
+
 /* ----------------------------------- Today ---------------------------------- */
 
 export type MedSlot = 'Morning' | 'Afternoon' | 'Evening'
@@ -256,6 +279,63 @@ export const meds: Med[] = [
 
 export const todayDate = 'Sunday 24 May'
 export const todayBadgeCount = 1
+
+/* --------------------------------- Open loops -------------------------------
+ * Shaped exactly like the `open_loops` table so this swaps to a real query
+ * later: select * from open_loops where loop_type = 'follow_up' and state = 'overdue'.
+ * A loop is only ever cleared by evidence — state moves to 'done' when a new
+ * document confirms it happened. There is no user-facing dismiss.
+ * -------------------------------------------------------------------------- */
+
+export type OpenLoop = {
+  id: string
+  person_id: string
+  loop_type: 'follow_up' | 'referral' | 'test' | 'appointment'
+  description: string
+  promised_on: string
+  due_on: string
+  days_overdue: number
+  state: 'open' | 'overdue' | 'done'
+}
+
+export const openLoops: OpenLoop[] = [
+  {
+    id: 'loop-bp',
+    person_id: 'dad',
+    loop_type: 'follow_up',
+    description: 'GP blood pressure check, 2 weeks after discharge',
+    promised_on: '2026-04-26',
+    due_on: '2026-05-10',
+    days_overdue: 14,
+    state: 'overdue',
+  },
+  {
+    id: 'loop-kidney-test',
+    person_id: 'dad',
+    loop_type: 'test',
+    description: 'Repeat kidney blood test, 6 weeks after the dose change',
+    promised_on: '2026-05-12',
+    due_on: '2026-06-23',
+    days_overdue: 0,
+    state: 'open',
+  },
+  {
+    id: 'loop-renal',
+    person_id: 'dad',
+    loop_type: 'referral',
+    description: 'Kidney specialist appointment letter',
+    promised_on: '2026-05-12',
+    due_on: '2026-07-07',
+    days_overdue: 0,
+    state: 'open',
+  },
+]
+
+export function overdueFollowUps(personId: string) {
+  return openLoops.filter(
+    (loop) => loop.person_id === personId && loop.loop_type === 'follow_up' && loop.state === 'overdue',
+  )
+}
 
 /* --------------------------------- Body map --------------------------------- */
 
@@ -359,11 +439,20 @@ export const capsulePresets: CapsulePreset[] = [
   },
 ]
 
-export const shareLink = 'healthcarehelper.uk/c/demo'
+// Each capsule gets its own token, so the three views never share a link.
+export const capsuleTokens: Record<CapsulePreset['slug'], string> = {
+  doctor: 'q7fd2m',
+  paramedic: 'x4bn9k',
+  family: 'h6cw3t',
+}
+
+export function shareLinkFor(slug: CapsulePreset['slug']) {
+  return `healthcarehelper.uk/c/${capsuleTokens[slug]}`
+}
 
 export const openLog = [
-  { who: 'Opened on a phone in Leeds', when: 'Tue 14:02' },
-  { who: 'Opened on a phone in Leeds', when: 'Tue 13:58' },
+  { who: 'Opened on a phone', where: 'Southwark, London', when: 'Tue 14:02' },
+  { who: 'Opened on a phone', where: 'Lambeth, London', when: 'Tue 13:58' },
 ]
 
 /* ------------------------------- Capsule page ------------------------------- */
@@ -378,7 +467,7 @@ export const capsuleMeds = [
 ]
 
 export const capsuleProblems = [
-  { name: 'Heart failure', detail: 'Under cardiology, Royal Infirmary — reviewed 12 May 2026' },
+  { name: 'Heart failure', detail: 'Under cardiology, St Thomas’ Hospital, London — reviewed 12 May 2026' },
   { name: 'Type 2 diabetes', detail: 'Managed at Meadow Lane Surgery — reviewed 28 April 2026' },
   { name: 'Reduced kidney function', detail: 'Monitored — eGFR 46 on 12 May 2026' },
 ]
@@ -397,13 +486,13 @@ export const capsuleInFlight = [
 
 export const capsuleAppointments = [
   { name: 'Diabetic eye screening', detail: 'July 2026 — letter to follow' },
-  { name: 'Heart clinic review', detail: 'November 2026, Royal Infirmary' },
+  { name: 'Heart clinic review', detail: 'November 2026, St Thomas’ Hospital, London' },
 ]
 
 export const emergency = {
   contact: 'Amira Hassan (daughter) · 07700 900 118',
   resus: 'No DNACPR in place',
-  gp: 'Meadow Lane Surgery, Leeds · 0113 496 0022',
+  gp: 'Meadow Lane Surgery, Southwark, London · 020 7946 0022',
   dob: '4 February 1949',
   nhs: '485 777 3456',
 }
