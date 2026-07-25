@@ -32,7 +32,7 @@ export default function AcceptInvite({ token }: { token: string }) {
       <Button onClick={accept} disabled={busy}>
         {busy ? 'Joining…' : 'Join'}
       </Button>
-      {error && <p className="text-[13px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="text-[13px] text-alert">{error}</p>}
     </div>
   )
 }

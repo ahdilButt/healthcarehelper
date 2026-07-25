@@ -58,16 +58,16 @@ export function PersonSwitcher({
         </svg>
       </button>
       {open && (
-        <div className="absolute left-0 z-30 mt-1 min-w-[230px] overflow-hidden rounded-[16px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] shadow-sm">
+        <div className="absolute left-0 z-30 mt-1 min-w-[230px] overflow-hidden rounded-[16px] border border-border bg-card shadow-sm">
           {people.length > 1 && (
-            <ul className="border-b border-[var(--hh-hairline)]">
+            <ul className="border-b border-border">
               {people.map((p) => (
                 <li key={p.id}>
                   <button
                     type="button"
                     onClick={() => choose(p.id)}
                     className={`block min-h-[44px] w-full px-4 py-3 text-left text-[15px] ${
-                      p.id === current.id ? 'text-[var(--hh-accent)]' : ''
+                      p.id === current.id ? 'text-primary' : ''
                     }`}
                   >
                     {p.displayName}
@@ -77,14 +77,14 @@ export function PersonSwitcher({
             </ul>
           )}
           {email && (
-            <p className="truncate px-4 pt-3 text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+            <p className="truncate px-4 pt-3 text-[13px] leading-[1.4] text-muted-foreground">
               Signed in as {email}
             </p>
           )}
           <form action={signOut}>
             <button
               type="submit"
-              className="block min-h-[44px] w-full px-4 py-3 text-left text-[15px] text-[var(--hh-secondary)]"
+              className="block min-h-[44px] w-full px-4 py-3 text-left text-[15px] text-muted-foreground"
             >
               Sign out
             </button>

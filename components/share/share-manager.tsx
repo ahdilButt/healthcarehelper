@@ -143,13 +143,13 @@ export function ShareManager({
             aria-pressed={kind === k.kind}
             className={`rounded-[16px] border p-4 text-left ${
               kind === k.kind
-                ? 'border-[var(--hh-accent)] bg-[var(--hh-accent-wash)]'
-                : 'border-[var(--hh-hairline)] bg-[var(--hh-card)]'
+                ? 'border-primary bg-accent'
+                : 'border-border bg-card'
             }`}
           >
             <span className="block text-[17px] font-semibold leading-[1.3]">{k.title}</span>
             <span className="mt-1 block text-[15px] leading-[1.45]">{k.blurb}</span>
-            <span className="mt-1 block text-[13px] text-[var(--hh-secondary)]">{k.expiry}</span>
+            <span className="mt-1 block text-[13px] text-muted-foreground">{k.expiry}</span>
           </button>
         ))}
       </div>
@@ -167,18 +167,18 @@ export function ShareManager({
           <p className="text-[15px] font-semibold">{preview.personName}</p>
           {preview.sections.map((section) => (
             <div key={section.heading} className="mt-3">
-              <p className="text-[13px] font-semibold uppercase tracking-wide text-[var(--hh-secondary)]">
+              <p className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">
                 {section.heading}
               </p>
               {section.lines.length === 0 ? (
-                <p className="text-[15px] text-[var(--hh-secondary)]">{section.emptyText}</p>
+                <p className="text-[15px] text-muted-foreground">{section.emptyText}</p>
               ) : (
                 <ul>
                   {section.lines.map((line, i) => (
                     <li key={`${line.text}-${i}`} className="text-[15px] leading-[1.45]">
                       {line.text}
                       {line.note && (
-                        <span className="block text-[13px] text-[var(--hh-secondary)]">{line.note}</span>
+                        <span className="block text-[13px] text-muted-foreground">{line.note}</span>
                       )}
                     </li>
                   ))}
@@ -196,7 +196,7 @@ export function ShareManager({
       </section>
 
       {made && <MadeLink made={made} />}
-      {error && <p className="mt-3 text-[15px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="mt-3 text-[15px] text-alert">{error}</p>}
 
       {capsules.length > 0 && (
         <section className="mt-6">
@@ -280,8 +280,8 @@ function DnrControl({
             aria-pressed={value === c.next}
             className={`min-h-[44px] rounded-full border px-4 text-[15px] ${
               value === c.next
-                ? 'border-[var(--hh-accent)] bg-[var(--hh-accent-wash)]'
-                : 'border-[var(--hh-hairline)] bg-[var(--hh-card)]'
+                ? 'border-primary bg-accent'
+                : 'border-border bg-card'
             }`}
           >
             {c.label}
@@ -291,7 +291,7 @@ function DnrControl({
       <Meta className="mt-2">
         The card is refreshed when you make the link, so set this first.
       </Meta>
-      {error && <p className="mt-2 text-[13px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="mt-2 text-[13px] text-alert">{error}</p>}
     </Card>
   )
 }
@@ -310,7 +310,7 @@ function MadeLink({ made }: { made: { url: string; qr: string; kind: CapsuleKind
           className="mx-auto mt-3 h-[220px] w-[220px]"
         />
       )}
-      <p className="mt-3 break-all text-[13px] text-[var(--hh-secondary)]">{made.url}</p>
+      <p className="mt-3 break-all text-[13px] text-muted-foreground">{made.url}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button
           variant="ghost"
@@ -328,7 +328,7 @@ function MadeLink({ made }: { made: { url: string; qr: string; kind: CapsuleKind
             href={made.url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--hh-hairline)] px-5 text-[15px] font-medium"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-border px-5 text-[15px] font-medium"
           >
             Open it
           </a>
@@ -375,7 +375,7 @@ function ManageCard({
               href={`/api/capsules/${capsule.id}/wallet.pdf`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--hh-hairline)] px-5 text-[15px] font-medium"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-border px-5 text-[15px] font-medium"
             >
               Wallet card
             </a>

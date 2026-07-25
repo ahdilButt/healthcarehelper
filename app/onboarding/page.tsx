@@ -81,20 +81,20 @@ export default function OnboardingPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={forSelf ? 'Me' : 'Dad'}
-                className="min-h-[44px] rounded-[10px] border border-[var(--hh-hairline)] bg-white px-3 text-[15px] outline-none focus:border-[var(--hh-accent)]"
+                className="min-h-[44px] rounded-xl border border-border bg-white px-3 text-[15px] outline-none focus:border-primary"
               />
               <label htmlFor="note" className="mt-2 text-[15px] font-medium">
                 What are they managing?{' '}
-                <span className="font-normal text-[var(--hh-secondary)]">(optional)</span>
+                <span className="font-normal text-muted-foreground">(optional)</span>
               </label>
               <input
                 id="note"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Heart failure and diabetes"
-                className="min-h-[44px] rounded-[10px] border border-[var(--hh-hairline)] bg-white px-3 text-[15px] outline-none focus:border-[var(--hh-accent)]"
+                className="min-h-[44px] rounded-xl border border-border bg-white px-3 text-[15px] outline-none focus:border-primary"
               />
-              {error && <p className="text-[13px] text-[var(--hh-red)]">{error}</p>}
+              {error && <p className="text-[13px] text-alert">{error}</p>}
               <Button onClick={create} disabled={busy || !name.trim()}>
                 {busy ? 'Setting up…' : 'Continue'}
               </Button>

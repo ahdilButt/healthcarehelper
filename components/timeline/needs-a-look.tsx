@@ -103,7 +103,7 @@ export function NeedsALookPanel({
         <label htmlFor="hh-typed" className="text-[15px] font-medium">
           Type what it says
         </label>
-        <p className="mt-1 text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+        <p className="mt-1 text-[13px] leading-[1.4] text-muted-foreground">
           The main lines are enough — the date, who wrote it, and what changed.
         </p>
         <textarea
@@ -111,7 +111,7 @@ export function NeedsALookPanel({
           rows={5}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="mt-2 w-full rounded-[10px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] p-3 text-[15px] leading-[1.45]"
+          className="mt-2 w-full rounded-[10px] border border-border bg-card p-3 text-[15px] leading-[1.45]"
           placeholder="Dear Mr…"
         />
         <Button className="mt-2" onClick={typeItIn} disabled={busy || !text.trim()}>
@@ -119,9 +119,9 @@ export function NeedsALookPanel({
         </Button>
       </div>
 
-      <div className="mt-5 border-t border-[var(--hh-hairline)] pt-4">
+      <div className="mt-5 border-t border-border pt-4">
         <p className="text-[15px] font-medium">Take another photo</p>
-        <p className="mt-1 text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+        <p className="mt-1 text-[13px] leading-[1.4] text-muted-foreground">
           Flat on a table, good light, no shadow across the page.
         </p>
         {/* Driven entirely by the button below, so it stays out of the tab
@@ -146,7 +146,7 @@ export function NeedsALookPanel({
         </Button>
       </div>
 
-      {error && <p className="mt-3 text-[13px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="mt-3 text-[13px] text-alert">{error}</p>}
     </>
   )
 }

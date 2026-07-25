@@ -74,7 +74,7 @@ export function AddLetterButton({
       <Button onClick={() => input.current?.click()} disabled={busy}>
         {busy ? 'Adding…' : 'Add a letter'}
       </Button>
-      {error && <p className="text-[13px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="text-[13px] text-alert">{error}</p>}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { X } from 'lucide-react'
 import type { FactDetail, FactField, FactTable, TimelineItem } from '@/lib/types'
 import {
   Button,
@@ -56,7 +57,7 @@ export function DetailSheet({
           href={`/api/documents/${item.sourceChip.documentId}/file`}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--hh-hairline)] px-5 text-[15px] font-medium"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-border px-5 text-[15px] font-medium"
         >
           View the original letter
         </a>
@@ -120,26 +121,40 @@ export function Sheet({
     }
 
     document.addEventListener('keydown', onKey)
+    // The page behind must not scroll under the sheet on a phone.
+    const scroll = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = scroll
       if (opener && document.contains(opener)) opener.focus()
     }
   }, [])
 
   return (
-    <div
-      className="fixed inset-0 z-40 flex items-end justify-center bg-black/30"
-      onClick={() => close.current()}
-    >
+    <div className="fixed inset-0 z-50 flex items-end justify-center">
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={() => close.current()}
+        className="absolute inset-0 bg-foreground/25"
+      />
       <div
         ref={panel}
         role="dialog"
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
-        className="hh-shell max-h-[85dvh] w-full overflow-y-auto rounded-t-[16px] bg-[var(--hh-card)] p-5 pb-[calc(env(safe-area-inset-bottom)+20px)] outline-none"
-        onClick={(e) => e.stopPropagation()}
+        className="relative flex max-h-[88dvh] w-full max-w-[520px] flex-col overflow-y-auto rounded-t-[24px] bg-card p-5 pb-[calc(env(safe-area-inset-bottom)+20px)] outline-none"
       >
+        <button
+          type="button"
+          onClick={() => close.current()}
+          className="absolute top-3 right-3 flex size-9 items-center justify-center rounded-full text-muted-foreground active:bg-muted"
+        >
+          <X className="size-5" />
+          <span className="sr-only">Close</span>
+        </button>
         {children}
       </div>
     </div>
@@ -227,7 +242,7 @@ function FactPanel({
 
   if (!detail) {
     return error ? (
-      <p className="text-[15px] text-[var(--hh-red)]">{error}</p>
+      <p className="text-[15px] text-alert">{error}</p>
     ) : (
       <Spinner label="Getting the details…" />
     )
@@ -247,7 +262,7 @@ function FactPanel({
 
       {/* Never ask someone to verify words they typed themselves. */}
       {!fact.confirmed && !detail.edited && (
-        <div className="mt-4 rounded-[16px] bg-[var(--hh-accent-wash)] p-4">
+        <div className="mt-4 rounded-[16px] bg-accent p-4">
           <p className="text-[15px] leading-[1.45]">
             We read this off the letter but we are not certain. Does it look right?
           </p>
@@ -279,7 +294,7 @@ function FactPanel({
               }
               note={
                 field.edited && field.aiValue && field.aiValue !== field.value ? (
-                  <p className="mt-1 text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+                  <p className="mt-1 text-[13px] leading-[1.4] text-muted-foreground">
                     was: {field.aiValue}
                   </p>
                 ) : undefined
@@ -289,7 +304,7 @@ function FactPanel({
                   <button
                     type="button"
                     onClick={() => setFixing(field.key)}
-                    className="min-h-[44px] shrink-0 rounded-full px-3 text-[15px] font-medium text-[var(--hh-accent)]"
+                    className="min-h-[44px] shrink-0 rounded-full px-3 text-[15px] font-medium text-primary"
                   >
                     Fix this
                   </button>
@@ -309,13 +324,13 @@ function FactPanel({
               ? 'What the letter says here'
               : 'The start of this letter — we could not point to the exact line'}
           </Meta>
-          <p className="mt-1 rounded-[10px] bg-[var(--hh-bg)] p-3 text-[15px] leading-[1.45] whitespace-pre-wrap">
+          <p className="mt-1 rounded-[10px] bg-muted p-3 text-[15px] leading-[1.45] whitespace-pre-wrap">
             {detail.document.transcriptExcerpt}
           </p>
         </div>
       )}
 
-      {error && <p className="mt-3 text-[13px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="mt-3 text-[13px] text-alert">{error}</p>}
     </>
   )
 }
@@ -371,7 +386,7 @@ function ChasePanel({ loopId, overdue }: { loopId: string; overdue: boolean }) {
           We will write a short letter asking where this has got to, using the details from the
           letter it came from. Nothing is sent — it is yours to check and send.
         </Meta>
-        {error && <p className="mt-2 text-[13px] text-[var(--hh-red)]">{error}</p>}
+        {error && <p className="mt-2 text-[13px] text-alert">{error}</p>}
       </div>
     )
   }
@@ -381,7 +396,7 @@ function ChasePanel({ loopId, overdue }: { loopId: string; overdue: boolean }) {
   return (
     <div className="mt-5">
       <Meta>Ready to send</Meta>
-      <div className="mt-1 rounded-[10px] bg-[var(--hh-bg)] p-3">
+      <div className="mt-1 rounded-[10px] bg-muted p-3">
         <FieldRow label="To" value={draft.to} />
         <FieldRow label="Subject" value={draft.subject} />
         <p className="mt-3 text-[15px] leading-[1.45] whitespace-pre-wrap">{draft.body}</p>
@@ -399,7 +414,7 @@ function ChasePanel({ loopId, overdue }: { loopId: string; overdue: boolean }) {
         </Button>
         <a
           href={`mailto:?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`}
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--hh-hairline)] px-5 text-[15px] font-medium"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-border px-5 text-[15px] font-medium"
         >
           Open in email
         </a>
@@ -428,17 +443,17 @@ function FixThis({
   )
   const id = `fix-${field.key}`
   const control =
-    'mt-1 min-h-[44px] w-full rounded-[10px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] px-3 text-[15px]'
+    'mt-1 min-h-[44px] w-full rounded-[10px] border border-border bg-card px-3 text-[15px]'
 
   return (
     <form
-      className="border-b border-[var(--hh-hairline)] py-3 last:border-b-0"
+      className="border-b border-border py-3 last:border-b-0"
       onSubmit={(e) => {
         e.preventDefault()
         onSave(value.trim())
       }}
     >
-      <label htmlFor={id} className="text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+      <label htmlFor={id} className="text-[13px] leading-[1.4] text-muted-foreground">
         {field.label}
       </label>
       {/* The control matches what the field holds, so a fix cannot be typed in
@@ -552,7 +567,7 @@ function LetterPanel({ item }: { item: TimelineItem }) {
             {busy ? 'Reading it…' : 'What this letter says'}
           </Button>
         )}
-        {error && <p className="mt-3 text-[13px] text-[var(--hh-red)]">{error}</p>}
+        {error && <p className="mt-3 text-[13px] text-alert">{error}</p>}
       </div>
     </>
   )

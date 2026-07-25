@@ -67,7 +67,7 @@ export function MergePrompt({
   }
 
   return (
-    <Card className="mb-3 border-[var(--hh-accent)]/40">
+    <Card className="mb-3 border-primary/40">
       <CardHeader>Is this the same letter?</CardHeader>
       <p className="mt-1 text-[15px] leading-[1.45]">
         This looks like the {name || 'letter'} you already added — merge them, or keep both?
@@ -80,7 +80,7 @@ export function MergePrompt({
           Keep both
         </Button>
       </div>
-      {error && <p className="mt-2 text-[13px] text-[var(--hh-red)]">{error}</p>}
+      {error && <p className="mt-2 text-[13px] text-alert">{error}</p>}
     </Card>
   )
 }

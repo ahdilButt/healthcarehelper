@@ -91,13 +91,13 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="min-h-[44px] rounded-[10px] border border-[var(--hh-hairline)] bg-white px-3 text-[15px] outline-none focus:border-[var(--hh-accent)]"
+              className="min-h-[44px] rounded-xl border border-border bg-white px-3 text-[15px] outline-none focus:border-primary"
             />
             <Button type="submit" disabled={state === 'sending'}>
               {state === 'sending' ? 'Sending…' : 'Email me a link'}
             </Button>
             {state === 'error' && (
-              <p className="text-[13px] text-[var(--hh-red)]">{message}</p>
+              <p className="text-[13px] text-alert">{message}</p>
             )}
           </form>
         </Card>

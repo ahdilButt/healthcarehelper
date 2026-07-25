@@ -20,7 +20,7 @@ export default async function TabsLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="border-b border-[var(--hh-hairline)] bg-[var(--hh-bg)] sm:order-first">
+      <header className="border-b border-border bg-background sm:order-first">
         <div className="hh-shell flex items-center justify-between px-4 py-3">
           <PersonSwitcher current={person} people={people} email={email} />
         </div>
