@@ -104,9 +104,18 @@ branch. `main` is the design lane and is a different application — if the site
 ever shows a page titled "Healthcare Helper - AI Task Automation", Vercel has
 reverted to building `main` and nothing below will work.
 
-Vercel → Settings → Git → **Production Branch = `master`**. Changing it does not
-move the current deployment: either promote a `master` deployment from the
-Deployments list, or push to `master` to build a fresh one.
+The production branch setting is **Settings → Environments → Production →
+Branch Tracking**, not the Git page — it moved, and looking on the Git page is
+how an afternoon disappears. It must read `master`. While it read `main`, every
+push to `master` built cleanly and then sat as a *Preview*, and the only thing
+in Production was a deployment promoted by hand.
+
+Changing it does not move deployments that already exist; push again, or
+promote a `master` build from the Deployments list.
+
+Do not poll the production URL in a loop. Vercel answers automated traffic with
+`x-vercel-mitigated: challenge` — a JS checkpoint that curl cannot pass, which
+looks exactly like an outage and is not one. Real browsers are unaffected.
 
 Environment variables live in Vercel, not in `.env.local`:
 
