@@ -49,14 +49,6 @@
       "dose": "5mg",
       "form": "patch",
       "expected_confidence": "high"
-    },
-    {
-      "name": "Furosemide",
-      "dose": "80mg each morning (2 x 40mg) on some days",
-      "form": "tablet",
-      "schedule_hint": "Handwritten pharmacy note, hard to read: patient may be taking two tablets in the morning on some days",
-      "change": { "old_dose": "40mg each morning" },
-      "expected_confidence": "low"
     }
   ],
   "open_loops": [

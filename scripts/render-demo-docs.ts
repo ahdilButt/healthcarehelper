@@ -48,12 +48,16 @@ async function main() {
       // The dataset's headline amber case: a genuine bad-light, out-of-focus
       // phone snap. The strength has to be readable-but-doubtful, or the
       // "unconfirmed" path never fires.
+      // Calibration matters here. At blur 5.4/900px the strength was still
+      // crisp enough to read confidently, so the pipeline scored it 0.96 and
+      // the "unconfirmed" path never fired — correctly, because nothing was
+      // actually ambiguous. The artefact has to be genuinely marginal.
       const jpg = await svgToPhoto(boxFaceSvg(a.boxFace, a.footer), {
-        rotate: -7.5,
-        blur: 5.4,
-        shadow: 0.55,
-        quality: 58,
-        longEdge: 900,
+        rotate: -8.5,
+        blur: 8.5,
+        shadow: 0.62,
+        quality: 46,
+        longEdge: 620,
       })
       await writeFile(path.join(OUT, `${base}.jpg`), jpg)
       built.push(`${base}.jpg`)

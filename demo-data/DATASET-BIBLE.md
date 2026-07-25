@@ -159,7 +159,9 @@ Doc 9 acknowledges L4 but sets no appointment. **Nothing after doc 9 mentions ne
 `expected_confidence` is `"high"` unless the artefact genuinely makes the fact ambiguous. Amber facts exist in **exactly two documents**:
 
 1. **doc 12** — Atorvastatin 20 mg, read off a blurred, badly-lit box label.
-2. **S2** — the handwritten biro annotation on the pharmacy slip: both the disputed Furosemide dose and the "check this with the GP" loop it raises.
+2. **S2** — the "check this with the GP" loop raised by the handwritten biro annotation on the pharmacy slip.
+
+Note what S2 deliberately does **not** contain: a second Furosemide medication row at 80 mg. An ambiguous handwritten dose query is a question for a clinician, not a dose. The pipeline records it as a loop and leaves the live dose alone — recording it as a medicine is the failure mode, so the fixture asserts the loop instead.
 
 Everything else must extract cleanly at `high`.
 
