@@ -1,14 +1,12 @@
 {
   "ref": "doc-07",
-  "_placeholder": true,
-  "_note": "Hand-written stand-in. Replace transcript + facts with curator-delivered content when Expert C provides doc 7. This is the key safety-flag demo moment — the 'flagged' potassium result should stay true so the app's alert logic has something to catch.",
   "person_ref": "dad",
   "kind": "pdf",
   "doc_type": "blood_test_result",
   "doc_date": "2026-06-20",
   "sender": "St Thomas' Hospital — Pathology Results",
   "status": "ready",
-  "transcript": "PATHOLOGY REPORT\n\nPatient: Whitfield\nDate: 20/06/2026\n\nRenal function:\neGFR: 45 mL/min/1.73m2 (Normal range: 90-120) — decreased from previous reading of 52\n\nElectrolytes:\nPotassium: 5.2 mmol/L (Normal range: 3.5-5.0) — FLAGGED, mildly elevated\n\nComment: mild deterioration in renal function and potassium slightly above range, consistent with recent ACE inhibitor dose increase. Recommend GP review and repeat bloods in 6 weeks.",
+  "transcript": "PATHOLOGY REPORT\n\nPatient: Hassan\nDate: 20/06/2026\n\nRenal function:\neGFR: 45 mL/min/1.73m2 (ref: >90) — L, decreased from 52 on previous testing\n\nElectrolytes:\nPotassium: 5.2 mmol/L (ref: 3.5-5.0) — H, mildly elevated\n\nComment: mild deterioration in renal function and potassium slightly above range, consistent with recent ACE inhibitor dose increase. Recommend GP review and repeat bloods in 6 weeks.",
   "facts": {
     "results": [
       {
@@ -16,7 +14,7 @@
         "value": 45,
         "unit": "mL/min/1.73m2",
         "ref_low": 90,
-        "ref_high": 120,
+        "ref_high": null,
         "flagged": true,
         "result_date": "2026-06-20",
         "confidence": 0.95

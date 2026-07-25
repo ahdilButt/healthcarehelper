@@ -6,7 +6,7 @@
   "doc_date": "2025-01-10",
   "sender": "Dr. Priya Patel, The Riverside Surgery",
   "status": "ready",
-  "transcript": "Dear Mr. Whitfield,\n\nFollowing your recent blood tests, I can confirm a diagnosis of Chronic Kidney Disease, stage 3 (eGFR 52 mL/min/1.73m2). This is a common condition in men your age and we will monitor it with regular blood tests every 6 months.\n\nI have also noted your known allergy to Penicillin (rash and swelling on previous exposure), which is now recorded on your file.\n\nYour current regular medication is:\n- Atorvastatin 20mg, once daily at night, for cholesterol\n\nPlease continue to attend your annual review and let the surgery know if you notice any swelling in your ankles or change in how much you are passing urine.\n\nYours sincerely,\nDr. Priya Patel\nThe Riverside Surgery",
+  "transcript": "Dear Mr. Hassan,\n\nFollowing your recent blood tests, I can confirm a diagnosis of Chronic Kidney Disease, stage 3 (eGFR 52 mL/min/1.73m2). This is a common condition in men your age and we will monitor it with regular blood tests every 6 months.\n\nI have also noted your known allergy to Penicillin (rash and swelling on previous exposure), which is now recorded on your file.\n\nYour current regular medication is:\n- Atorvastatin 20mg, once daily at night, for cholesterol\n\nPlease continue to attend your annual review and let the surgery know if you notice any swelling in your ankles or change in how much you are passing urine.\n\nYours sincerely,\nDr. Priya Patel\nThe Riverside Surgery",
   "facts": {
     "conditions": [
       { "name": "Chronic kidney disease, stage 3", "status": "active", "confidence": 0.96 }

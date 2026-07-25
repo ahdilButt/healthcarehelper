@@ -1,17 +1,15 @@
 {
   "ref": "doc-08",
-  "_placeholder": true,
-  "_note": "Hand-written stand-in. Replace with curator-delivered content when Expert C provides doc 8. This one is a simple 'box_photo' ingest (A1) — a photographed medicine box label rather than a letter, so keep it short and label-like.",
   "person_ref": "dad",
   "kind": "box_photo",
   "doc_type": "med_label",
   "doc_date": "2026-07-01",
-  "sender": null,
+  "sender": "Riverside Pharmacy, 14 Mill Lane",
   "status": "ready",
-  "transcript": "ASPIRIN 75mg Gastro-Resistant Tablets\nTake ONE tablet daily\nDispensed: 01/07/2026\nRiverside Pharmacy",
+  "transcript": "Name: Hassan G.\nDOB 25/07/1960\nASPIRIN 75mg Gastro-Resistant Tablets\nTake ONE tablet daily\n28 tablets\nDispensed: 01/07/2026\nRiverside Pharmacy, 14 Mill Lane\nKeep out of the sight and reach of children",
   "facts": {
     "medications": [
-      { "ref": "aspirin", "name": "Aspirin", "current_dose": "75mg once daily", "form": "tablet", "confidence": 0.88 }
+      { "ref": "aspirin", "name": "Aspirin", "current_dose": "75mg once daily", "form": "tablet", "confidence": 0.92 }
     ]
   }
 }

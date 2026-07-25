@@ -6,7 +6,7 @@
   "doc_date": "2025-09-02",
   "sender": "The Riverside Surgery — Pathology Results",
   "status": "ready",
-  "transcript": "PATHOLOGY REPORT\n\nPatient: Whitfield\nDate: 02/09/2025\n\nRenal function:\neGFR: 52 mL/min/1.73m2 (Normal range: 90-120) — consistent with known CKD stage 3\n\nBlood pressure (clinic reading): 148/92 mmHg (target <140/90)\n\nNo further action required at this stage; continue routine monitoring.",
+  "transcript": "PATHOLOGY REPORT\n\nPatient: Hassan\nDate: 02/09/2025\n\nRenal function:\neGFR: 52 mL/min/1.73m2 (Normal range: 90-120) — consistent with known CKD stage 3\n\nBlood pressure (clinic reading): 148/92 mmHg (target <140/90)\n\nNo further action required at this stage; continue routine monitoring.",
   "facts": {
     "results": [
       {

@@ -1,20 +1,18 @@
 {
   "ref": "doc-02",
-  "_placeholder": true,
-  "_note": "Hand-written stand-in. Replace transcript + facts with curator-delivered content when Expert C provides doc 2. Keep the medication ref 'ramipril' and the dose value '2.5mg once daily' unchanged if possible, since doc-05 references this medication for the dose-change event.",
   "person_ref": "dad",
   "kind": "letter_photo",
   "doc_type": "discharge_summary",
   "doc_date": "2025-03-22",
-  "sender": "St Thomas' Hospital, Cardiology (Discharge Summary)",
+  "sender": "Dr. Osei, Consultant Cardiologist, St Thomas' Hospital",
   "status": "ready",
-  "transcript": "DISCHARGE SUMMARY\n\nPatient attended following an episode of dizziness. Blood pressure on admission 158/96. Diagnosis: Hypertension.\n\nStarted on Ramipril 2.5mg once daily. Advised to have blood pressure checked by GP in 2 weeks.\n\nDr. Osei, Cardiology",
+  "transcript": "DISCHARGE SUMMARY\n\nDate of Discharge: 22 March 2025\nPatient Name: George Hassan\nDate of Birth: 25/07/1960\nHospital Number: 63355343\n\nPresenting Complaint\nAttended the emergency department following a syncopal episode, described as a brief loss of consciousness preceded by dizziness. No associated chest pain, palpitations, or neurological symptoms reported.\n\nDiagnosis\nEssential Hypertension\n\nHospital Course\nOn admission, blood pressure was noted to be significantly elevated at 158/96 mmHg. Subsequent readings remained high. A comprehensive work-up including ECG, routine bloods (U&Es, FBC), and a clinical examination was performed. ECG showed normal sinus rhythm with no acute ischaemic changes. Blood results were within normal limits. The syncopal episode was attributed to a transient vasovagal event, with the underlying hypertension identified as a primary concern requiring management.\n\nThe patient was commenced on Ramipril 2.5mg once daily. Blood pressure response was monitored and found to be satisfactory, with readings improving to approximately 140/88 mmHg prior to discharge. The patient was educated on the diagnosis of hypertension, the importance of medication adherence, and lifestyle modifications including dietary salt reduction and regular physical activity.\n\nMedications on Discharge\n1. Ramipril 2.5mg once daily\n\nAllergies\nNo known drug allergies.\n\nFollow-Up Plan\nTo arrange a follow-up appointment with his General Practitioner in 2 weeks for a blood pressure check and medication review. Advised to monitor for any side effects of Ramipril, including cough or dizziness, and to report these to his GP. To continue with lifestyle modification advice provided during admission.\n\nDischarged to\nHome, in a stable condition.\n\nDr. Osei\nConsultant Cardiologist\nGMC number 1567893",
   "facts": {
     "conditions": [
-      { "name": "Hypertension", "status": "active", "confidence": 0.9 }
+      { "name": "Hypertension", "status": "active", "confidence": 0.96 }
     ],
     "medications": [
-      { "ref": "ramipril", "name": "Ramipril", "current_dose": "2.5mg once daily", "form": "tablet", "confidence": 0.9 }
+      { "ref": "ramipril", "name": "Ramipril", "current_dose": "2.5mg once daily", "form": "tablet", "confidence": 0.96 }
     ]
   }
 }
