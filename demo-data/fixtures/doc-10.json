@@ -1,0 +1,24 @@
+{
+  "ref": "doc-10",
+  "person_ref": "dad",
+  "kind": "letter_photo",
+  "doc_type": "nephrology_letter",
+  "doc_date": "2026-07-10",
+  "sender": "Dr. Chen, Nephrology, St Thomas' Hospital",
+  "status": "ready",
+  "transcript": "Dear Dr. Patel,\n\nRe: Mr. Whitfield\n\nSeen today with ankle swelling and mild deterioration in renal function (eGFR 45, potassium 5.2 on last bloods). Examination confirms mild peripheral oedema.\n\nI have started Furosemide 40mg once daily in the morning to address fluid retention. Please arrange repeat bloods (renal function and potassium) in 3 weeks to ensure potassium normalises and kidney function does not deteriorate further on the combination of Ramipril and Furosemide.\n\nHe is already booked to see me in clinic on 15th August.\n\nDr. Chen",
+  "facts": {
+    "medications": [
+      { "ref": "furosemide", "name": "Furosemide", "current_dose": "40mg once daily, morning", "form": "tablet", "confidence": 0.94 }
+    ],
+    "open_loops": [
+      {
+        "loop_type": "test",
+        "description": "Repeat bloods (eGFR + potassium) after starting Furosemide, to check for interaction with Ramipril",
+        "expected_date": "2026-08-01",
+        "state": "waiting",
+        "confidence": 0.92
+      }
+    ]
+  }
+}

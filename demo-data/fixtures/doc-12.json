@@ -1,0 +1,30 @@
+{
+  "ref": "doc-12",
+  "person_ref": "dad",
+  "kind": "letter_photo",
+  "doc_type": "clinic_letter",
+  "doc_date": "2026-07-20",
+  "sender": "Dr. Osei, Cardiology, St Thomas' Hospital",
+  "status": "ready",
+  "transcript": "Dear Dr. Patel,\n\nRe: Mr. Whitfield — Cardiology review\n\nSeen today. Blood pressure much improved at 134/85 on the current Ramipril 5mg. He reports the ankle swelling has settled since starting Furosemide. No further cardiology action needed at this stage; happy for renal team to continue monitoring given the CKD.\n\nDr. Osei",
+  "facts": {
+    "appointments": [
+      {
+        "title": "Cardiology review",
+        "location": "St Thomas' Hospital, Cardiology",
+        "starts_at": "2026-07-20T14:00:00+01:00",
+        "confidence": 0.95
+      }
+    ],
+    "results": [
+      {
+        "name": "Blood pressure (systolic/diastolic)",
+        "value_text": "134/85",
+        "unit": "mmHg",
+        "flagged": false,
+        "result_date": "2026-07-20",
+        "confidence": 0.93
+      }
+    ]
+  }
+}

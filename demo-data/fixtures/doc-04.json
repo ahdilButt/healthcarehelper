@@ -1,0 +1,32 @@
+{
+  "ref": "doc-04",
+  "person_ref": "dad",
+  "kind": "pdf",
+  "doc_type": "blood_test_result",
+  "doc_date": "2025-09-02",
+  "sender": "The Riverside Surgery — Pathology Results",
+  "status": "ready",
+  "transcript": "PATHOLOGY REPORT\n\nPatient: Whitfield\nDate: 02/09/2025\n\nRenal function:\neGFR: 52 mL/min/1.73m2 (Normal range: 90-120) — consistent with known CKD stage 3\n\nBlood pressure (clinic reading): 148/92 mmHg (target <140/90)\n\nNo further action required at this stage; continue routine monitoring.",
+  "facts": {
+    "results": [
+      {
+        "name": "eGFR",
+        "value": 52,
+        "unit": "mL/min/1.73m2",
+        "ref_low": 90,
+        "ref_high": 120,
+        "flagged": false,
+        "result_date": "2025-09-02",
+        "confidence": 0.97
+      },
+      {
+        "name": "Blood pressure (systolic/diastolic)",
+        "value_text": "148/92",
+        "unit": "mmHg",
+        "flagged": false,
+        "result_date": "2025-09-02",
+        "confidence": 0.95
+      }
+    ]
+  }
+}
