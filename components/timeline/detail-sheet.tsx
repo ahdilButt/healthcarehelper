@@ -1,0 +1,445 @@
+'use client'
+
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import type { FactDetail, FactField, FactTable, TimelineItem } from '@/lib/types'
+import {
+  Button,
+  EditedMark,
+  FieldRow,
+  Meta,
+  SourceChip,
+  Spinner,
+  UnconfirmedBadge,
+} from '@/components/ui/primitives'
+import { NeedsALookPanel } from './needs-a-look'
+
+interface DocumentBody {
+  document: {
+    id: string
+    status: string
+    docType: string | null
+    docDate: string | null
+    sender: string | null
+  }
+}
+
+/**
+ * One sheet, three faces (SPEC-FINAL §4): a fact you can check and fix, a
+ * letter you can look at, and a photo we could not read. Every face ends at
+ * the same place — the original letter.
+ */
+export function DetailSheet({
+  item,
+  onClose,
+  onChanged,
+  onAdded,
+}: {
+  item: TimelineItem
+  onClose: () => void
+  onChanged: () => void
+  onAdded: (documentIds: string[]) => void
+}) {
+  return (
+    <Sheet label={item.humanTitle} onClose={onClose}>
+      {item.factTable ? (
+        <FactPanel item={item} table={item.factTable} onChanged={onChanged} />
+      ) : item.itemType === 'needs_look' ? (
+        <NeedsALookPanel item={item} onAdded={onAdded} onClose={onClose} />
+      ) : (
+        <LetterPanel item={item} />
+      )}
+
+      <div className="mt-5 flex flex-col gap-2">
+        <a
+          href={`/api/documents/${item.sourceChip.documentId}/file`}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--hh-hairline)] px-5 text-[15px] font-medium"
+        >
+          View the original letter
+        </a>
+        <Button variant="ghost" onClick={onClose}>
+          Close
+        </Button>
+      </div>
+    </Sheet>
+  )
+}
+
+/**
+ * Bottom sheet with the modal manners: focuses itself, closes on Escape or a
+ * tap outside, and hands focus back to whatever opened it.
+ *
+ * It lives here rather than in primitives.tsx because primitives is imported
+ * by server components — a hook in that module would break their build.
+ */
+export function Sheet({
+  label,
+  onClose,
+  children,
+}: {
+  label: string
+  onClose: () => void
+  children: ReactNode
+}) {
+  const panel = useRef<HTMLDivElement>(null)
+  const close = useRef(onClose)
+
+  useEffect(() => {
+    close.current = onClose
+  })
+
+  useEffect(() => {
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    panel.current?.focus()
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        close.current()
+        return
+      }
+      // Tab must not walk out onto the cards behind the scrim, where the focus
+      // ring is invisible and Enter would swap this sheet for another fact.
+      if (e.key !== 'Tab' || !panel.current) return
+      const stops = panel.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      if (!stops.length) return
+      const first = stops[0]
+      const last = stops[stops.length - 1]
+      const on = document.activeElement
+      if (e.shiftKey && (on === first || on === panel.current)) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && on === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      if (opener && document.contains(opener)) opener.focus()
+    }
+  }, [])
+
+  return (
+    <div
+      className="fixed inset-0 z-40 flex items-end justify-center bg-black/30"
+      onClick={() => close.current()}
+    >
+      <div
+        ref={panel}
+        role="dialog"
+        aria-modal="true"
+        aria-label={label}
+        tabIndex={-1}
+        className="hh-shell max-h-[85dvh] w-full overflow-y-auto rounded-t-[16px] bg-[var(--hh-card)] p-5 pb-[calc(env(safe-area-inset-bottom)+20px)] outline-none"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function FactPanel({
+  item,
+  table,
+  onChanged,
+}: {
+  item: TimelineItem
+  table: FactTable
+  onChanged: () => void
+}) {
+  const [detail, setDetail] = useState<FactDetail | null>(null)
+  const [fixing, setFixing] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const live = useRef(true)
+
+  useEffect(() => {
+    live.current = true
+    return () => {
+      live.current = false
+    }
+  }, [])
+
+  // Settled in a promise callback rather than an async body so the first load
+  // is never a synchronous setState inside the effect below.
+  const load = useCallback(
+    () =>
+      apiJson<FactDetail>(`/api/facts/${table}/${item.id}`).then(
+        (body) => {
+          if (!live.current) return
+          setDetail(body)
+          setError('')
+        },
+        (e: unknown) => {
+          if (live.current) setError(humanError(e))
+        }
+      ),
+    [table, item.id]
+  )
+
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  async function confirmFact() {
+    setBusy(true)
+    setError('')
+    try {
+      await apiJson<{ confirmedAt: string }>(`/api/facts/${table}/${item.id}/confirm`, {
+        method: 'POST',
+      })
+      await load()
+      if (live.current) onChanged()
+    } catch (e) {
+      if (live.current) setError(humanError(e))
+    } finally {
+      if (live.current) setBusy(false)
+    }
+  }
+
+  async function saveFix(field: string, value: string) {
+    setBusy(true)
+    setError('')
+    try {
+      await apiJson(`/api/facts/${table}/${item.id}/correct`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ field, value }),
+      })
+      await load()
+      if (!live.current) return
+      setFixing(null)
+      onChanged()
+    } catch (e) {
+      if (live.current) setError(humanError(e))
+    } finally {
+      if (live.current) setBusy(false)
+    }
+  }
+
+  if (!detail) {
+    return error ? (
+      <p className="text-[15px] text-[var(--hh-red)]">{error}</p>
+    ) : (
+      <Spinner label="Getting the details…" />
+    )
+  }
+
+  const { fact } = detail
+
+  return (
+    <>
+      <h2 className="text-[17px] font-semibold leading-[1.3]">{fact.humanTitle}</h2>
+      <p className="mt-1 text-[15px] leading-[1.45]">{detail.displayValue}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <SourceChip label={item.sourceChip.label} />
+        {detail.edited && <EditedMark />}
+        {!fact.confirmed && <UnconfirmedBadge />}
+      </div>
+
+      {/* Never ask someone to verify words they typed themselves. */}
+      {!fact.confirmed && !detail.edited && (
+        <div className="mt-4 rounded-[16px] bg-[var(--hh-accent-wash)] p-4">
+          <p className="text-[15px] leading-[1.45]">
+            We read this off the letter but we are not certain. Does it look right?
+          </p>
+          <Button className="mt-3" onClick={confirmFact} disabled={busy}>
+            Yes, that’s right
+          </Button>
+        </div>
+      )}
+
+      <div className="mt-4">
+        {fact.fields.map((field) =>
+          fixing === field.key ? (
+            <FixThis
+              key={field.key}
+              field={field}
+              busy={busy}
+              onCancel={() => setFixing(null)}
+              onSave={(value) => saveFix(field.key, value)}
+            />
+          ) : (
+            <FieldRow
+              key={field.key}
+              label={field.label}
+              value={
+                <>
+                  {field.value || '—'}
+                  {field.edited && <EditedMark className="ml-2 align-middle" />}
+                </>
+              }
+              note={
+                field.edited && field.aiValue && field.aiValue !== field.value ? (
+                  <p className="mt-1 text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+                    was: {field.aiValue}
+                  </p>
+                ) : undefined
+              }
+              action={
+                field.correctable ? (
+                  <button
+                    type="button"
+                    onClick={() => setFixing(field.key)}
+                    className="min-h-[44px] shrink-0 rounded-full px-3 text-[15px] font-medium text-[var(--hh-accent)]"
+                  >
+                    Fix this
+                  </button>
+                ) : undefined
+              }
+            />
+          )
+        )}
+      </div>
+
+      {detail.document.transcriptExcerpt && (
+        <div className="mt-4">
+          <Meta>
+            {detail.document.excerptLocated
+              ? 'What the letter says here'
+              : 'The start of this letter — we could not point to the exact line'}
+          </Meta>
+          <p className="mt-1 rounded-[10px] bg-[var(--hh-bg)] p-3 text-[15px] leading-[1.45] whitespace-pre-wrap">
+            {detail.document.transcriptExcerpt}
+          </p>
+        </div>
+      )}
+
+      {error && <p className="mt-3 text-[13px] text-[var(--hh-red)]">{error}</p>}
+    </>
+  )
+}
+
+/** The correction overlay (SPEC-FINAL §3) — one field at a time, warm words. */
+function FixThis({
+  field,
+  busy,
+  onSave,
+  onCancel,
+}: {
+  field: FactField
+  busy: boolean
+  onSave: (value: string) => void
+  onCancel: () => void
+}) {
+  // A date/datetime control only accepts its own wire format, so a stored
+  // timestamp is trimmed to what the picker can show.
+  const [value, setValue] = useState(
+    field.input === 'datetime' ? field.value.replace(' ', 'T').slice(0, 16) : field.value
+  )
+  const id = `fix-${field.key}`
+  const control =
+    'mt-1 min-h-[44px] w-full rounded-[10px] border border-[var(--hh-hairline)] bg-[var(--hh-card)] px-3 text-[15px]'
+
+  return (
+    <form
+      className="border-b border-[var(--hh-hairline)] py-3 last:border-b-0"
+      onSubmit={(e) => {
+        e.preventDefault()
+        onSave(value.trim())
+      }}
+    >
+      <label htmlFor={id} className="text-[13px] leading-[1.4] text-[var(--hh-secondary)]">
+        {field.label}
+      </label>
+      {/* The control matches what the field holds, so a fix cannot be typed in
+          a shape the story would then quietly ignore. */}
+      {field.input === 'choice' ? (
+        <select
+          id={id}
+          autoFocus
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className={control}
+        >
+          <option value="">Choose one</option>
+          {(field.choices ?? []).map((choice) => (
+            <option key={choice} value={choice}>
+              {choice}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          id={id}
+          autoFocus
+          type={field.input === 'date' ? 'date' : field.input === 'datetime' ? 'datetime-local' : 'text'}
+          inputMode={field.input === 'number' ? 'decimal' : undefined}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className={control}
+        />
+      )}
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Button type="submit" disabled={busy || !value.trim()}>
+          {busy ? 'Saving…' : 'Save the fix'}
+        </Button>
+        <Button type="button" variant="ghost" onClick={onCancel} disabled={busy}>
+          Cancel
+        </Button>
+      </div>
+    </form>
+  )
+}
+
+function LetterPanel({ item }: { item: TimelineItem }) {
+  const [doc, setDoc] = useState<DocumentBody['document'] | null>(null)
+
+  useEffect(() => {
+    let live = true
+    apiJson<DocumentBody>(`/api/documents/${item.sourceChip.documentId}`)
+      .then((body) => {
+        if (live) setDoc(body.document)
+      })
+      .catch(() => {})
+    return () => {
+      live = false
+    }
+  }, [item.sourceChip.documentId])
+
+  const sender = doc?.sender ?? null
+
+  return (
+    <>
+      <h2 className="text-[17px] font-semibold leading-[1.3]">{item.humanTitle}</h2>
+      <div className="mt-3">
+        {sender && <FieldRow label="Who sent it" value={sender} />}
+        <FieldRow label="When it was written" value={longDate(doc?.docDate ?? item.date)} />
+      </div>
+      <div className="mt-3">
+        <SourceChip label={item.sourceChip.label} />
+      </div>
+    </>
+  )
+}
+
+function longDate(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+type Envelope = { error?: { code?: string; message?: string } }
+
+async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, init)
+  const body = (await res.json().catch(() => null)) as (T & Envelope) | null
+  if (!res.ok || !body) {
+    throw new Error(body?.error?.message ?? 'That did not work. Try again in a moment.')
+  }
+  return body
+}
+
+const humanError = (e: unknown) =>
+  e instanceof Error ? e.message : 'That did not work. Try again in a moment.'

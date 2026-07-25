@@ -1,7 +1,7 @@
 'use client'
 
 import type { TimelineItem } from '@/lib/types'
-import { Card, CardHeader, SourceChip, UnconfirmedBadge } from '@/components/ui/primitives'
+import { Card, CardHeader, EditedMark, SourceChip, UnconfirmedBadge } from '@/components/ui/primitives'
 
 /**
  * The six card variants (SPEC-FINAL §4): letter · result · med-change ·
@@ -44,6 +44,7 @@ export function TimelineCard({
             )}
             <span className="mt-2 flex flex-wrap items-center gap-2">
               {item.itemType !== 'processing' && <SourceChip label={item.sourceChip.label} />}
+              {item.edited && <EditedMark />}
               {!item.confirmed && <UnconfirmedBadge />}
             </span>
           </span>

@@ -32,12 +32,18 @@ export async function runPipeline(
   if (!doc) return
 
   try {
-    const { data: file, error: dlErr } = await db.storage
-      .from(DOCUMENTS_BUCKET)
-      .download(doc.storage_path)
-    if (dlErr || !file) throw new Error(`download failed: ${dlErr?.message}`)
-
-    const bytes = new Uint8Array(await file.arrayBuffer())
+    // A typed-in transcript needs no file, and must not need one: the way a
+    // document ends up unreadable is often that its upload failed, leaving
+    // nothing in the bucket to download. Stage A short-circuits on the hint.
+    const hinted = Boolean(opts.hintedTranscript?.trim())
+    let bytes = new Uint8Array()
+    if (!hinted) {
+      const { data: file, error: dlErr } = await db.storage
+        .from(DOCUMENTS_BUCKET)
+        .download(doc.storage_path)
+      if (dlErr || !file) throw new Error(`download failed: ${dlErr?.message}`)
+      bytes = new Uint8Array(await file.arrayBuffer())
+    }
     const filename = doc.storage_path.split('/').pop() ?? 'document'
 
     // ---- Stage A: transcribe

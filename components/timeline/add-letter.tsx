@@ -13,7 +13,8 @@ export function AddLetterButton({
   autoOpen = false,
 }: {
   personId: string
-  onAdded: () => void
+  /** The ids just created, so the feed can watch them settle. */
+  onAdded: (documentIds: string[]) => void
   autoOpen?: boolean
 }) {
   const input = useRef<HTMLInputElement>(null)
@@ -32,6 +33,8 @@ export function AddLetterButton({
     if (!files?.length) return
     setBusy(true)
     setError('')
+    // Ids are handed over even if a later file fails — the ones that landed are real.
+    const ids: string[] = []
     try {
       for (const file of Array.from(files)) {
         const kind = file.type === 'application/pdf' ? 'pdf' : 'letter_photo'
@@ -40,17 +43,18 @@ export function AddLetterButton({
         form.append('kind', kind)
         form.append('file', file)
         const res = await fetch('/api/documents', { method: 'POST', body: form })
-        if (!res.ok) {
-          const body = await res.json().catch(() => null)
-          throw new Error(body?.error?.message ?? 'Upload failed.')
-        }
+        const body = (await res.json().catch(() => null)) as
+          | { documentId?: string; error?: { message?: string } }
+          | null
+        if (!res.ok) throw new Error(body?.error?.message ?? 'Upload failed.')
+        if (body?.documentId) ids.push(body.documentId)
       }
-      onAdded()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Upload failed.')
     } finally {
       setBusy(false)
       if (input.current) input.current.value = ''
+      if (ids.length) onAdded(ids)
     }
   }
 
@@ -63,6 +67,8 @@ export function AddLetterButton({
         capture="environment"
         multiple
         className="sr-only"
+        aria-hidden="true"
+        tabIndex={-1}
         onChange={(e) => upload(e.target.files)}
       />
       <Button onClick={() => input.current?.click()} disabled={busy}>

@@ -3,17 +3,20 @@
 export type MembershipRole = 'owner' | 'patient' | 'carer'
 export type DocumentKind = 'letter_photo' | 'pdf' | 'voice_note' | 'box_photo'
 export type DocumentStatus = 'processing' | 'ready' | 'needs_look' | 'merged'
-export type MedForm =
-  | 'tablet'
-  | 'capsule'
-  | 'patch'
-  | 'gel'
-  | 'injection'
-  | 'inhaler'
-  | 'liquid'
-  | 'other'
+export const MED_FORM_VALUES = [
+  'tablet',
+  'capsule',
+  'patch',
+  'gel',
+  'injection',
+  'inhaler',
+  'liquid',
+  'other',
+] as const
+export type MedForm = (typeof MED_FORM_VALUES)[number]
 export type LoopType = 'referral' | 'test' | 'letter' | 'follow_up' | 'other'
-export type LoopState = 'waiting' | 'done' | 'overdue'
+export const LOOP_STATE_VALUES = ['waiting', 'done', 'overdue'] as const
+export type LoopState = (typeof LOOP_STATE_VALUES)[number]
 export type CapsuleKind = 'doctor_brief' | 'paramedic' | 'family'
 export type NotifType = 'reminder' | 'what_changed'
 export type NotifChannel = 'sms' | 'email'
@@ -57,6 +60,56 @@ export interface TimelineItem {
   /** Extra hints the UI uses; never load-bearing for the contract. */
   factTable?: FactTable
   loopState?: LoopState
+  /** Someone fixed this fact — the card shows their words, marked as edited. */
+  edited?: boolean
+}
+
+/** What kind of thing a field holds, so "Fix this" can offer the right control
+ * rather than a text box the rest of the app will refuse to understand. */
+export type FieldInput = 'text' | 'date' | 'datetime' | 'number' | 'choice'
+
+/** One line of a fact's detail sheet; `correctable` ones carry "Fix this". */
+export interface FactField {
+  key: string
+  label: string
+  value: string
+  aiValue: string
+  edited: boolean
+  correctable: boolean
+  input: FieldInput
+  choices?: string[]
+}
+
+export interface FactCorrection {
+  id: string
+  field: string
+  value: string
+  at: string
+}
+
+/** GET /api/facts/:table/:id — the detail sheet behind every card. */
+export interface FactDetail {
+  fact: {
+    table: FactTable
+    id: string
+    personId: string
+    sourceDocumentId: string
+    humanTitle: string
+    confidence: number
+    confirmed: boolean
+    confirmedAt: string | null
+    fields: FactField[]
+  }
+  corrections: FactCorrection[]
+  displayValue: string
+  edited: boolean
+  document: {
+    id: string
+    transcriptExcerpt: string
+    /** False when the value could not be found and the excerpt is just the top
+     * of the letter — a citation must never be labelled as one when it isn't. */
+    excerptLocated: boolean
+  }
 }
 
 export interface DueItem {

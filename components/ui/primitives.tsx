@@ -128,6 +128,49 @@ export function EmptyState({
   )
 }
 
+/** Someone corrected this by hand. Quiet — a mark, never a diff view. */
+export function EditedMark({ className = '' }: { className?: string }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 text-[13px] text-[var(--hh-secondary)] ${className}`}
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <path
+          d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+      </svg>
+      edited
+    </span>
+  )
+}
+
+/** One line of a detail sheet: quiet label, human value, optional action. */
+export function FieldRow({
+  label,
+  value,
+  note,
+  action,
+}: {
+  label: string
+  value: ReactNode
+  note?: ReactNode
+  action?: ReactNode
+}) {
+  return (
+    <div className="flex items-start justify-between gap-2 border-b border-[var(--hh-hairline)] py-3 last:border-b-0">
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] leading-[1.4] text-[var(--hh-secondary)]">{label}</p>
+        <div className="mt-[2px] text-[15px] leading-[1.45] break-words">{value}</div>
+        {note}
+      </div>
+      {action}
+    </div>
+  )
+}
+
 export function Spinner({ label }: { label?: string }) {
   return (
     <span className="inline-flex items-center gap-2 text-[13px] text-[var(--hh-secondary)]">

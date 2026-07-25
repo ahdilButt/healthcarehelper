@@ -1,15 +1,23 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { CONFIRMED_THRESHOLD } from '@/lib/constants'
-import type { TimelineItem } from '@/lib/types'
+import {
+  applyCorrections,
+  correctionsForPerson,
+  factKey,
+  isConfirmed,
+  isoDateOrNull,
+  loopStateOf,
+} from '@/lib/facts/read'
+import type { LoopState, TimelineItem } from '@/lib/types'
 
 /**
  * The merged feed: one chronological story per person (SPEC-FINAL §4).
  *
  * Every card is traceable to the document it came from, and every header is
  * written in human meaning — "Heart medicine dose went up", not "med_change".
+ *
+ * Cards show the corrected reading, never the original: once someone has fixed
+ * a dose, the wrong one must not survive anywhere they can still see it.
  */
-
-const confirmed = (c: number, at: string | null) => c >= CONFIRMED_THRESHOLD || Boolean(at)
 
 interface DocRow {
   id: string
@@ -63,20 +71,51 @@ export function monthLabel(iso: string): string {
   return d.toLocaleString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
 }
 
+type FactBase = {
+  id: string
+  source_document_id: string
+  confidence: number
+  confirmed_at: string | null
+  created_at: string
+}
+type ChangeRow = FactBase & {
+  medication_id: string
+  old_dose: string | null
+  new_dose: string
+  changed_on: string | null
+}
+type ResultRow = FactBase & {
+  name: string
+  value: number | string | null
+  value_text: string | null
+  unit: string | null
+  result_date: string | null
+}
+type LoopRow = FactBase & {
+  description: string
+  expected_date: string | null
+  state: LoopState
+}
+
 export async function buildTimeline(
   db: SupabaseClient,
   personId: string,
   limit = 60
 ): Promise<TimelineItem[]> {
-  const [docsRes, resultsRes, changesRes, loopsRes, medsRes] = await Promise.all([
+  const [docsRes, resultsRes, changesRes, loopsRes, medsRes, corrections] = await Promise.all([
     db.from('documents').select('*').eq('person_id', personId).order('created_at', { ascending: false }),
     db.from('results').select('*').eq('person_id', personId),
     db.from('med_change_events').select('*').eq('person_id', personId),
     db.from('open_loops').select('*').eq('person_id', personId),
     db.from('medications').select('id,name').eq('person_id', personId),
+    // One query for every fix this person has made, rather than one per card.
+    correctionsForPerson(db, personId),
   ])
 
-  const medName = new Map<string, string>((medsRes.data ?? []).map((m) => [m.id, m.name]))
+  const meds = (medsRes.data ?? []) as { id: string; name: string }[]
+  const medName = new Map<string, string>(
+    meds.map((m) => [m.id, applyCorrections(m, corrections.get(factKey('medications', m.id))).name])
+  )
 
   const docs = (docsRes.data ?? []) as DocRow[]
   const byId = new Map(docs.map((d) => [d.id, d]))
@@ -131,59 +170,70 @@ export async function buildTimeline(
   }
 
   // ---- med changes: the "what changed" star
-  for (const c of changesRes.data ?? []) {
+  for (const c of (changesRes.data ?? []) as ChangeRow[]) {
     const doc = byId.get(c.source_document_id)
     if (doc?.status === 'merged') continue
+    const fixes = corrections.get(factKey('med_change_events', c.id))
+    const row = applyCorrections(c, fixes)
     const name = medName.get(c.medication_id) ?? null
     items.push({
       itemType: 'med_change',
       id: c.id,
       personId,
       // Human meaning first (SPEC-FINAL §4), the clinical detail underneath.
-      humanTitle: name ? `${name} ${changeVerb(c.old_dose, c.new_dose)}` : 'A medicine changed',
-      payloadLine: c.old_dose
-        ? `${name ?? 'The dose'} is now ${c.new_dose} (was ${c.old_dose})`
-        : `Started ${name ?? 'a new medicine'} ${c.new_dose}`,
-      date: c.changed_on ?? dateOf(doc, c.created_at),
-      confirmed: confirmed(Number(c.confidence), c.confirmed_at),
+      humanTitle: name ? `${name} ${changeVerb(row.old_dose, row.new_dose)}` : 'A medicine changed',
+      payloadLine: row.old_dose
+        ? `${name ?? 'The dose'} is now ${row.new_dose} (was ${row.old_dose})`
+        : `Started ${name ?? 'a new medicine'} ${row.new_dose}`,
+      date: isoDateOrNull(row.changed_on) ?? dateOf(doc, c.created_at),
+      confirmed: isConfirmed(Number(c.confidence), c.confirmed_at),
       sourceChip: { documentId: c.source_document_id, label: sourceLabel(doc) },
       factTable: 'med_change_events',
+      edited: Boolean(fixes),
     })
   }
 
   // ---- results
-  for (const r of resultsRes.data ?? []) {
+  for (const r of (resultsRes.data ?? []) as ResultRow[]) {
     const doc = byId.get(r.source_document_id)
     if (doc?.status === 'merged') continue
-    const value = r.value !== null ? `${r.value}${r.unit ? ` ${r.unit}` : ''}` : r.value_text
+    const fixes = corrections.get(factKey('results', r.id))
+    const row = applyCorrections(r, fixes)
+    const reading = row.value === null || row.value === '' ? null : row.value
+    const value = reading !== null ? `${reading}${row.unit ? ` ${row.unit}` : ''}` : row.value_text
     items.push({
       itemType: 'result',
       id: r.id,
       personId,
-      humanTitle: `${r.name} result`,
+      humanTitle: `${row.name} result`,
       payloadLine: String(value ?? ''),
-      date: r.result_date ?? dateOf(doc, r.created_at),
-      confirmed: confirmed(Number(r.confidence), r.confirmed_at),
+      date: isoDateOrNull(row.result_date) ?? dateOf(doc, r.created_at),
+      confirmed: isConfirmed(Number(r.confidence), r.confirmed_at),
       sourceChip: { documentId: r.source_document_id, label: sourceLabel(doc) },
       factTable: 'results',
+      edited: Boolean(fixes),
     })
   }
 
   // ---- open loops: "Things to watch"
-  for (const l of loopsRes.data ?? []) {
+  for (const l of (loopsRes.data ?? []) as LoopRow[]) {
     const doc = byId.get(l.source_document_id)
     if (doc?.status === 'merged') continue
+    const fixes = corrections.get(factKey('open_loops', l.id))
+    const row = applyCorrections(l, fixes)
+    const state = loopStateOf(row.state, l.state)
     items.push({
       itemType: 'open_loop',
       id: l.id,
       personId,
-      humanTitle: l.state === 'overdue' ? 'This looks overdue' : 'Something to watch',
-      payloadLine: l.description,
-      date: l.expected_date ?? dateOf(doc, l.created_at),
-      confirmed: confirmed(Number(l.confidence), l.confirmed_at),
+      humanTitle: state === 'overdue' ? 'This looks overdue' : 'Something to watch',
+      payloadLine: row.description,
+      date: isoDateOrNull(row.expected_date) ?? dateOf(doc, l.created_at),
+      confirmed: isConfirmed(Number(l.confidence), l.confirmed_at),
       sourceChip: { documentId: l.source_document_id, label: sourceLabel(doc) },
       factTable: 'open_loops',
-      loopState: l.state,
+      loopState: state,
+      edited: Boolean(fixes),
     })
   }
 
