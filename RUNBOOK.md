@@ -13,7 +13,7 @@
 | 3 | `npm run set-phone -- amira@example.com +44…` and again for Dad's sign-in | both print the number back |
 | 4 | Set `SMS_DRY_RUN=false` in `.env.local` **and** in Vercel | `npm run tick -- 08:00` sends two real texts |
 | 5 | Verify both numbers in the Twilio console (trial accounts only send to verified numbers) | test text arrives on both handsets |
-| 6 | `npm run security-check -- https://<app-url>` | ALL CHECKS PASS |
+| 6 | `npm run security-check -- https://healthcarehelper-pi.vercel.app` | ALL CHECKS PASS |
 | 7 | Install the PWA on both phones (Share → Add to Home Screen) | opens without browser chrome |
 | 8 | Record the backup clip: screen-record yourself walking §3 below | file on the desktop, named `backup.mp4` |
 | 9 | Rehearse once, with a timer | under 150 seconds |
@@ -99,7 +99,7 @@
 
 ## 6. Deploying it
 
-Production is **https://healthcarehelper.vercel.app**, built from the **`master`**
+Production is **https://healthcarehelper-pi.vercel.app**, built from the **`master`**
 branch. `main` is the design lane and is a different application — if the site
 ever shows a page titled "Healthcare Helper - AI Task Automation", Vercel has
 reverted to building `main` and nothing below will work.
@@ -125,10 +125,10 @@ Two that bite:
   into every capsule QR code — wrong here and the code you hold up on stage
   points at localhost.
 - **Supabase → Authentication → URL Configuration** must list
-  `https://healthcarehelper.vercel.app/auth/callback` as a redirect URL, or
+  `https://healthcarehelper-pi.vercel.app/auth/callback` as a redirect URL, or
   magic-link sign-in fails in production. Keep the localhost one alongside it.
 
-Then `npm run security-check -- https://healthcarehelper.vercel.app`. A healthy
+Then `npm run security-check -- https://healthcarehelper-pi.vercel.app`. A healthy
 production answers 401 to `/api/persons/…/timeline` and `/api/cron/tick` — a 404
 means the wrong branch is live.
 
