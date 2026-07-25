@@ -300,6 +300,8 @@ function FactPanel({
         )}
       </div>
 
+      {table === 'open_loops' && <ChasePanel loopId={item.id} overdue={item.loopState === 'overdue'} />}
+
       {detail.document.transcriptExcerpt && (
         <div className="mt-4">
           <Meta>
@@ -315,6 +317,95 @@ function FactPanel({
 
       {error && <p className="mt-3 text-[13px] text-[var(--hh-red)]">{error}</p>}
     </>
+  )
+}
+
+interface ChaseDraft {
+  to: string
+  subject: string
+  body: string
+}
+
+/**
+ * "Chase this?" (SPEC-FINAL §4/§10). The referral that went quiet is the thing
+ * a family finds out about a year too late, and the reason it never gets
+ * chased is that the letter is both trivial and impossible to write. So it is
+ * already written, with the references in it, and they press send.
+ */
+function ChasePanel({ loopId, overdue }: { loopId: string; overdue: boolean }) {
+  const [draft, setDraft] = useState<ChaseDraft | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
+  const live = useRef(true)
+
+  useEffect(() => {
+    live.current = true
+    return () => {
+      live.current = false
+    }
+  }, [])
+
+  const write = () => {
+    setBusy(true)
+    setError('')
+    apiJson<ChaseDraft>(`/api/loops/${loopId}/chase`)
+      .then((body) => {
+        if (live.current) setDraft(body)
+      })
+      .catch((e: unknown) => {
+        if (live.current) setError(humanError(e))
+      })
+      .finally(() => {
+        if (live.current) setBusy(false)
+      })
+  }
+
+  if (!draft) {
+    return (
+      <div className="mt-5">
+        <Button variant={overdue ? 'primary' : 'quiet'} onClick={write} disabled={busy}>
+          {busy ? 'Writing it…' : 'Chase this?'}
+        </Button>
+        <Meta className="mt-2">
+          We will write a short letter asking where this has got to, using the details from the
+          letter it came from. Nothing is sent — it is yours to check and send.
+        </Meta>
+        {error && <p className="mt-2 text-[13px] text-[var(--hh-red)]">{error}</p>}
+      </div>
+    )
+  }
+
+  const full = `To: ${draft.to}\nSubject: ${draft.subject}\n\n${draft.body}`
+
+  return (
+    <div className="mt-5">
+      <Meta>Ready to send</Meta>
+      <div className="mt-1 rounded-[10px] bg-[var(--hh-bg)] p-3">
+        <FieldRow label="To" value={draft.to} />
+        <FieldRow label="Subject" value={draft.subject} />
+        <p className="mt-3 text-[15px] leading-[1.45] whitespace-pre-wrap">{draft.body}</p>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Button
+          onClick={() => {
+            navigator.clipboard.writeText(full).then(
+              () => setCopied(true),
+              () => setCopied(false)
+            )
+          }}
+        >
+          {copied ? 'Copied' : 'Copy the letter'}
+        </Button>
+        <a
+          href={`mailto:?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`}
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--hh-hairline)] px-5 text-[15px] font-medium"
+        >
+          Open in email
+        </a>
+      </div>
+      <Meta className="mt-2">Check it before you send it — it is written from one letter.</Meta>
+    </div>
   )
 }
 
