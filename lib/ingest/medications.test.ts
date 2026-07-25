@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { doseChanged, doseStrength, medKey, richerDose, sameMedicine } from './medications'
+import { doseChanged, doseStrength, medKey, richerDose, sameMedicine, statesADose } from './medications'
 
 describe('medKey', () => {
   it('strips strengths, forms and frequencies', () => {
@@ -74,5 +74,63 @@ describe('richerDose', () => {
 
   it('takes the new wording when the dose genuinely changed', () => {
     expect(richerDose('2.5mg once daily', '5mg')).toBe('5mg')
+  })
+})
+
+/**
+ * Found by the M3 unplug: the live ingest turned Metformin's "1 g twice daily"
+ * into "Dose not stated" and then into "1g tablets", inventing two dose
+ * changes on the way. A letter can name a medicine without prescribing one.
+ */
+describe('a mention is not a dose', () => {
+  it('knows which strings state a dose', () => {
+    expect(statesADose('1 g twice daily')).toBe(true)
+    expect(statesADose('5mg')).toBe(true)
+    expect(statesADose('one tablet daily')).toBe(true)
+    expect(statesADose('Dose not stated')).toBe(false)
+    expect(statesADose('not specified')).toBe(false)
+    expect(statesADose('unchanged')).toBe(false)
+    expect(statesADose('as before')).toBe(false)
+    expect(statesADose('continue')).toBe(false)
+    expect(statesADose('')).toBe(false)
+    expect(statesADose(null)).toBe(false)
+  })
+
+  it('never reads a mention as a change', () => {
+    expect(doseChanged('1 g twice daily', 'Dose not stated')).toBe(false)
+    expect(doseChanged('1 g twice daily', 'unchanged')).toBe(false)
+    expect(doseChanged('Dose not stated', '1g twice daily')).toBe(true)
+    expect(doseChanged('2.5mg once daily', '5mg once daily')).toBe(true)
+  })
+
+  it('never lets a mention overwrite a prescription', () => {
+    expect(richerDose('1 g twice daily', 'Dose not stated')).toBe('1 g twice daily')
+    expect(richerDose('Dose not stated', '1 g twice daily')).toBe('1 g twice daily')
+    expect(richerDose('5mg', '5mg once daily')).toBe('5mg once daily')
+  })
+})
+
+/**
+ * Also from the M3 unplug: the pharmacy repeat slip is ingested last, and its
+ * wording is longer than a clinic letter's while saying less about when to
+ * take anything. Every dose on the record ended up reading "quantity 28".
+ */
+describe('the wording that survives', () => {
+  it('prefers when-to-take-it over how-many-were-dispensed', () => {
+    expect(richerDose('5mg once daily', '5mg tablets, quantity 28')).toBe('5mg once daily')
+    expect(richerDose('1 g twice daily', '1g tablets, quantity 56')).toBe('1 g twice daily')
+    expect(richerDose('40mg once daily in the morning', '40mg tablets, quantity 28')).toBe(
+      '40mg once daily in the morning'
+    )
+  })
+
+  it('still lets a fuller clinical wording win', () => {
+    expect(richerDose('5mg', '5mg once daily')).toBe('5mg once daily')
+  })
+
+  it('reads "unchanged - dose not stated" as no dose at all', () => {
+    expect(statesADose('unchanged - dose not stated')).toBe(false)
+    expect(doseChanged('1 g twice daily', 'unchanged - dose not stated')).toBe(false)
+    expect(richerDose('1 g twice daily', 'unchanged - dose not stated')).toBe('1 g twice daily')
   })
 })

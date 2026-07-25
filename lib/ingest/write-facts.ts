@@ -20,6 +20,21 @@ export interface WriteResult {
 
 const norm = (s: string) => s.trim().toLowerCase().replace(/\s+/g, ' ')
 
+/**
+ * The same diagnosis, written by three departments, three ways: "Heart failure
+ * with reduced ejection fraction", "…(diagnosed 11 February 2026)", "…, stage
+ * 3a (newly documented 12 May)". Comparing the raw names put nineteen
+ * conditions on the record where there were four, so the parenthetical
+ * qualifier — always a date, a source or a restatement — is dropped before
+ * comparing. Deliberately no more than that: "CKD, stage 3a" and "CKD, stage
+ * 4" must stay two rows, because that difference is the whole point.
+ */
+const conditionKey = (name: string) =>
+  norm(name)
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
 export async function writeFacts(
   db: SupabaseClient,
   personId: string,
@@ -32,8 +47,14 @@ export async function writeFacts(
 
   if (facts.conditions.length) {
     const { data: existing } = await db.from('conditions').select('id,name').eq('person_id', personId)
-    const seen = new Set((existing ?? []).map((c) => norm(c.name)))
-    const fresh = facts.conditions.filter((c) => !seen.has(norm(c.name)))
+    const seen = new Set((existing ?? []).map((c) => conditionKey(c.name)))
+    const fresh: typeof facts.conditions = []
+    for (const c of facts.conditions) {
+      const key = conditionKey(c.name)
+      if (seen.has(key)) continue
+      seen.add(key) // also dedupes within one document
+      fresh.push(c)
+    }
     if (fresh.length) {
       const { error } = await db.from('conditions').insert(
         fresh.map((c) => ({ ...base, name: c.name, status: c.status, confidence: c.confidence }))

@@ -3,6 +3,7 @@ import { after } from 'next/server'
 import { ApiError, readJson, required, route } from '@/lib/api/errors'
 import { requireMemberOfRow } from '@/lib/api/guards'
 import { runPipeline } from '@/lib/ingest/pipeline'
+import { supabaseService } from '@/lib/supabase/service'
 
 const MIN_LENGTH = 20
 const MAX_LENGTH = 40000
@@ -46,7 +47,7 @@ export const POST = route(async (req: Request, ctx: RouteContext<'/api/documents
   }
 
   after(async () => {
-    await runPipeline(db, id, { hintedTranscript: transcript })
+    await runPipeline(db, id, { hintedTranscript: transcript, storage: supabaseService() })
   })
 
   return NextResponse.json({ status: 'processing' })

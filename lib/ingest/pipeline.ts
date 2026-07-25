@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { DOCUMENTS_BUCKET } from '@/lib/constants'
+import { getDocument } from '@/lib/storage'
 import { transcribe } from './stage-a'
 import { extractFacts } from './stage-b'
 import { writeFacts } from './write-facts'
@@ -22,7 +22,8 @@ import { RefusalError } from '@/lib/ai/claude'
 export async function runPipeline(
   db: SupabaseClient,
   documentId: string,
-  opts: { hintedTranscript?: string | null } = {}
+  /** `storage` needs the service role — the bucket has no user policies. */
+  opts: { hintedTranscript?: string | null; storage: SupabaseClient }
 ): Promise<void> {
   const { data: doc } = await db
     .from('documents')
@@ -36,14 +37,7 @@ export async function runPipeline(
     // document ends up unreadable is often that its upload failed, leaving
     // nothing in the bucket to download. Stage A short-circuits on the hint.
     const hinted = Boolean(opts.hintedTranscript?.trim())
-    let bytes = new Uint8Array()
-    if (!hinted) {
-      const { data: file, error: dlErr } = await db.storage
-        .from(DOCUMENTS_BUCKET)
-        .download(doc.storage_path)
-      if (dlErr || !file) throw new Error(`download failed: ${dlErr?.message}`)
-      bytes = new Uint8Array(await file.arrayBuffer())
-    }
+    const bytes = hinted ? new Uint8Array() : await getDocument(opts.storage, doc.storage_path)
     const filename = doc.storage_path.split('/').pop() ?? 'document'
 
     // ---- Stage A: transcribe

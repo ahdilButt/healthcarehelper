@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { ApiError, route } from '@/lib/api/errors'
 import { requireMemberOfRow } from '@/lib/api/guards'
-import { DOCUMENTS_BUCKET, SIGNED_URL_TTL_SECONDS } from '@/lib/constants'
+import { signedUrlFor } from '@/lib/storage'
+import { supabaseService } from '@/lib/supabase/service'
 
 /**
  * GET /api/documents/:id/file — "view the original letter", the citation made
@@ -13,15 +14,13 @@ import { DOCUMENTS_BUCKET, SIGNED_URL_TTL_SECONDS } from '@/lib/constants'
  */
 export const GET = route(async (_req: Request, ctx: RouteContext<'/api/documents/[id]/file'>) => {
   const { id } = await ctx.params
-  const { membership, row } = await requireMemberOfRow('documents', id)
+  const { row } = await requireMemberOfRow('documents', id)
 
   const path = row.storage_path as string
   if (!path || path === 'pending') throw new ApiError('not_found', 'That file is not ready yet.')
 
-  const { data, error } = await membership.db.storage
-    .from(DOCUMENTS_BUCKET)
-    .createSignedUrl(path, SIGNED_URL_TTL_SECONDS)
-  if (error || !data) throw new ApiError('not_found', 'Could not open that file.')
+  const url = await signedUrlFor(supabaseService(), path)
+  if (!url) throw new ApiError('not_found', 'Could not open that file.')
 
-  return NextResponse.redirect(data.signedUrl, 302)
+  return NextResponse.redirect(url, 302)
 })

@@ -108,7 +108,7 @@ export default function OnboardingPage() {
           <ShoeboxIllustration />
           <PageTitle>Add the first letter</PageTitle>
           <Meta className="max-w-[30ch]">
-            Photograph it and watch {name || 'their'} story build itself.
+            Photograph it and watch {possessive(name)} story build itself.
           </Meta>
           <Button onClick={() => router.push('/timeline?add=1')}>Add a letter</Button>
           <Button variant="ghost" onClick={() => router.push('/timeline')}>
@@ -118,4 +118,11 @@ export default function OnboardingPage() {
       )}
     </main>
   )
+}
+
+/** "Dad's story", "Jess's story" — and "their story" before there is a name. */
+function possessive(name: string): string {
+  const trimmed = name.trim()
+  if (!trimmed) return 'their'
+  return trimmed.endsWith('s') ? `${trimmed}’` : `${trimmed}’s`
 }

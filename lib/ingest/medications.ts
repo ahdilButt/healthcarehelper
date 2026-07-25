@@ -110,10 +110,36 @@ export function doseStrength(dose: string | null | undefined): string | null {
 }
 
 /**
+ * A letter can name a medicine without prescribing one — "continue his usual
+ * metformin", "dose not stated", "as before". That is a mention, not a dose,
+ * and treating it as one is how a live record loses a real strength: the M3
+ * ingest turned "1 g twice daily" into "Dose not stated" and then into "1g
+ * tablets", inventing two dose changes on the way.
+ */
+const NON_DOSE_RE =
+  /^(dose\s+)?(not\s+(stated|specified|given|recorded)|unstated|unknown|unchanged|as\s+(before|previous(ly)?|per\s+repeat)|continue[sd]?|ongoing|usual|n\/?a|-|—)\.?$/i
+
+/** The extractor also writes it as a phrase: "unchanged - dose not stated". */
+const NON_DOSE_PHRASE_RE = /\b(dose\s+)?not\s+(stated|specified|given|recorded)\b/i
+
+export function statesADose(dose: string | null | undefined): boolean {
+  const s = (dose ?? '').trim()
+  if (!s) return false
+  // Only placeholders are excluded. "One at night" and "as directed" are real
+  // instructions with no number in them, and treating anything without a digit
+  // as absent would quietly discard them.
+  return !NON_DOSE_RE.test(s) && !NON_DOSE_PHRASE_RE.test(s)
+}
+
+/**
  * Did the dose actually change? Only a movement in strength counts.
- * A restatement in different words does not.
+ * A restatement in different words does not, and a document that states no
+ * dose at all changes nothing.
  */
 export function doseChanged(previous: string | null | undefined, next: string | null | undefined): boolean {
+  if (!statesADose(next)) return false
+  if (!statesADose(previous)) return true
+
   const a = doseStrength(previous)
   const b = doseStrength(next)
   if (a !== null && b !== null) return a !== b
@@ -122,11 +148,40 @@ export function doseChanged(previous: string | null | undefined, next: string | 
   return norm(previous) !== norm(next)
 }
 
+const FREQUENCY_RE =
+  /\b(once|twice|three|four|times|daily|day|nightly|night|morning|evening|bd|od|tds|qds|nocte|mane|prn|hourly|weekly|patch(es)?\s+(daily|each))\b/i
+
+/** Dispensing detail, not a prescription: "quantity 28", "28 tablets". */
+const DISPENSING_RE = /\b(quantity|qty|pack|x\s*\d+)\b/i
+
+/**
+ * How useful a wording is to someone holding the box (SPEC-FINAL §8: the card
+ * says "5mg once daily", never "5mg tablets, quantity 28").
+ *
+ * Longer is not better. A pharmacy repeat slip's line is longer than a clinic
+ * letter's and says less about when to take it — the M3 ingest ended with every
+ * dose reading "quantity 28" because the slip was simply the last one in.
+ */
+function doseQuality(dose: string): number {
+  let score = 0
+  if (FREQUENCY_RE.test(dose)) score += 4
+  if (doseStrength(dose) !== null) score += 2
+  if (DISPENSING_RE.test(dose)) score -= 3
+  return score
+}
+
 /**
  * When the strength is unchanged, keep whichever wording is more informative.
  * A clinic letter's "5mg once daily" beats a repeat slip's "5mg".
  */
 export function richerDose(previous: string, next: string): string {
+  // A mention never replaces a prescription.
+  if (!statesADose(next)) return previous
+  if (!statesADose(previous)) return next
   if (doseChanged(previous, next)) return next
+
+  const a = doseQuality(previous)
+  const b = doseQuality(next)
+  if (a !== b) return b > a ? next : previous
   return next.trim().length > previous.trim().length ? next : previous
 }

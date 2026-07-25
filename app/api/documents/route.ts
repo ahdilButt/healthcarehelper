@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server'
 import { after } from 'next/server'
 import { ApiError, route } from '@/lib/api/errors'
 import { requireMember } from '@/lib/api/guards'
-import { DOCUMENTS_BUCKET } from '@/lib/constants'
 import { runPipeline } from '@/lib/ingest/pipeline'
+import { putDocument } from '@/lib/storage'
+import { supabaseService } from '@/lib/supabase/service'
 import type { DocumentKind } from '@/lib/types'
 
 const KINDS: DocumentKind[] = ['letter_photo', 'pdf', 'voice_note', 'box_photo']
@@ -53,21 +54,18 @@ export const POST = route(async (req: Request) => {
   const safeName = (file.name || 'document').replace(/[^\w.\-]/g, '_').slice(-80)
   const storagePath = `${personId}/${doc.id}/${safeName}`
 
-  const { error: upErr } = await member.db.storage
-    .from(DOCUMENTS_BUCKET)
-    .upload(storagePath, await file.arrayBuffer(), {
-      contentType: file.type || 'application/octet-stream',
-      upsert: false,
-    })
-  if (upErr) {
+  const service = supabaseService()
+  const stored = await putDocument(service, storagePath, await file.arrayBuffer(), file.type)
+  if (!stored.ok) {
     await member.db.from('documents').update({ status: 'needs_look' }).eq('id', doc.id)
+    console.error(`[documents] store failed: ${stored.reason}`)
     throw new ApiError('processing_failed', 'Could not store that file.')
   }
 
   await member.db.from('documents').update({ storage_path: storagePath }).eq('id', doc.id)
 
   after(async () => {
-    await runPipeline(member.db, doc.id, { hintedTranscript })
+    await runPipeline(member.db, doc.id, { hintedTranscript, storage: service })
   })
 
   return NextResponse.json({ documentId: doc.id, status: 'processing' })
