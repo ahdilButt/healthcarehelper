@@ -13,6 +13,15 @@
     ],
     "medications": [
       { "ref": "ramipril", "name": "Ramipril", "current_dose": "2.5mg once daily", "form": "tablet", "confidence": 0.96 }
+    ],
+    "open_loops": [
+      {
+        "loop_type": "follow_up",
+        "description": "GP blood pressure check, 2 weeks after discharge",
+        "expected_date": "2025-04-05",
+        "state": "overdue",
+        "confidence": 0.9
+      }
     ]
   }
 }
