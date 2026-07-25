@@ -85,10 +85,15 @@ export function AddVoiceButton({
     async (audio: Blob, transcript: string) => {
       setBusy(true)
       try {
+        // MediaRecorder reports "audio/webm;codecs=opus"; the bucket's allow
+        // list matches on the bare type, so the codec parameter has to go.
+        const type = audio.type.split(';')[0] || 'audio/webm'
+        const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm'
+
         const form = new FormData()
         form.append('personId', personId)
         form.append('kind', 'voice_note')
-        form.append('audio', new File([audio], `voice-note-${Date.now()}.webm`, { type: audio.type }))
+        form.append('audio', new File([audio], `voice-note-${Date.now()}.${ext}`, { type }))
         if (transcript.trim()) form.append('transcript', transcript.trim())
 
         const res = await fetch('/api/documents', { method: 'POST', body: form })

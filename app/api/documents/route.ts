@@ -55,7 +55,11 @@ export const POST = route(async (req: Request) => {
   const storagePath = `${personId}/${doc.id}/${safeName}`
 
   const service = supabaseService()
-  const stored = await putDocument(service, storagePath, await file.arrayBuffer(), file.type)
+  // A browser sends "audio/webm;codecs=opus"; the bucket's allow list matches
+  // the bare type, so a parameterised one is refused. Normalise here rather
+  // than trusting every caller to have remembered.
+  const contentType = (file.type || '').split(';')[0].trim()
+  const stored = await putDocument(service, storagePath, await file.arrayBuffer(), contentType)
   if (!stored.ok) {
     await member.db.from('documents').update({ status: 'needs_look' }).eq('id', doc.id)
     console.error(`[documents] store failed: ${stored.reason}`)
