@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Check, ChevronRight } from 'lucide-react'
+import { Check, ChevronRight, Clock3 } from 'lucide-react'
 import { CupIllustration } from '@/components/illustrations'
 import { usePerson } from '@/components/person-context'
 import { Card, Meta, PageTitle, StatusPill } from '@/components/ui-bits'
-import { meds as initialMeds, todayDate, type Med, type MedSlot } from '@/lib/mock'
+import { meds as initialMeds, overdueFollowUps, todayDate, type Med, type MedSlot } from '@/lib/mock'
 import { cn } from '@/lib/utils'
 
 const slots: MedSlot[] = ['Morning', 'Afternoon', 'Evening']
@@ -41,8 +41,9 @@ export function TodayList() {
 
   return (
     <div className="px-5">
-      <PageTitle className="pt-1">Today</PageTitle>
-      <div className="mt-1 flex flex-wrap items-center gap-3">
+      <OverdueFollowUp personId={person.id} />
+      <PageTitle className="pt-1 pr-36">Today</PageTitle>
+      <div className="mt-1 flex flex-wrap items-center gap-3 pr-36">
         <Meta>{todayDate}</Meta>
         {left > 0 ? (
           <StatusPill tone="warn">{left} still to take</StatusPill>
@@ -80,6 +81,37 @@ export function TodayList() {
           The heart clinic asked for a kidney check around 23 June — worth booking now.
         </Meta>
       </Card>
+    </div>
+  )
+}
+
+/**
+ * Overdue follow-ups from the open_loops table. There is deliberately no way to
+ * dismiss this card: it only disappears when the loop's state becomes 'done',
+ * which happens when a new document proves the follow-up actually happened.
+ */
+function OverdueFollowUp({ personId }: { personId: string }) {
+  const loops = overdueFollowUps(personId)
+  if (loops.length === 0) return null
+  const loop = loops[0]
+
+  return (
+    <div className="pointer-events-none fixed inset-x-0 top-[3.5rem] z-30 mx-auto w-full max-w-[720px]">
+      <div className="flex justify-end px-5">
+        <aside
+          aria-label="Still waiting to happen"
+          className="pointer-events-auto flex size-32 flex-col justify-between rounded-lg bg-accent p-3 text-accent-foreground shadow-[0_4px_14px_rgba(32,26,23,0.08)]"
+        >
+          <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary">
+            <Clock3 className="size-3.5" aria-hidden="true" />
+            Still waiting
+          </span>
+          <p className="text-[13px] font-medium leading-snug text-pretty">{loop.description}</p>
+          <span className="text-[13px] text-muted-foreground">
+            {loop.days_overdue} days overdue
+          </span>
+        </aside>
+      </div>
     </div>
   )
 }
