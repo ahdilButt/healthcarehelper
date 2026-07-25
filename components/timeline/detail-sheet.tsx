@@ -17,6 +17,8 @@ import { NeedsALookPanel } from './needs-a-look'
 interface DocumentBody {
   document: {
     id: string
+    kind: string
+    transcript: string | null
     status: string
     docType: string | null
     docDate: string | null
@@ -42,6 +44,9 @@ export function DetailSheet({
    * same sheet from a source chip and has nowhere to put one. */
   onAdded?: (documentIds: string[]) => void
 }) {
+  const [kind, setKind] = useState<string | null>(null)
+  const spoken = kind === 'voice_note'
+
   return (
     <Sheet label={item.humanTitle} onClose={onClose}>
       {item.factTable ? (
@@ -49,18 +54,34 @@ export function DetailSheet({
       ) : item.itemType === 'needs_look' && onAdded ? (
         <NeedsALookPanel item={item} onAdded={onAdded} onClose={onClose} />
       ) : (
-        <LetterPanel item={item} />
+        <LetterPanel item={item} onKind={setKind} />
       )}
 
       <div className="mt-5 flex flex-col gap-2">
-        <a
-          href={`/api/documents/${item.sourceChip.documentId}/file`}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-border px-5 text-[15px] font-medium"
-        >
-          View the original letter
-        </a>
+        {/* A recording is listened to, not read. Same signed URL either way —
+            the browser plays it inline rather than opening a viewer. */}
+        {spoken ? (
+          <div>
+            <Meta>The recording</Meta>
+            <audio
+              controls
+              preload="none"
+              src={`/api/documents/${item.sourceChip.documentId}/file`}
+              className="mt-1 w-full"
+            >
+              Your browser cannot play this recording.
+            </audio>
+          </div>
+        ) : (
+          <a
+            href={`/api/documents/${item.sourceChip.documentId}/file`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-border px-5 text-[15px] font-medium"
+          >
+            View the original letter
+          </a>
+        )}
         <Button variant="ghost" onClick={onClose}>
           Close
         </Button>
@@ -502,7 +523,7 @@ interface Translation {
   whatHappensNext: string
 }
 
-function LetterPanel({ item }: { item: TimelineItem }) {
+function LetterPanel({ item, onKind }: { item: TimelineItem; onKind?: (kind: string) => void }) {
   const documentId = item.sourceChip.documentId
   const [doc, setDoc] = useState<DocumentBody['document'] | null>(null)
   const [plain, setPlain] = useState<Translation | null>(null)
@@ -520,10 +541,12 @@ function LetterPanel({ item }: { item: TimelineItem }) {
   useEffect(() => {
     apiJson<DocumentBody>(`/api/documents/${documentId}`)
       .then((body) => {
-        if (live.current) setDoc(body.document)
+        if (!live.current) return
+        setDoc(body.document)
+        onKind?.(body.document.kind)
       })
       .catch(() => {})
-  }, [documentId])
+  }, [documentId, onKind])
 
   // Asked for, not assumed: most letters are never opened, and reading one
   // back in plain English costs a real call.
@@ -542,14 +565,20 @@ function LetterPanel({ item }: { item: TimelineItem }) {
       })
   }
 
+  const spoken = doc?.kind === 'voice_note'
   const written = doc?.docDate ?? (item.date || null)
 
   return (
     <>
       <h2 className="text-[17px] font-semibold leading-[1.3]">{item.humanTitle}</h2>
       <div className="mt-3">
-        {doc?.sender && <FieldRow label="Who sent it" value={doc.sender} />}
-        {written && <FieldRow label="When it was written" value={longDate(written)} />}
+        {doc?.sender && <FieldRow label={spoken ? "Recorded by" : "Who sent it"} value={doc.sender} />}
+        {written && (
+          <FieldRow label={spoken ? "When it was recorded" : "When it was written"} value={longDate(written)} />
+        )}
+        {spoken && doc?.transcript && (
+          <FieldRow label="What was said" value={doc.transcript} />
+        )}
       </div>
       <div className="mt-3">
         <SourceChip label={item.sourceChip.label} />
@@ -558,13 +587,13 @@ function LetterPanel({ item }: { item: TimelineItem }) {
       <div className="mt-5">
         {plain ? (
           <div className="flex flex-col gap-4">
-            <Passage title="What this letter says" body={plain.whatItSays} />
+            <Passage title={spoken ? 'What the note is about' : 'What this letter says'} body={plain.whatItSays} />
             <Passage title="What changed" body={plain.whatChanged} />
             <Passage title="What happens next" body={plain.whatHappensNext} />
           </div>
         ) : (
           <Button variant="quiet" onClick={explain} disabled={busy}>
-            {busy ? 'Reading it…' : 'What this letter says'}
+            {busy ? 'Reading it…' : spoken ? 'What the note says' : 'What this letter says'}
           </Button>
         )}
         {error && <p className="mt-3 text-[13px] text-alert">{error}</p>}

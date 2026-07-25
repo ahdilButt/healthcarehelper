@@ -26,6 +26,7 @@ interface DocRow {
   doc_type: string | null
   doc_date: string | null
   sender: string | null
+  transcript: string | null
   status: string
   created_at: string
   merged_into: string | null
@@ -185,7 +186,7 @@ export async function buildTimeline(
       id: d.id,
       personId,
       humanTitle: capitalise(humanDocName(d.doc_type, d.sender, d.kind)),
-      payloadLine: d.sender ?? 'Added to the record',
+      payloadLine: documentLine(d),
       date: dateOf(d, d.created_at),
       confirmed: true,
       sourceChip: chip,
@@ -265,6 +266,28 @@ export async function buildTimeline(
 }
 
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+/**
+ * What a document card says under its heading.
+ *
+ * A letter has a sender, which is the useful line. A voice note has nobody —
+ * it has words, and "Added to the record" told the person who just spoke them
+ * nothing at all. So a note quotes itself.
+ */
+const SPOKEN_KINDS = new Set(['voice_note'])
+const SNIPPET_MAX = 120
+
+function documentLine(d: DocRow): string {
+  const said = (d.transcript ?? '').trim().replace(/\s+/g, ' ')
+  if (SPOKEN_KINDS.has(d.kind) && said) return `“${snippet(said)}”`
+  return d.sender ?? said.slice(0, SNIPPET_MAX) ?? 'Added to the record'
+}
+
+function snippet(text: string): string {
+  if (text.length <= SNIPPET_MAX) return text
+  const cut = text.slice(0, SNIPPET_MAX)
+  return `${cut.slice(0, cut.lastIndexOf(' ')).trim()}…`
+}
 
 /**
  * A card header has to say what the thing IS.
