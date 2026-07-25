@@ -147,19 +147,16 @@ Supabase's built-in mailer rate-limits magic links to a handful an hour, and
 testing means signing in and out far more often than that. Do not use the email
 form:
 
-\
-> healthcarehelper@0.1.0 magic-link
-> tsx scripts/magic-link.ts amira@example.com --prod
+```
+npm run magic-link -- amira@example.com --prod
+```
 
-
-amira@example.com -> https://healthcarehelper-pi.vercel.app
-
-https://eepkyxcqkabhabfpfdqs.supabase.co/auth/v1/verify?token=9fd23cd3cdc5b217d74dcec8e9fa23cfb6fc32f479e2bf8de87e33f4&type=magiclink&redirect_to=https%3A%2F%2Fhealthcarehelper-pi.vercel.app%2Fauth%2Fcallback%3Fnext%3D%2Ftimeline
-
-Open it in a private window to test as a stranger. It signs you in once and is then spent.
 That mints a link through the admin API — no email sent, no rate limit, as many
 as you like. Open it in a private window to arrive as a stranger. Each link
 signs you in once and is then spent.
+
+Never paste a minted link into a file. It is a working credential until it is
+used, and this document is in the repository.
 
 Sign out from the person name, top-left. A session otherwise lasts indefinitely:
 it refreshes itself and never expires on its own.
