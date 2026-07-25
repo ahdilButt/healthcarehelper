@@ -2,7 +2,7 @@
 
 *Resume a fresh session with: **"Read CLAUDE.md and PROGRESS.md, continue autopilot."***
 
-Last updated: end of Stage 4 (ingest pipeline green).
+Last updated: end of Stage 6 (timeline live in the browser).
 
 ---
 
@@ -15,15 +15,15 @@ Last updated: end of Stage 4 (ingest pipeline green).
 | 2 · Seed | ✅ done | `npm run seed:reset` → 14 documents, 48 facts, end state matches the bible |
 | 3 · Auth + persons + invites | ✅ done | routes build; service-role key absent from `.next/static` |
 | 4 · Ingest (Stage A + B) | ✅ done | `npm run test:extraction` → **15/15 documents, 71 checks, PASS** (cold run) |
-| 5 · Narration card / needs-a-look / merge prompt | ⛔ **UI not built** | APIs exist and are tested; no screens yet |
-| 6 · Timeline API + UI | ⛔ not started | — |
+| 5 · Narration card / needs-a-look / merge prompt | 🟡 partial | processing + needs-a-look cards render and poll; merge-prompt UI still to build (API done) |
+| 6 · Timeline API + UI | 🟡 mostly | feed + month headers + 6 card variants + view-original verified in browser; "Fix this" correction overlay still to build |
 | 7 · Ask API + UI + translate | ⛔ not started | — |
 | 8 · Routines / Today / SMS / cron | ⛔ not started | — |
 | 9 · Capsules + `/c/[token]` + QR + wallet PDF | ⛔ not started | — |
 | 10 · Watch-cards + "Chase this?" | ⛔ not started | — |
 | 11 · M3 self-test + runbook | ⛔ not started | — |
 
-**Next action:** Stage 5/6 together — the timeline feed API (`GET /api/persons/:id/timeline`) and the Timeline screen, including the processing card that polls `GET /api/documents/:id` for live narration counts. Everything it needs already exists.
+**Next action:** finish Stage 6 (the "Fix this" correction overlay + `/api/facts/:table/:id` routes, which nothing else depends on), then Stage 7 (Ask). The seeded record renders end-to-end today.
 
 ---
 

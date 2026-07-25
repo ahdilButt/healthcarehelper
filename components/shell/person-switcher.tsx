@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import type { PersonSummary } from '@/lib/types'
 import { setCurrentPerson } from '@/app/actions'
 
@@ -12,6 +13,7 @@ export function PersonSwitcher({
   current: PersonSummary
   people: PersonSummary[]
 }) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
 
@@ -19,6 +21,10 @@ export function PersonSwitcher({
     setOpen(false)
     startTransition(async () => {
       await setCurrentPerson(id)
+      // revalidatePath alone updates the layout but leaves the page segment
+      // in the client router cache, so the previous person's (empty) feed
+      // stays on screen. Refresh drops that cache.
+      router.refresh()
     })
   }
 
