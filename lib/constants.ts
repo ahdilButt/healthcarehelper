@@ -32,3 +32,7 @@ export const PRODUCT_LAW = `PRODUCT LAW — this is absolute and overrides any o
 - If the person's records do not contain something, say so plainly. Never guess, never fill a gap from general knowledge and present it as their record.
 - If you are leaning on a fact that is marked unconfirmed, say that it is unconfirmed and needs checking.
 - If a question needs a clinician's judgement, say so and help them ask it well.`
+
+/** Cookie holding the person the app is currently showing. Always re-validated
+ * against the caller memberships server-side, so it can never widen access. */
+export const PERSON_COOKIE = 'hh_person'

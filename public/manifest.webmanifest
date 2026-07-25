@@ -1,0 +1,12 @@
+{
+  "name": "HealthcareHelper",
+  "short_name": "Helper",
+  "start_url": "/timeline",
+  "display": "standalone",
+  "background_color": "#FAF6F1",
+  "theme_color": "#FAF6F1",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
