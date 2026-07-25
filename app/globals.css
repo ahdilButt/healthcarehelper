@@ -17,20 +17,50 @@
   --hh-red: #c6432d;
 }
 
+/* The design lane named the same palette differently. Both lanes read
+   SPEC-FINAL §8 and landed on identical hex values, so rather than pick a
+   winner these are aliases onto the tokens above — one source of truth, two
+   vocabularies, and v0's markup ports across unchanged. */
+:root {
+  --hh-secondary-bg: #f4ece5;
+  --hh-green-wash: #e6f2ec;
+  --hh-amber-wash: #fdf3e0;
+  --hh-red-wash: #fbeae7;
+}
+
 @theme inline {
   --color-bg: var(--hh-bg);
   --color-card: var(--hh-card);
   --color-ink: var(--hh-text);
   --color-secondary: var(--hh-secondary);
   --color-hairline: var(--hh-hairline);
-  --color-accent: var(--hh-accent);
   --color-accent-wash: var(--hh-accent-wash);
   --color-ok: var(--hh-green);
-  --color-warn: var(--hh-amber);
   --color-bad: var(--hh-red);
+
+  /* v0's vocabulary */
+  --color-background: var(--hh-bg);
+  --color-foreground: var(--hh-text);
+  --color-card-foreground: var(--hh-text);
+  --color-primary: var(--hh-accent);
+  --color-primary-foreground: #ffffff;
+  --color-muted: var(--hh-secondary-bg);
+  --color-muted-foreground: var(--hh-secondary);
+  --color-accent: var(--hh-accent-wash);
+  --color-accent-foreground: var(--hh-text);
+  --color-border: var(--hh-hairline);
+  --color-input: var(--hh-hairline);
+  --color-ring: var(--hh-accent);
+  --color-good: var(--hh-green);
+  --color-good-wash: var(--hh-green-wash);
+  --color-warn: var(--hh-amber);
+  --color-warn-wash: var(--hh-amber-wash);
+  --color-alert: var(--hh-red);
+  --color-alert-wash: var(--hh-red-wash);
 
   --radius-card: 16px;
   --radius-chip: 10px;
+  --radius-lg: 1rem;
 
   /* Type scale — page title 28/semibold · card header 17/semibold · body 15 · meta 13 */
   --text-title: 28px;

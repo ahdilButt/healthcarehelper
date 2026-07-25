@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { TimelineItem } from '@/lib/types'
 import { monthLabel } from '@/lib/timeline/build'
-import { EmptyState, MonthHeader } from '@/components/ui/primitives'
+import { EmptyState, Meta, MonthHeader, PageTitle } from '@/components/ui/primitives'
 import { ShoeboxIllustration } from '@/components/ui/illustrations'
 import { TimelineCard } from './timeline-card'
 import { AddLetterButton } from './add-letter'
@@ -151,8 +151,11 @@ export function TimelineFeed({
     <>
       {/* One button, never re-mounted: an upload error must survive the moment
           the first letter turns an empty story into a full one. */}
-      <div className="flex items-center justify-between gap-3 py-4">
-        <h1 className="text-[28px] font-semibold leading-[1.2]">The story</h1>
+      <div className="flex items-start justify-between gap-3 py-4">
+        <div>
+          <PageTitle>The story</PageTitle>
+          <Meta className="mt-1">Everything we have read, newest first</Meta>
+        </div>
         <AddLetterButton personId={personId} onAdded={added} autoOpen={autoOpen} />
       </div>
 
@@ -178,7 +181,7 @@ export function TimelineFeed({
         groups.map((g) => (
           <section key={g.month}>
             <MonthHeader label={g.month} />
-            <ul className="mt-2">
+            <ul className="mt-1 flex flex-col gap-3">
               {g.items.map((item) => (
                 <TimelineCard key={`${item.itemType}:${item.id}`} item={item} onOpen={setDetail} />
               ))}

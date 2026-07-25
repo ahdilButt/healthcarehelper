@@ -2,99 +2,57 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { CalendarDays, Clock3, MessageCircleHeart, Share2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 /**
- * Timeline · Today · Ask · Share (SPEC-FINAL §9).
- * Bottom bar on a phone; becomes a top bar at desktop width.
+ * Timeline · Today · Ask · Share (SPEC-FINAL §9), in the design lane's shape.
+ * Bottom bar on a phone; the badge is the whole of in-app notification.
  */
 const TABS = [
-  { href: '/timeline', label: 'Timeline', icon: TimelineIcon },
-  { href: '/today', label: 'Today', icon: TodayIcon },
-  { href: '/ask', label: 'Ask', icon: AskIcon },
-  { href: '/share', label: 'Share', icon: ShareIcon },
+  { href: '/timeline', label: 'Timeline', icon: Clock3 },
+  { href: '/today', label: 'Today', icon: CalendarDays },
+  { href: '/ask', label: 'Ask', icon: MessageCircleHeart },
+  { href: '/share', label: 'Share', icon: Share2 },
 ]
 
-/** In-app notification is a badge on Today and nothing else (SPEC-FINAL §9). */
 export function TabBar({ todayBadge = 0 }: { todayBadge?: number }) {
   const pathname = usePathname()
+
   return (
     <nav
       aria-label="Main"
-      className="sticky bottom-0 z-20 border-t border-[var(--hh-hairline)] bg-[var(--hh-card)] pb-[env(safe-area-inset-bottom)] sm:top-0 sm:bottom-auto sm:border-t-0 sm:border-b"
+      className="sticky bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur"
     >
-      <ul className="hh-shell flex">
+      <ul className="hh-shell flex items-stretch">
         {TABS.map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href)
+          const badge = href === '/today' ? todayBadge : 0
           return (
             <li key={href} className="flex-1">
               <Link
                 href={href}
                 aria-current={active ? 'page' : undefined}
-                className={`flex min-h-[52px] flex-col items-center justify-center gap-1 py-2 text-[13px] ${
-                  active ? 'text-[var(--hh-accent)]' : 'text-[var(--hh-secondary)]'
-                }`}
+                className={cn(
+                  'flex flex-col items-center gap-1 px-1 pt-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-[11px] font-medium',
+                  active ? 'text-primary' : 'text-muted-foreground'
+                )}
               >
                 <span className="relative">
-                  <Icon />
-                  {href === '/today' && todayBadge > 0 && (
-                    <span
-                      aria-hidden
-                      className="absolute -top-1 -right-2 min-w-[16px] rounded-full bg-[var(--hh-accent)] px-1 text-center text-[11px] font-semibold leading-4 text-white"
-                    >
-                      {todayBadge > 9 ? '9+' : todayBadge}
+                  <Icon className="size-6" strokeWidth={active ? 2.2 : 1.8} />
+                  {badge > 0 && (
+                    <span className="absolute -top-1 -right-1.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                      {badge > 9 ? '9' : badge}
                     </span>
                   )}
                 </span>
                 {label}
-                {href === '/today' && todayBadge > 0 && (
-                  <span className="sr-only">{todayBadge} due</span>
-                )}
+                {badge > 0 && <span className="sr-only">{badge} due</span>}
               </Link>
             </li>
           )
         })}
       </ul>
     </nav>
-  )
-}
-
-const s = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const }
-
-function TimelineIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
-      <path d="M5 4v16" {...s} />
-      <circle cx="5" cy="8" r="2" {...s} />
-      <circle cx="5" cy="16" r="2" {...s} />
-      <path d="M10 8h9M10 16h6" {...s} />
-    </svg>
-  )
-}
-function TodayIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
-      <rect x="4" y="5" width="16" height="15" rx="3" {...s} />
-      <path d="M4 10h16M9 3v4M15 3v4" {...s} />
-    </svg>
-  )
-}
-function AskIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
-      <path d="M20 12a8 8 0 1 1-3.2-6.4" {...s} />
-      <path d="M4 20l1.6-3.7" {...s} />
-      <path d="M9.5 9.5a2.5 2.5 0 1 1 3 2.45V13" {...s} />
-      <circle cx="12.5" cy="16" r=".9" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-function ShareIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
-      <circle cx="17" cy="6" r="2.6" {...s} />
-      <circle cx="7" cy="12" r="2.6" {...s} />
-      <circle cx="17" cy="18" r="2.6" {...s} />
-      <path d="m9.4 10.8 5.2-3.2M9.4 13.2l5.2 3.2" {...s} />
-    </svg>
   )
 }
