@@ -1,0 +1,60 @@
+{
+  "id": "07",
+  "slug": "blood-panel-may",
+  "render": "pdf",
+  "docType": "blood_panel",
+  "humanTitle": "Blood test results from May",
+  "letterhead": {
+    "org": "St Saviour's NHS Foundation Trust",
+    "dept": "Department of Clinical Biochemistry",
+    "addressLines": ["St Saviour's Hospital", "Carradine Way", "Ashcombe", "ZZ99 1SS"],
+    "tel": "01632 960118"
+  },
+  "meta": { "date": "2026-05-14", "ourRef": "ASH/26/063117" },
+  "recipient": {
+    "name": "Dr Priya Raman",
+    "lines": ["Marlow Fields Medical Centre", "3 Pinner Row", "Ashcombe Vale", "ZZ99 3DF"]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "blocks": [
+    { "type": "heading", "text": "Pathology Report" },
+    {
+      "type": "kv",
+      "rows": [
+        ["Specimen type", "Serum"],
+        ["Date collected", "10 May 2026"],
+        ["Date received", "11 May 2026"],
+        ["Date reported", "14 May 2026"],
+        ["Laboratory number", "ASH/26/063117"],
+        ["Requested by", "Dr P Raman, Marlow Fields Medical Centre"],
+        ["Clinical details supplied", "Routine monitoring. Repeat U&E and HbA1c requested."]
+      ]
+    },
+    { "type": "heading", "text": "Results" },
+    {
+      "type": "table",
+      "columns": ["Test", "Result", "Units", "Reference range"],
+      "rows": [
+        ["Sodium", "137", "mmol/L", "133 - 146"],
+        ["Potassium", "5.1", "mmol/L", "3.5 - 5.3"],
+        ["Creatinine", "131  H", "µmol/L", "59 - 104"],
+        ["eGFR (CKD-EPI)", "46  L", "mL/min/1.73m²", "> 90"],
+        ["HbA1c (IFCC)", "61  H", "mmol/mol", "20 - 41"]
+      ],
+      "caption": "Specimen ASH/26/063117, collected 10 May 2026."
+    },
+    { "type": "para", "text": "Key: L = result below the quoted reference range. H = result above the quoted reference range. Reference ranges are those in routine use by this laboratory and may differ from those quoted by other providers. Results should not be compared directly with assays performed elsewhere." },
+    { "type": "heading", "text": "Comments" },
+    { "type": "para", "text": "Renal function: the estimated glomerular filtration rate is reduced at 46 mL/min/1.73m² and has fallen compared with the previous specimen from this patient collected on 16 March 2026, with a corresponding rise in serum creatinine to 131 µmol/L. This represents a genuine change rather than analytical variation on our assay. Suggest repeat of renal function to establish the trend, together with review of any renally cleared or potentially nephrotoxic medication. Please correlate with your clinical findings." },
+    { "type": "para", "text": "Glycaemic control: HbA1c remains raised at 61 mmol/mol against a laboratory reference range of 20 to 41 mmol/mol. This result reflects average glycaemia over the preceding two to three months and should be read in the context of any recent acute illness, transfusion or change in therapy." },
+    { "type": "para", "text": "Electrolytes: potassium is within the reference range but towards its upper limit at 5.1 mmol/L, and sodium is within range at 137 mmol/L. No haemolysis was noted on this specimen. This report is issued for the information of the requesting clinician and is not a clinical opinion." },
+    { "type": "spacer" },
+    { "type": "para", "text": "Report authorised electronically by the duty clinical biochemist. Analyses performed at St Saviour's Hospital laboratory. Telephoned results are available on request; laboratory enquiries 01632 960118, quoting the laboratory number above." }
+  ],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

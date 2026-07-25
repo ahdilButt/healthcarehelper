@@ -1,0 +1,63 @@
+{
+  "id": "S2",
+  "slug": "pharmacy-repeat-slip",
+  "render": "photo_slip",
+  "docType": "pharmacy_slip",
+  "humanTitle": "Repeat prescription slip from the chemist",
+  "letterhead": {
+    "org": "Pinner Row Pharmacy",
+    "dept": "Repeat Prescription Service",
+    "addressLines": ["5 Pinner Row", "Ashcombe Vale", "ZZ99 3DF"],
+    "tel": "01632 960512"
+  },
+  "meta": { "date": "2026-07-06", "ourRef": "RX/PRP/6072" },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "REPEAT PRESCRIPTION - PATIENT COPY - TICK ITEMS REQUIRED"
+    },
+    {
+      "type": "kv",
+      "rows": [
+        ["Surgery", "Marlow Fields Medical Centre"],
+        ["Prescriber", "Dr P Raman"],
+        ["Slip printed", "6 July 2026"],
+        ["Allergy", "PENICILLIN"]
+      ]
+    },
+    {
+      "type": "table",
+      "columns": ["Tick", "Item", "Qty", "Last issued"],
+      "rows": [
+        ["[  ]", "Ramipril 5mg tablets", "28", "09 Jun 2026"],
+        ["[  ]", "Bisoprolol 2.5mg tablets", "28", "09 Jun 2026"],
+        ["[  ]", "Furosemide 40mg tablets", "28", "09 Jun 2026"],
+        ["[  ]", "Metformin 1g tablets", "56", "09 Jun 2026"],
+        ["[  ]", "Atorvastatin 20mg tablets", "28", "09 Jun 2026"],
+        ["[  ]", "Glyceryl trinitrate (GTN) 5mg patches", "28", "09 Jun 2026"]
+      ]
+    },
+    {
+      "type": "para",
+      "text": "Tick the items you need, then hand this slip in at the counter or post it through the letterbox. Please allow two full working days."
+    },
+    {
+      "type": "handwritten",
+      "text": "Furosemide - pt taking 2 in AM some days? check w GP"
+    },
+    {
+      "type": "spacer"
+    },
+    {
+      "type": "para",
+      "text": "Pinner Row Pharmacy, 5 Pinner Row, Ashcombe Vale ZZ99 3DF. Tel 01632 960512."
+    }
+  ],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

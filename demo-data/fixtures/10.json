@@ -1,0 +1,24 @@
+{
+  "doc_meta": {
+    "type": "appointment_letter",
+    "date": "2026-06-08",
+    "sender": "Diabetic Eye Screening Service, Ashcombe Community Screening Hub (fictional)",
+    "human_title": "Eye screening appointment"
+  },
+  "transcript_must_include": [
+    "Diabetic eye screening",
+    "Tuesday 14 July 2026",
+    "10:20",
+    "Marlow Fields Medical Centre",
+    "you should not drive",
+    "01632 960903"
+  ],
+  "appointments": [
+    {
+      "title": "Diabetic eye screening",
+      "location": "Marlow Fields Medical Centre, 3 Pinner Row, Ashcombe Vale, ZZ99 3DF",
+      "starts_at": "2026-07-14T10:20:00+01:00",
+      "expected_confidence": "high"
+    }
+  ]
+}

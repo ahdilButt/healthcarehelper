@@ -1,0 +1,104 @@
+{
+  "doc_meta": {
+    "type": "discharge_summary",
+    "date": "2026-03-06",
+    "sender": "Cardiology, Kestrel Ward, St Saviour's NHS Foundation Trust (fictional)",
+    "human_title": "Hospital stay summary"
+  },
+  "transcript_must_include": [
+    "Kestrel Ward",
+    "decompensated heart failure",
+    "Mild pulmonary congestion. No consolidation.",
+    "91.4 kg",
+    "87.8 kg",
+    "intravenous furosemide",
+    "Continue usual repeat medications as per GP record.",
+    "PENICILLIN"
+  ],
+  "conditions": [
+    {
+      "name": "Heart failure with reduced ejection fraction",
+      "status": "active",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Type 2 diabetes mellitus",
+      "status": "active",
+      "expected_confidence": "high"
+    }
+  ],
+  "medications": [
+    {
+      "name": "Furosemide",
+      "dose": "40mg once daily",
+      "form": "tablet",
+      "schedule_hint": "each morning",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Ramipril",
+      "dose": "2.5mg once daily",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Bisoprolol",
+      "dose": "2.5mg once daily",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Metformin",
+      "dose": "1g twice daily",
+      "form": "tablet",
+      "expected_confidence": "high"
+    }
+  ],
+  "allergies": [
+    {
+      "substance": "penicillin",
+      "reaction": null,
+      "expected_confidence": "high"
+    }
+  ],
+  "results": [
+    {
+      "name": "Weight on admission",
+      "value": 91.4,
+      "unit": "kg",
+      "ref_low": null,
+      "ref_high": null,
+      "date": "2026-03-03",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Weight on discharge",
+      "value": 87.8,
+      "unit": "kg",
+      "ref_low": null,
+      "ref_high": null,
+      "date": "2026-03-06",
+      "flagged_by_letter": false,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Chest X-ray",
+      "value_text": "Mild pulmonary congestion. No consolidation.",
+      "unit": null,
+      "ref_low": null,
+      "ref_high": null,
+      "date": "2026-03-03",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    }
+  ],
+  "open_loops": [
+    {
+      "type": "test",
+      "description": "GP to check urea and electrolytes within one week of discharge",
+      "expected_date": "2026-03-13",
+      "expected_confidence": "high"
+    }
+  ]
+}

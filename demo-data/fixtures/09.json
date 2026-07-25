@@ -1,0 +1,25 @@
+{
+  "doc_meta": {
+    "type": "admin_letter",
+    "date": "2026-05-19",
+    "sender": "Renal Services Outpatient Booking Office, St Saviour's NHS Foundation Trust (fictional)",
+    "human_title": "Kidney clinic waiting list letter"
+  },
+  "transcript_must_include": [
+    "Renal Services",
+    "Dr Marcus Oyelaran",
+    "added to the waiting list",
+    "approximately six weeks from the date of referral",
+    "23 June 2026",
+    "01632 960118",
+    "It is not an appointment."
+  ],
+  "open_loops": [
+    {
+      "type": "referral",
+      "description": "Nephrology referral from Cardiology acknowledged by Renal Services; added to the waiting list under Dr Marcus Oyelaran, appointment date still to be sent",
+      "expected_date": "2026-06-23",
+      "expected_confidence": "high"
+    }
+  ]
+}

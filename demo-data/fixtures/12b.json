@@ -1,0 +1,117 @@
+{
+  "doc_meta": {
+    "type": "clinic_letter",
+    "date": "2026-05-12",
+    "sender": "Department of Cardiology, St Saviour's NHS Foundation Trust (fictional)",
+    "human_title": "Heart clinic letter, May 2026"
+  },
+  "transcript_must_include": [
+    "I have increased his Ramipril from 2.5 mg to 5 mg once daily.",
+    "Chronic kidney disease, stage 3a",
+    "eGFR has fallen from 52",
+    "creatinine has risen from 118 to 131",
+    "Dr Marcus Oyelaran",
+    "They aim to see patients within six weeks.",
+    "repeat his urea and electrolytes in two weeks",
+    "October 2026"
+  ],
+  "conditions": [
+    {
+      "name": "Chronic kidney disease, stage 3a",
+      "status": "active",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Heart failure with reduced ejection fraction",
+      "status": "active",
+      "expected_confidence": "high"
+    }
+  ],
+  "medications": [
+    {
+      "name": "Ramipril",
+      "dose": "5mg once daily",
+      "form": "tablet",
+      "change": {
+        "old_dose": "2.5mg once daily"
+      },
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Bisoprolol",
+      "dose": "2.5mg once daily",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Furosemide",
+      "dose": "40mg once daily",
+      "form": "tablet",
+      "schedule_hint": "in the morning",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Glyceryl trinitrate (GTN) patch",
+      "dose": "5mg / 24 hours",
+      "form": "patch",
+      "schedule_hint": "One patch each morning and off at night; restated as unchanged, started by the practice on 21 April 2026",
+      "expected_confidence": "high"
+    }
+  ],
+  "results": [
+    {
+      "name": "eGFR",
+      "value": 46,
+      "unit": "mL/min/1.73m²",
+      "ref_low": 90,
+      "ref_high": null,
+      "date": "2026-05-10",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Creatinine",
+      "value": 131,
+      "unit": "µmol/L",
+      "ref_low": 59,
+      "ref_high": 104,
+      "date": "2026-05-10",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Potassium",
+      "value": 5.1,
+      "unit": "mmol/L",
+      "ref_low": 3.5,
+      "ref_high": 5.3,
+      "date": "2026-05-10",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    }
+  ],
+  "appointments": [
+    {
+      "title": "Cardiology follow-up",
+      "location": "Cardiology outpatients, St Saviour's",
+      "starts_at": null,
+      "expected_confidence": "high"
+    }
+  ],
+  "open_loops": [
+    {
+      "type": "test",
+      "description": "Repeat urea and electrolytes in two weeks following the Ramipril increase",
+      "expected_date": "2026-05-26",
+      "expected_confidence": "high"
+    },
+    {
+      "type": "referral",
+      "description": "Referred to nephrology (renal team, Dr Marcus Oyelaran, St Saviour's); they aim to see patients within six weeks",
+      "expected_date": "2026-06-23",
+      "expected_confidence": "high"
+    }
+  ],
+  "duplicate_of": "08",
+  "note": "Same letter as 08, photographed at an angle. Tests duplicate detection, not extraction."
+}

@@ -1,0 +1,66 @@
+{
+  "id": "09",
+  "slug": "nephrology-referral-ack",
+  "render": "pdf",
+  "docType": "admin_letter",
+  "humanTitle": "Kidney clinic waiting list letter",
+  "letterhead": {
+    "org": "St Saviour's NHS Foundation Trust",
+    "dept": "Renal Services - Outpatient Booking Office",
+    "addressLines": ["St Saviour's Hospital", "Carradine Way", "Ashcombe", "ZZ99 1SS"],
+    "tel": "01632 960118"
+  },
+  "meta": { "date": "2026-05-19", "ourRef": "RENAL/BKG/2026/8842" },
+  "recipient": {
+    "name": "Mr Samuel Adeyemi",
+    "lines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "salutation": "Dear Mr Adeyemi",
+  "blocks": [
+    { "type": "heading", "text": "Referral received - Renal Services" },
+    {
+      "type": "para",
+      "text": "We are writing to confirm that we have received a referral for you from the Department of Cardiology at St Saviour's Hospital. Your name has been added to the waiting list for a routine outpatient appointment with Renal Services."
+    },
+    {
+      "type": "kv",
+      "rows": [
+        ["Referred by", "Department of Cardiology, St Saviour's Hospital"],
+        ["Date of referral", "12 May 2026"],
+        ["Service", "Renal Services (Nephrology)"],
+        ["Consultant", "Dr Marcus Oyelaran"],
+        ["Appointment type", "Routine outpatient"],
+        ["Current waiting time", "Approximately six weeks from the date of referral"],
+        ["Appointment date", "To be confirmed - not yet booked"]
+      ]
+    },
+    {
+      "type": "para",
+      "text": "The current waiting time for a routine appointment in this service is approximately six weeks from the date of referral. We will write to you again with the date, time and location of your appointment as soon as it has been booked. Please do not come to the hospital until you have received that letter."
+    },
+    {
+      "type": "para",
+      "text": "If you have not heard from us by 23 June 2026, please telephone the booking office on 01632 960118, Monday to Friday, 9am to 5pm, quoting the reference number at the top of this letter."
+    },
+    {
+      "type": "para",
+      "text": "Please let us know as soon as possible if your address, telephone number or GP practice changes, or if there are dates on which you would be unable to attend. If you no longer wish to be seen, please tell us so that we can offer the appointment to another patient."
+    },
+    {
+      "type": "para",
+      "text": "This letter confirms only that your referral has been received and that you are on the waiting list. It is not an appointment."
+    }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Renal Services Booking Team",
+    "title": "Outpatient Booking Office, St Saviour's NHS Foundation Trust"
+  },
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

@@ -1,0 +1,60 @@
+{
+  "doc_meta": {
+    "type": "imaging_report",
+    "date": "2026-02-13",
+    "sender": "Cardiac Physiology, St Saviour's NHS Foundation Trust (fictional)",
+    "human_title": "Heart scan report"
+  },
+  "transcript_must_include": [
+    "Transthoracic echocardiogram",
+    "Simpson's biplane",
+    "is 38%",
+    "58 mm",
+    "mild mitral regurgitation",
+    "Trileaflet aortic valve with no stenosis",
+    "Moderate left ventricular systolic dysfunction.",
+    "Ms Fenella Achebe"
+  ],
+  "results": [
+    {
+      "name": "Left ventricular ejection fraction (LVEF, Simpson's biplane)",
+      "value": 38,
+      "unit": "%",
+      "ref_low": 55,
+      "ref_high": null,
+      "date": "2026-02-10",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Left ventricular internal diameter, diastole",
+      "value": 58,
+      "unit": "mm",
+      "ref_low": null,
+      "ref_high": null,
+      "date": "2026-02-10",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Mitral regurgitation",
+      "value_text": "Mild",
+      "unit": null,
+      "ref_low": null,
+      "ref_high": null,
+      "date": "2026-02-10",
+      "flagged_by_letter": false,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Echocardiogram conclusion",
+      "value_text": "Moderate left ventricular systolic dysfunction.",
+      "unit": null,
+      "ref_low": null,
+      "ref_high": null,
+      "date": "2026-02-10",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    }
+  ]
+}

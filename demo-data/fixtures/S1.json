@@ -1,0 +1,25 @@
+{
+  "doc_meta": {
+    "type": "screening_invite",
+    "date": "2026-06-15",
+    "sender": "Ashcombe Community Screening Hub, Bowel Cancer Screening Programme (fictional)",
+    "human_title": "Bowel screening invitation"
+  },
+  "transcript_must_include": [
+    "Ashcombe Community Screening Hub",
+    "bowel screening",
+    "test kit",
+    "pre-paid return envelope",
+    "Monday 27 July 2026",
+    "01632 960903",
+    "Taking part is your choice."
+  ],
+  "open_loops": [
+    {
+      "type": "test",
+      "description": "Return the bowel screening home test kit",
+      "expected_date": "2026-07-27",
+      "expected_confidence": "high"
+    }
+  ]
+}

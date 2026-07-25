@@ -1,0 +1,58 @@
+{
+  "id": "03",
+  "slug": "echo-report",
+  "render": "pdf",
+  "docType": "imaging_report",
+  "humanTitle": "Heart scan report",
+  "letterhead": {
+    "org": "St Saviour's NHS Foundation Trust",
+    "dept": "Department of Cardiac Physiology - Echocardiography Service",
+    "addressLines": ["St Saviour's Hospital", "Carradine Way", "Ashcombe", "ZZ99 1SS"],
+    "tel": "01632 960118"
+  },
+  "meta": { "date": "2026-02-13", "ourRef": "ECHO/2026/00847" },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "blocks": [
+    { "type": "heading", "text": "Transthoracic echocardiogram report" },
+    { "type": "kv", "rows": [
+      ["Study", "Transthoracic echocardiogram"],
+      ["Date of study", "10 February 2026"],
+      ["Date reported", "13 February 2026"],
+      ["Requested by", "Dr Helena Vasquez-Okafor, Consultant Cardiologist"],
+      ["Indication", "Breathlessness on exertion and ankle swelling; query heart failure"],
+      ["Study quality", "Adequate"]
+    ] },
+    { "type": "heading", "text": "Measurements" },
+    { "type": "table",
+      "columns": ["Measurement", "Result", "Units", "Reference range"],
+      "rows": [
+        ["Left ventricular ejection fraction (Simpson's biplane)", "38", "%", "> 55"],
+        ["Left ventricular internal diameter, diastole", "58", "mm", "-"],
+        ["Mitral valve", "Mild regurgitation", "-", "-"],
+        ["Aortic valve", "Trileaflet, no stenosis", "-", "-"]
+      ],
+      "caption": "Measurements as acquired at the study on 10 February 2026."
+    },
+    { "type": "heading", "text": "Findings" },
+    { "type": "para", "text": "Left ventricle: the left ventricle is mildly dilated, with an internal diameter in diastole of 58 mm. Systolic function is moderately impaired. The ejection fraction measured by Simpson's biplane method is 38%, against a normal value of greater than 55%." },
+    { "type": "para", "text": "Mitral valve: there is mild mitral regurgitation demonstrated on colour Doppler. This is not of haemodynamic significance and does not require surveillance in its own right." },
+    { "type": "para", "text": "Aortic valve: trileaflet aortic valve with no stenosis." },
+    { "type": "heading", "text": "Conclusion" },
+    { "type": "para", "text": "Moderate left ventricular systolic dysfunction. Mild mitral regurgitation. Trileaflet aortic valve with no stenosis." },
+    { "type": "para", "text": "The findings have been discussed with the requesting consultant. A copy of this report has been sent to the patient's general practitioner and, at his request, to the patient at his home address." },
+    { "type": "heading", "text": "Authorisation" },
+    { "type": "kv", "rows": [
+      ["Performed by", "Ms Fenella Achebe BSc, Cardiac Physiologist"],
+      ["Reported by", "Ms Fenella Achebe BSc, Cardiac Physiologist"],
+      ["Verified by", "Dr Helena Vasquez-Okafor, Consultant Cardiologist"],
+      ["Date verified", "13 February 2026"]
+    ] }
+  ],
+  "cc": ["Dr Priya Raman, Marlow Fields Medical Centre", "Mr Samuel Adeyemi"],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

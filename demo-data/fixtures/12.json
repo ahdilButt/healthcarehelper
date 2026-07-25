@@ -1,0 +1,23 @@
+{
+  "doc_meta": {
+    "type": "medicine_box",
+    "date": "2026-07-02",
+    "sender": "Pinner Row Pharmacy (fictional)",
+    "human_title": "Photo of Dad's medicine box"
+  },
+  "transcript_must_include": [
+    "Atorvastatin",
+    "20",
+    "ONE TABLET",
+    "NIGHT"
+  ],
+  "medications": [
+    {
+      "name": "Atorvastatin",
+      "dose": "20mg once daily",
+      "form": "tablet",
+      "schedule_hint": "take one tablet each night",
+      "expected_confidence": "low"
+    }
+  ]
+}

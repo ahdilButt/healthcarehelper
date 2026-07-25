@@ -1,0 +1,160 @@
+{
+  "id": "04",
+  "slug": "discharge-summary-march",
+  "render": "pdf",
+  "docType": "discharge_summary",
+  "humanTitle": "Hospital stay summary",
+  "letterhead": {
+    "org": "St Saviour's NHS Foundation Trust",
+    "dept": "Department of Cardiology - Kestrel Ward",
+    "addressLines": ["St Saviour's Hospital", "Carradine Way", "Ashcombe", "ZZ99 1SS"],
+    "tel": "01632 960118"
+  },
+  "meta": { "date": "2026-03-06", "ourRef": "HVO/disch/3862" },
+  "recipient": {
+    "name": "Dr Priya Raman",
+    "lines": ["Marlow Fields Medical Centre", "3 Pinner Row", "Ashcombe Vale", "ZZ99 3DF"]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "salutation": "Dear Dr Raman",
+  "blocks": [
+    { "type": "heading", "text": "Discharge Summary" },
+    {
+      "type": "para",
+      "text": "This is a summary of Mr Adeyemi's recent inpatient stay under the cardiology team. A copy has been sent to him at his home address and to his daughter, who is named as his emergency contact. Please contact the ward directly if any part of this summary is unclear or if you would like the full laboratory record."
+    },
+    {
+      "type": "kv",
+      "rows": [
+        ["Date of admission", "3 March 2026"],
+        ["Date of discharge", "6 March 2026"],
+        ["Method of admission", "Emergency Department, self-presented"],
+        ["Ward", "Kestrel Ward"],
+        ["Consultant", "Dr Helena Vasquez-Okafor, Consultant Cardiologist"],
+        ["Admitting registrar", "Dr Tomas Lindqvist, Specialty Registrar (ST6)"],
+        ["Discharge destination", "Home, independent"],
+        ["Allergies", "PENICILLIN"]
+      ]
+    },
+    { "type": "heading", "text": "Allergies and adverse reactions" },
+    {
+      "type": "para",
+      "text": "Penicillin. This is recorded on the front of the notes and on the ward drug chart, and was confirmed with Mr Adeyemi and with his daughter on admission. Please ensure it remains flagged on the practice record. No antibiotics were required at any point during this admission."
+    },
+    { "type": "heading", "text": "Presenting complaint" },
+    {
+      "type": "para",
+      "text": "Mr Adeyemi attended the Emergency Department on the evening of 3 March 2026 with a five-day history of worsening breathlessness. He described being unable to walk to the corner shop and back without stopping twice, and having to sleep propped up on three pillows rather than his usual one. He had woken twice in the preceding week short of breath and had needed to sit on the edge of the bed for several minutes before it settled."
+    },
+    {
+      "type": "para",
+      "text": "His daughter, who had visited that weekend, reported that his ankles had become progressively more swollen over the previous fortnight and that his shoes and his wedding ring had become tight. There was no chest pain, no palpitation, no fever and no productive cough. He had not missed any doses of his tablets and had not started anything new. On examination he was breathless at rest and at the end of short sentences, with a raised jugular venous pressure, fine inspiratory crackles at both lung bases and pitting oedema to the mid-calf bilaterally."
+    },
+    { "type": "heading", "text": "Diagnosis" },
+    {
+      "type": "bullets",
+      "items": [
+        "Decompensated heart failure with reduced ejection fraction (first diagnosed 11 February 2026)",
+        "Type 2 diabetes mellitus (diagnosed 2015)"
+      ]
+    },
+    {
+      "type": "para",
+      "text": "The clinical picture on arrival was one of decompensated heart failure with fluid overload, in a gentleman whose heart failure had been diagnosed only three weeks earlier and whose diuretic therapy had not yet been established. There was no evidence of infection, arrhythmia or acute coronary syndrome to account for the deterioration."
+    },
+    { "type": "heading", "text": "Investigations" },
+    {
+      "type": "para",
+      "text": "A chest X-ray was performed in the Emergency Department on 3 March 2026. The reporting radiologist recorded: \"Mild pulmonary congestion. No consolidation.\""
+    },
+    {
+      "type": "para",
+      "text": "Blood tests including full blood count, urea and electrolytes, liver function and inflammatory markers were taken on admission and repeated each morning while he was receiving intravenous treatment. They were reviewed daily by the ward team and used to guide the rate of diuresis. The full laboratory report is held on the trust system and can be sent to the practice on request."
+    },
+    {
+      "type": "para",
+      "text": "The echocardiogram performed on 10 February 2026 was reviewed on the ward round and did not need to be repeated during this admission."
+    },
+    { "type": "pagebreak" },
+    { "type": "heading", "text": "Management" },
+    {
+      "type": "para",
+      "text": "Mr Adeyemi was admitted to Kestrel Ward under the care of Dr Helena Vasquez-Okafor. He was treated with intravenous furosemide, with daily weights, strict fluid balance charting and daily urea and electrolytes. He diuresed well over the first forty-eight hours, with a clear improvement in his breathlessness and near-complete resolution of the peripheral oedema."
+    },
+    {
+      "type": "para",
+      "text": "Intravenous treatment was converted to oral furosemide 40 mg once daily, taken each morning, on 5 March 2026. He tolerated the change without symptomatic hypotension or dizziness. His renal function was monitored daily during diuresis and was acceptable at the point of discharge, although it will need repeating in the community as set out below."
+    },
+    {
+      "type": "kv",
+      "rows": [
+        ["Weight on admission (3 March 2026)", "91.4 kg"],
+        ["Weight on discharge (6 March 2026)", "87.8 kg"]
+      ]
+    },
+    {
+      "type": "para",
+      "text": "By the morning of 6 March 2026 he was able to walk the length of the ward and manage a short flight of stairs with the physiotherapist without stopping, and was able to lie flat comfortably. He was assessed as medically fit for discharge home."
+    },
+    {
+      "type": "para",
+      "text": "Ramipril and bisoprolol were continued at their existing doses throughout the admission and were deliberately not up-titrated in hospital; we felt this was better done in the community once his fluid status had settled and his renal function was known to be stable. Metformin was continued unchanged and his blood glucose readings remained satisfactory on the ward."
+    },
+    { "type": "heading", "text": "Medication on discharge" },
+    {
+      "type": "table",
+      "columns": ["Medicine", "Dose", "Form", "Directions", "Status"],
+      "rows": [
+        ["Ramipril", "2.5mg", "Tablet, oral", "Once daily", "Continued, dose unchanged"],
+        ["Bisoprolol", "2.5mg", "Tablet, oral", "Once daily", "Continued, dose unchanged"],
+        ["Furosemide", "40mg", "Tablet, oral", "Each morning", "NEW - started this admission"],
+        ["Metformin", "1g", "Tablet, oral", "Twice daily", "Continued, dose unchanged"]
+      ],
+      "caption": "Fourteen days' supply issued on discharge."
+    },
+    {
+      "type": "para",
+      "text": "Continue usual repeat medications as per GP record."
+    },
+    {
+      "type": "para",
+      "text": "Mr Adeyemi has been advised to take the furosemide in the morning so that it does not disturb his sleep, and to keep to that routine rather than taking it later in the day if a dose is missed. He understands that he may need to pass urine more often for the first few days."
+    },
+    { "type": "heading", "text": "Follow-up" },
+    {
+      "type": "bullets",
+      "items": [
+        "Cardiology outpatient clinic in approximately eight weeks. An appointment will be posted to the patient directly.",
+        "We would be grateful if the practice would check urea and electrolytes within one week of discharge, given that furosemide has been newly started alongside ramipril.",
+        "Please also review his weight and his symptoms at that visit, and consider whether the ramipril can be increased once the renal function is known.",
+        "No further imaging is planned at present."
+      ]
+    },
+    { "type": "heading", "text": "Information given to patient" },
+    {
+      "type": "para",
+      "text": "The ward team explained the reason for the new water tablet, how it works and why it is taken in the morning. Written information on living with heart failure was given to Mr Adeyemi and to his daughter, together with a weight diary and the ward contact number. He has been asked to weigh himself each morning, after using the toilet and before breakfast, and to write the figure down."
+    },
+    {
+      "type": "para",
+      "text": "He was advised to contact his general practice, or NHS 111 outside surgery hours, if his breathlessness returns, if his ankles swell again, or if he feels lightheaded on standing. He was also reminded to continue his diabetes medication as usual and to keep his existing arrangements for repeat prescriptions with the practice."
+    },
+    { "type": "spacer" },
+    {
+      "type": "para",
+      "text": "Both Mr Adeyemi and his daughter were present for the discharge conversation and had the opportunity to ask questions. They were content with the plan. Thank you for taking over his ongoing care."
+    }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Dr Tomas Lindqvist",
+    "title": "Specialty Registrar (ST6) in Cardiology, on behalf of Dr Helena Vasquez-Okafor, Consultant Cardiologist"
+  },
+  "cc": ["Mr Samuel Adeyemi", "Ms Amira Adeyemi (daughter)"],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

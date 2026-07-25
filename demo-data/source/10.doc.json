@@ -1,0 +1,99 @@
+{
+  "id": "10",
+  "slug": "eye-screening-appointment",
+  "render": "pdf",
+  "docType": "appointment_letter",
+  "humanTitle": "Eye screening appointment",
+  "letterhead": {
+    "org": "Ashcombe Community Screening Hub",
+    "dept": "Diabetic Eye Screening Service",
+    "addressLines": ["Unit 4, Halberd Court", "Ashcombe", "ZZ99 2HQ"],
+    "tel": "01632 960903"
+  },
+  "meta": { "date": "2026-06-08", "ourRef": "DES/ACSH/2026/10442" },
+  "recipient": {
+    "name": "Mr Samuel Adeyemi",
+    "lines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "salutation": "Dear Mr Adeyemi",
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "Your diabetic eye screening appointment"
+    },
+    {
+      "type": "para",
+      "text": "An appointment has been reserved for you with the Ashcombe Community Screening Hub. Everyone on the diabetic eye screening register aged twelve and over is invited once a year, and it is important to attend even if your sight seems perfectly good to you. Screening looks for early changes at the back of the eye that you would not be able to notice yourself, and those changes are far easier to deal with when they are found early."
+    },
+    {
+      "type": "kv",
+      "rows": [
+        ["Appointment", "Diabetic eye screening"],
+        ["Date", "Tuesday 14 July 2026"],
+        ["Time", "10:20"],
+        ["Location", "Marlow Fields Medical Centre"],
+        ["Address", "3 Pinner Row, Ashcombe Vale, ZZ99 3DF"],
+        ["Expected duration", "About 30 minutes"],
+        ["Screening reference", "DES/ACSH/2026/10442"]
+      ]
+    },
+    {
+      "type": "para",
+      "text": "Please note that the appointment is held at your own GP surgery and not at the screening hub address printed at the top of this letter. Please arrive five to ten minutes early and report to the main reception desk."
+    },
+    {
+      "type": "heading",
+      "text": "What will happen on the day"
+    },
+    {
+      "type": "para",
+      "text": "A screener will first check how well you can see using a letter chart. You will then be given eye drops, and after twenty to thirty minutes a small number of photographs will be taken of the back of each eye. The camera uses a bright flash, which is startling but completely harmless. The whole visit usually takes about 30 minutes, although it can take a little longer if the drops are slow to work. The photographs are graded afterwards by a trained assessor, so no result can be given to you on the day."
+    },
+    {
+      "type": "heading",
+      "text": "Eye drops and driving"
+    },
+    {
+      "type": "para",
+      "text": "The drops widen the pupil so that the camera can see the back of the eye clearly. They sting for a few seconds and then leave your vision blurred and sensitive to light for between two and six hours. For this reason you should not drive yourself home after the appointment, and you should not drive again until your vision has fully settled. Please arrange for someone to collect you, or plan to travel home by bus or taxi. Bringing sunglasses is a good idea, as daylight can feel uncomfortably bright afterwards."
+    },
+    {
+      "type": "heading",
+      "text": "Please bring with you"
+    },
+    {
+      "type": "bullets",
+      "items": [
+        "This letter.",
+        "Any glasses you wear, and contact lenses with their case and solution if you use them.",
+        "A list of the medicines you are currently taking.",
+        "Sunglasses, and if possible someone to travel home with you."
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "If you cannot attend"
+    },
+    {
+      "type": "para",
+      "text": "If the date or the time is not convenient, please telephone the screening hub on 01632 960903 as soon as you are able and we will offer you another appointment. Lines are open Monday to Friday, 9am to 4pm. Please also ring us on 01632 960903 if you have changed GP practice, if you need an interpreter, or if you need step-free access or extra time on the day. If you do not attend and have not been in touch, you will be offered one further appointment before your care is returned to your GP practice."
+    },
+    {
+      "type": "para",
+      "text": "You are very welcome to bring a family member or friend with you, and the screener will be happy to explain anything you are unsure about on the day."
+    }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Diabetic Eye Screening Administration Team",
+    "title": "Ashcombe Community Screening Hub"
+  },
+  "cc": ["Dr Priya Raman, Marlow Fields Medical Centre"],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

@@ -1,0 +1,187 @@
+{
+  "id": "12b",
+  "slug": "cardiology-letter-12-may-photo",
+  "render": "photo_letter",
+  "docType": "clinic_letter",
+  "humanTitle": "Heart clinic letter, May 2026",
+  "letterhead": {
+    "org": "St Saviour's NHS Foundation Trust",
+    "dept": "Department of Cardiology",
+    "addressLines": [
+      "St Saviour's Hospital",
+      "Carradine Way",
+      "Ashcombe",
+      "ZZ99 1SS"
+    ],
+    "tel": "01632 960118"
+  },
+  "meta": {
+    "date": "2026-05-12",
+    "ourRef": "HVO/cardio/4471"
+  },
+  "recipient": {
+    "name": "Dr Priya Raman",
+    "lines": [
+      "Marlow Fields Medical Centre",
+      "3 Pinner Row",
+      "Ashcombe Vale",
+      "ZZ99 3DF"
+    ]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": [
+      "12 Wreneley Gardens",
+      "Ashcombe Vale",
+      "ZZ99 3CZ"
+    ]
+  },
+  "salutation": "Dear Dr Raman",
+  "blocks": [
+    {
+      "type": "para",
+      "text": "Thank you for your continuing care of Mr Adeyemi, whom I reviewed in the cardiology outpatient clinic here at St Saviour's on 12 May 2026. This was his first consultant review since his admission in March 2026 with decompensated heart failure. He attended in person and his daughter, Ms Amira Adeyemi, joined the consultation by telephone, so that the plan below has been discussed with them both."
+    },
+    {
+      "type": "heading",
+      "text": "Diagnoses"
+    },
+    {
+      "type": "bullets",
+      "items": [
+        "Heart failure with reduced ejection fraction, diagnosed 11 February 2026",
+        "Chronic kidney disease, stage 3a - newly documented today, 12 May 2026"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Progress since discharge"
+    },
+    {
+      "type": "para",
+      "text": "I am pleased to say that he is considerably better than when I last saw him. His breathlessness has improved and he now manages the walk to the parade of shops at the end of his road without stopping, which he could not do in February. He sleeps flat on a single pillow and reports no orthopnoea and no paroxysmal nocturnal dyspnoea. There have been no palpitations and no syncope."
+    },
+    {
+      "type": "para",
+      "text": "The ankle swelling that troubled him so much after discharge has largely settled; there is only a trace of pitting oedema at the ankles today and none over the shins. His weight has been stable at home over the past six weeks, and he is weighing himself most mornings, which is excellent. He denies dizziness on standing and there was no significant postural drop in the clinic today. His adherence to the tablets appears very good and his daughter is helping him keep track of them."
+    },
+    {
+      "type": "para",
+      "text": "I note from the practice medication review of 21 April 2026 that a glyceryl trinitrate patch, 5 mg over 24 hours, was started for the tightness across the chest that he had been getting on the slope up to the shops. He tells me that the tightness has settled considerably since, that he has not had to stop on that hill in the past fortnight, and that he has had no discomfort at rest. He is applying one patch each morning, taking it off at night and rotating the site as he was shown. I am content with that arrangement and have made no change to it today."
+    },
+    {
+      "type": "heading",
+      "text": "Medication change"
+    },
+    {
+      "type": "para",
+      "text": "I have increased his Ramipril from 2.5 mg to 5 mg once daily. He has tolerated the lower dose well, his blood pressure allows it, and there is good evidence that reaching a higher dose of an ACE inhibitor improves outcomes in heart failure of this type. He started the new dose this evening. I would be grateful if the practice could update his repeat prescription accordingly, so that the 2.5 mg tablets are removed from the list and are not issued alongside the new strength."
+    },
+    {
+      "type": "para",
+      "text": "His other cardiac medication is unchanged, and his current cardiac list is therefore:"
+    },
+    {
+      "type": "bullets",
+      "items": [
+        "Ramipril 5 mg once daily - increased today from 2.5 mg once daily",
+        "Bisoprolol 2.5 mg once daily - unchanged",
+        "Furosemide 40 mg once daily in the morning - unchanged",
+        "Glyceryl trinitrate patch 5 mg / 24 hours, one patch each morning and off at night - unchanged, started by the practice on 21 April 2026"
+      ]
+    },
+    {
+      "type": "para",
+      "text": "His Metformin is unchanged and I have not altered anything else on his repeat, which remains a matter for the practice."
+    },
+    {
+      "type": "pagebreak"
+    },
+    {
+      "type": "heading",
+      "text": "Renal function - please note"
+    },
+    {
+      "type": "para",
+      "text": "The one area of concern is his kidney function, which has deteriorated over the past two months. His eGFR has fallen from 52 in March to 46 on the bloods taken on 10 May 2026, and over the same interval his creatinine has risen from 118 to 131 µmol/L. This places him in chronic kidney disease, stage 3a, and I have recorded that as a formal diagnosis today."
+    },
+    {
+      "type": "table",
+      "columns": [
+        "Test",
+        "Result (10 May 2026)",
+        "Units",
+        "Reference range"
+      ],
+      "rows": [
+        [
+          "eGFR",
+          "46",
+          "mL/min/1.73m²",
+          "> 90"
+        ],
+        [
+          "Creatinine",
+          "131",
+          "µmol/L",
+          "59 - 104"
+        ]
+      ],
+      "caption": "Renal function, sample taken 10 May 2026. March 2026 values for comparison: eGFR 52, creatinine 118."
+    },
+    {
+      "type": "para",
+      "text": "I want to put this in context for the family, because a falling number of this kind is understandably alarming to read. ACE inhibitors such as Ramipril can produce a transient reduction in eGFR when they are started or increased; this is an expected pharmacological effect on the pressure inside the kidney's filters rather than damage to the kidney itself, and it usually stabilises. A modest fall is acceptable and is not on its own a reason to stop the drug. This therefore needs watching carefully rather than alarm, and it needs watching sooner rather than later, which is why I have arranged the checks below. Please do not stop the Ramipril without discussing it with me or with the renal team."
+    },
+    {
+      "type": "para",
+      "text": "His potassium on 10 May 2026 was 5.1 mmol/L. That is within the laboratory range but at the upper end of it, and an increase in the dose of an ACE inhibitor can push it higher, so it needs watching alongside the eGFR. Accordingly, I have asked him to repeat his urea and electrolytes in two weeks, by 26 May 2026, so that we can see the effect of the increased dose. If the eGFR has fallen substantially further, or if his potassium has risen above the laboratory's upper limit, please contact me or the renal registrar on call and we will review the dose."
+    },
+    {
+      "type": "heading",
+      "text": "Nephrology referral"
+    },
+    {
+      "type": "para",
+      "text": "Given the trend across two sets of bloods, and the rate of change over only eight weeks, I do not think this should be observed from cardiology alone. I have therefore referred him to the renal team here at St Saviour's, under Dr Marcus Oyelaran. They aim to see patients within six weeks. On that basis I would expect him to be offered an appointment by around 23 June 2026, and their booking office should write to him directly with the details."
+    },
+    {
+      "type": "heading",
+      "text": "Plan"
+    },
+    {
+      "type": "bullets",
+      "items": [
+        "Increase Ramipril from 2.5 mg to 5 mg once daily - started today, 12 May 2026",
+        "Continue Bisoprolol 2.5 mg once daily, Furosemide 40 mg once daily in the morning and the glyceryl trinitrate patch 5 mg / 24 hours",
+        "Repeat urea and electrolytes in two weeks, by 26 May 2026",
+        "Routine referral to nephrology, Dr Marcus Oyelaran, St Saviour's - expected to be seen within six weeks, by around 23 June 2026",
+        "Cardiology outpatient review in October 2026"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Follow-up"
+    },
+    {
+      "type": "para",
+      "text": "I will see him again in the cardiology outpatient clinic at St Saviour's in October 2026. Our booking office will send him a date and time nearer the time; no specific appointment has been issued today. If his symptoms deteriorate before then, if the ankle swelling returns, or if his weight climbs steadily at home, please refer him back to me sooner and we will bring the review forward."
+    },
+    {
+      "type": "para",
+      "text": "I have gone through all of the above with Mr Adeyemi and his daughter, and they have a copy of this letter. Thank you again for your help with his care; please do contact me directly on the number above if anything is unclear."
+    }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Dr Helena Vasquez-Okafor",
+    "title": "MBBS MD FRCP, Consultant Cardiologist"
+  },
+  "cc": [
+    "Mr Samuel Adeyemi",
+    "Ms Amira Adeyemi (daughter)"
+  ],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

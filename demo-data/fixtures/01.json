@@ -1,0 +1,33 @@
+{
+  "doc_meta": {
+    "type": "referral_letter",
+    "date": "2026-01-08",
+    "sender": "Dr Priya Raman, Marlow Fields Medical Centre (fictional)",
+    "human_title": "Referral to the heart clinic"
+  },
+  "transcript_must_include": [
+    "999 471 3382",
+    "Metformin 1 g twice daily",
+    "Amlodipine 5 mg once daily",
+    "bibasal crackles",
+    "sinus rhythm with left axis deviation",
+    "within six weeks",
+    "19 February 2026"
+  ],
+  "conditions": [
+    { "name": "Type 2 diabetes mellitus", "status": "active", "expected_confidence": "high" },
+    { "name": "Hypertension", "status": "active", "expected_confidence": "high" }
+  ],
+  "medications": [
+    { "name": "Metformin", "dose": "1g twice daily", "form": "tablet", "expected_confidence": "high" },
+    { "name": "Amlodipine", "dose": "5mg once daily", "form": "tablet", "expected_confidence": "high" }
+  ],
+  "open_loops": [
+    {
+      "type": "referral",
+      "description": "GP referral to cardiology at St Saviour's; the practice expects him to be seen within six weeks",
+      "expected_date": "2026-02-19",
+      "expected_confidence": "high"
+    }
+  ]
+}

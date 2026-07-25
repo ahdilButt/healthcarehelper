@@ -1,0 +1,82 @@
+{
+  "id": "S1",
+  "slug": "bowel-screening-invite",
+  "render": "pdf",
+  "docType": "screening_invite",
+  "humanTitle": "Bowel screening invitation",
+  "letterhead": {
+    "org": "Ashcombe Community Screening Hub",
+    "dept": "Bowel Cancer Screening Programme",
+    "addressLines": ["Unit 4, Halberd Court", "Ashcombe", "ZZ99 2HQ"],
+    "tel": "01632 960903"
+  },
+  "meta": { "date": "2026-06-15", "ourRef": "BCSP/AC/771204" },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "salutation": "Dear Mr Adeyemi",
+  "blocks": [
+    { "type": "heading", "text": "Your bowel screening test kit is on its way" },
+    {
+      "type": "para",
+      "text": "Everyone in your age group who is registered with a GP practice in this area is invited to take part in bowel screening every two years. It is your turn now, and this letter is to tell you what will happen next. You do not need to do anything at this stage, and you do not need to book an appointment or come in to see anyone."
+    },
+    {
+      "type": "para",
+      "text": "The test looks for tiny traces of blood in your poo that are far too small to see. Finding a trace of blood does not mean that anything is wrong, and most people who do the test get a normal result. The reason we ask is simple: when something is picked up early, it is usually much easier to treat."
+    },
+    { "type": "heading", "text": "What will happen" },
+    {
+      "type": "bullets",
+      "items": [
+        "Your test kit will arrive in the post within the next two weeks. It comes in a plain, unmarked envelope.",
+        "Inside you will find one small sample stick, a sample bottle, a simple step-by-step instruction leaflet and a pre-paid return envelope. There is nothing to pay, including the postage.",
+        "You do the test at home, by yourself, whenever it suits you. It takes about five minutes and only needs one sample.",
+        "There is no need to change what you eat or drink, and no need to stop or change any of your usual tablets.",
+        "Write the date on the sample bottle where shown, seal it in the pre-paid return envelope and post it back to us as soon as you can."
+      ]
+    },
+    { "type": "heading", "text": "Please return your kit by Monday 27 July 2026" },
+    {
+      "type": "para",
+      "text": "Samples that reach the laboratory after this date can no longer be tested reliably, and we would have to send you a replacement kit and start again. Posting your kit back on the same day you do the test is the easiest way to make sure it arrives in good time."
+    },
+    {
+      "type": "para",
+      "text": "If your kit has not arrived by Monday 29 June 2026, or if it is damaged, spilled or you are simply not sure what to do with it, please ring us on 01632 960903 and we will post you another one straight away. There is no limit on replacements and nobody minds being asked."
+    },
+    { "type": "heading", "text": "Your result" },
+    {
+      "type": "para",
+      "text": "We will write to you with your result within two weeks of your sample reaching us, and a copy goes to your GP practice at the same time. Most people receive a normal result and are simply invited again in two years' time. If anything needs a closer look, the letter will explain clearly what happens next and who will be in touch with you."
+    },
+    { "type": "heading", "text": "If you would rather not take part" },
+    {
+      "type": "para",
+      "text": "Taking part is your choice. If you would prefer not to, or if you have already had this test somewhere else recently, please ring the number at the top of this letter and we will update our records so that you are not sent reminders. You can change your mind and ask to be invited again at any time in the future."
+    },
+    { "type": "heading", "text": "Help and support" },
+    {
+      "type": "para",
+      "text": "If you would like this letter in large print, braille, easy read or another language, or if you would find the test easier with a family member or carer helping you, please ring us on 01632 960903, Monday to Friday, 9am to 5pm. We are very happy to talk it through, however small the question."
+    },
+    {
+      "type": "para",
+      "text": "Please note that this office deals only with the screening programme. We are not able to answer questions about your other appointments, your medicines or your general health. For anything of that kind, please contact your GP practice in the usual way."
+    },
+    { "type": "spacer" },
+    {
+      "type": "para",
+      "text": "Thank you for reading this letter. Doing the test is one of the simplest and most useful things you can do for yourself this year."
+    }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Ashcombe Community Screening Hub",
+    "title": "Programme Administration Team"
+  },
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

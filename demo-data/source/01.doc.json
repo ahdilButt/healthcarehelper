@@ -1,0 +1,57 @@
+{
+  "id": "01",
+  "slug": "gp-referral-cardiology",
+  "render": "pdf",
+  "docType": "referral_letter",
+  "humanTitle": "Referral to the heart clinic",
+  "letterhead": {
+    "org": "Marlow Fields Medical Centre",
+    "dept": "General Practice",
+    "addressLines": ["3 Pinner Row", "Ashcombe Vale", "ZZ99 3DF"],
+    "tel": "01632 960477"
+  },
+  "meta": { "date": "2026-01-08", "ourRef": "PR/MFMC/11482" },
+  "recipient": {
+    "name": "The Consultant Cardiologist",
+    "lines": ["Department of Cardiology", "St Saviour's Hospital", "Carradine Way", "Ashcombe", "ZZ99 1SS"]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "salutation": "Dear Colleague",
+  "blocks": [
+    { "type": "heading", "text": "Reason for referral" },
+    { "type": "para", "text": "I should be grateful for your assessment of this 73-year-old gentleman, who has six months of progressive breathlessness on exertion together with ankle swelling. I am concerned that he may be in heart failure and would value a cardiology opinion with echocardiography." },
+    { "type": "heading", "text": "History" },
+    { "type": "para", "text": "Mr Adeyemi first noticed breathlessness on exertion around six months ago. At the outset it troubled him only on the walk up from the shops, and he put it down to age and to the weight he has put on since retiring. It has worsened steadily since the summer. He is now short of breath climbing a single flight of stairs at home and has to stop on the landing to get his breath back before going on. He has cut down what he does around the house as a result, and his daughter tells me he no longer walks to the corner shop." },
+    { "type": "para", "text": "Alongside the breathlessness he describes swelling of both ankles. He says it is hardly there when he gets up in the morning and is at its worst by the evening, when his socks leave a deep mark on the skin. He has had no chest pain at any stage, either at rest or on exertion, which is one reason he has not brought this to us sooner." },
+    { "type": "heading", "text": "Past medical history" },
+    { "type": "bullets", "items": [
+      "Type 2 diabetes mellitus, diagnosed 2015",
+      "Hypertension, diagnosed 2011"
+    ] },
+    { "type": "heading", "text": "Current medication" },
+    { "type": "bullets", "items": [
+      "Metformin 1 g twice daily",
+      "Amlodipine 5 mg once daily"
+    ] },
+    { "type": "heading", "text": "Examination" },
+    { "type": "para", "text": "On examination in the surgery today he was comfortable sitting but became breathless walking the length of the corridor. There were bibasal crackles on auscultation of the chest. He had pitting oedema of both ankles extending up to mid-shin bilaterally." },
+    { "type": "heading", "text": "Investigations" },
+    { "type": "para", "text": "An ECG was performed at the surgery today. This shows sinus rhythm with left axis deviation." },
+    { "type": "heading", "text": "What I am asking for" },
+    { "type": "para", "text": "I should be grateful if he could be seen in the cardiology clinic for assessment and echocardiography, and for advice on his medication in the light of the findings. Our understanding of the current pathway is that he will be seen within six weeks of this referral, that is by 19 February 2026, and I have told Mr Adeyemi and his daughter to expect an appointment within that time." },
+    { "type": "para", "text": "His daughter, Ms Amira Adeyemi (mobile 07700 900412), coordinates a good deal of his care from another city and may contact the department on his behalf. He is content for her to do so and for information to be shared with her. Please copy any correspondence to him at his home address above." },
+    { "type": "para", "text": "Please do not hesitate to contact me at the surgery if any further information would be helpful before he is seen." }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Dr Priya Raman",
+    "title": "MBBS MRCGP, General Practitioner"
+  },
+  "cc": ["Mr Samuel Adeyemi"],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

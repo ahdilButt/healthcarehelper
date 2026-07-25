@@ -1,0 +1,82 @@
+{
+  "doc_meta": {
+    "type": "medication_review",
+    "date": "2026-04-21",
+    "sender": "Marlow Fields Medical Centre (fictional)",
+    "human_title": "Medicines review from your GP"
+  },
+  "transcript_must_include": [
+    "BP today 152/88.",
+    "penicillin",
+    "widespread rash and facial swelling",
+    "5 mg over 24 hours",
+    "nitrate-free interval",
+    "the left hip, the right hip, the left upper arm and the right upper arm",
+    "Items not reviewed today remain unchanged on your repeat prescription."
+  ],
+  "medications": [
+    {
+      "name": "Glyceryl trinitrate (GTN) patch",
+      "dose": "5mg / 24 hours",
+      "form": "patch",
+      "schedule_hint": "Apply one patch each morning and remove it at night to give a nitrate-free interval overnight",
+      "rotation_sites": ["left hip", "right hip", "left upper arm", "right upper arm"],
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Ramipril",
+      "dose": "2.5mg once daily",
+      "form": "tablet",
+      "schedule_hint": "One tablet once daily",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Bisoprolol",
+      "dose": "2.5mg once daily",
+      "form": "tablet",
+      "schedule_hint": "One tablet once daily",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Furosemide",
+      "dose": "40mg once daily",
+      "form": "tablet",
+      "schedule_hint": "One tablet each morning",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Metformin",
+      "dose": "1g twice daily",
+      "form": "tablet",
+      "schedule_hint": "One tablet twice daily, with food",
+      "expected_confidence": "high"
+    }
+  ],
+  "allergies": [
+    {
+      "substance": "penicillin",
+      "reaction": "widespread rash and facial swelling",
+      "expected_confidence": "high"
+    }
+  ],
+  "results": [
+    {
+      "name": "Blood pressure",
+      "value_text": "152/88",
+      "unit": "mmHg",
+      "ref_low": null,
+      "ref_high": null,
+      "date": "2026-04-21",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    }
+  ],
+  "open_loops": [
+    {
+      "type": "test",
+      "description": "Repeat blood tests in about four weeks: kidney function (U and E) and HbA1c, booked with the healthcare assistant",
+      "expected_date": "2026-05-19",
+      "expected_confidence": "high"
+    }
+  ]
+}

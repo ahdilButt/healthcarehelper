@@ -1,0 +1,80 @@
+{
+  "doc_meta": {
+    "type": "blood_panel",
+    "date": "2026-03-18",
+    "sender": "Clinical Biochemistry, St Saviour's NHS Foundation Trust (fictional)",
+    "human_title": "Blood test results from March"
+  },
+  "transcript_must_include": [
+    "Clinical Biochemistry",
+    "ASH/26/041882",
+    "eGFR",
+    "52",
+    "Creatinine",
+    "118",
+    "HbA1c",
+    "58"
+  ],
+  "results": [
+    {
+      "name": "Sodium",
+      "value": 139,
+      "unit": "mmol/L",
+      "ref_low": 133,
+      "ref_high": 146,
+      "date": "2026-03-16",
+      "flagged_by_letter": false,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Potassium",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "ref_low": 3.5,
+      "ref_high": 5.3,
+      "date": "2026-03-16",
+      "flagged_by_letter": false,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Creatinine",
+      "value": 118,
+      "unit": "µmol/L",
+      "ref_low": 59,
+      "ref_high": 104,
+      "date": "2026-03-16",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "eGFR",
+      "value": 52,
+      "unit": "mL/min/1.73m²",
+      "ref_low": 90,
+      "ref_high": null,
+      "date": "2026-03-16",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "HbA1c",
+      "value": 58,
+      "unit": "mmol/mol",
+      "ref_low": 20,
+      "ref_high": 41,
+      "date": "2026-03-16",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Haemoglobin",
+      "value": 129,
+      "unit": "g/L",
+      "ref_low": 130,
+      "ref_high": 170,
+      "date": "2026-03-16",
+      "flagged_by_letter": true,
+      "expected_confidence": "high"
+    }
+  ]
+}

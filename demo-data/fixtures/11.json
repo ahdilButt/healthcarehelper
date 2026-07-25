@@ -1,0 +1,30 @@
+{
+  "doc_meta": {
+    "type": "voice_note",
+    "date": "2026-06-22",
+    "sender": "Ms Amira Adeyemi (daughter)",
+    "human_title": "Voice note after ringing the surgery"
+  },
+  "transcript_must_include": [
+    "six weeks",
+    "bloods",
+    "ankles",
+    "two kilos",
+    "three days",
+    "ring the surgery"
+  ],
+  "open_loops": [
+    {
+      "type": "test",
+      "description": "Repeat blood tests in six weeks, as asked for by the GP surgery",
+      "expected_date": "2026-08-03",
+      "expected_confidence": "high"
+    },
+    {
+      "type": "follow_up",
+      "description": "Keep an eye on the ankle swelling; ring the surgery if his weight goes up by more than 2 kg in three days",
+      "expected_date": null,
+      "expected_confidence": "high"
+    }
+  ]
+}

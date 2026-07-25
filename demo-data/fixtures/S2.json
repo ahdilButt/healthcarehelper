@@ -1,0 +1,70 @@
+{
+  "doc_meta": {
+    "type": "pharmacy_slip",
+    "date": "2026-07-06",
+    "sender": "Pinner Row Pharmacy (fictional)",
+    "human_title": "Repeat prescription slip from the chemist"
+  },
+  "transcript_must_include": [
+    "Pinner Row Pharmacy",
+    "Ramipril 5mg tablets",
+    "Furosemide 40mg tablets",
+    "Atorvastatin 20mg tablets",
+    "Glyceryl trinitrate (GTN) 5mg patches",
+    "Furosemide - pt taking 2 in AM some days? check w GP"
+  ],
+  "medications": [
+    {
+      "name": "Ramipril",
+      "dose": "5mg",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Bisoprolol",
+      "dose": "2.5mg",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Furosemide",
+      "dose": "40mg",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Metformin",
+      "dose": "1g",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Atorvastatin",
+      "dose": "20mg",
+      "form": "tablet",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Glyceryl trinitrate (GTN)",
+      "dose": "5mg",
+      "form": "patch",
+      "expected_confidence": "high"
+    },
+    {
+      "name": "Furosemide",
+      "dose": "80mg each morning (2 x 40mg) on some days",
+      "form": "tablet",
+      "schedule_hint": "Handwritten pharmacy note, hard to read: patient may be taking two tablets in the morning on some days",
+      "change": { "old_dose": "40mg each morning" },
+      "expected_confidence": "low"
+    }
+  ],
+  "open_loops": [
+    {
+      "type": "follow_up",
+      "description": "Handwritten pharmacy note asks for the furosemide dose to be checked with the GP, as the patient may be taking two 40mg tablets in the morning on some days",
+      "expected_date": null,
+      "expected_confidence": "low"
+    }
+  ]
+}

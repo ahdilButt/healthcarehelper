@@ -1,0 +1,59 @@
+{
+  "id": "02",
+  "slug": "cardiology-clinic-letter-feb",
+  "render": "pdf",
+  "docType": "clinic_letter",
+  "humanTitle": "Heart clinic letter",
+  "letterhead": {
+    "org": "St Saviour's NHS Foundation Trust",
+    "dept": "Department of Cardiology",
+    "addressLines": ["St Saviour's Hospital", "Carradine Way", "Ashcombe", "ZZ99 1SS"],
+    "tel": "01632 960118"
+  },
+  "meta": { "date": "2026-02-11", "ourRef": "HVO/cardio/4318" },
+  "recipient": {
+    "name": "Dr Priya Raman",
+    "lines": ["Marlow Fields Medical Centre", "3 Pinner Row", "Ashcombe Vale", "ZZ99 3DF"]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "salutation": "Dear Dr Raman",
+  "blocks": [
+    { "type": "heading", "text": "Diagnosis" },
+    { "type": "bullets", "items": [
+      "Heart failure with reduced ejection fraction (new diagnosis today, 11 February 2026)",
+      "Type 2 diabetes mellitus, diagnosed 2015",
+      "Hypertension, diagnosed 2011"
+    ] },
+    { "type": "para", "text": "Thank you for referring this pleasant 73-year-old gentleman, whom I saw in the cardiology clinic today, and for such a clear letter. I am sorry to say that your clinical suspicion was correct: he has heart failure with reduced ejection fraction. I have explained the diagnosis to him and to his daughter, who was with him in clinic, and I have gone through what it means in plain terms and what we can do about it." },
+    { "type": "heading", "text": "History and examination" },
+    { "type": "para", "text": "He gave the same history you describe: six months of breathlessness on exertion, now provoked by a single flight of stairs, and swelling of both ankles that is barely present in the morning and worst by the evening. He has had no chest pain at any point. On examination today the findings you noted were confirmed, with bibasal crackles at both lung bases and pitting oedema of both ankles to mid-shin." },
+    { "type": "heading", "text": "Investigations" },
+    { "type": "para", "text": "He attended for transthoracic echocardiography here yesterday, 10 February 2026. I reviewed the images at the time of the study and they demonstrate impaired left ventricular systolic function, which together with his symptoms and examination confirms the diagnosis above. The formal report from the cardiac physiology department has not yet been issued." },
+    { "type": "heading", "text": "Plan" },
+    { "type": "bullets", "items": [
+      "START Ramipril 2.5 mg once daily",
+      "START Bisoprolol 2.5 mg once daily",
+      "STOP Amlodipine 5 mg once daily"
+    ] },
+    { "type": "para", "text": "I have started Ramipril 2.5 mg once daily and Bisoprolol 2.5 mg once daily today. These are the two treatments that will do the most for him. Both have been begun at low dose and I would expect to increase them in steps over the coming months as he tolerates them, so he should not be surprised if the doses change at future visits. I have warned him that the Bisoprolol may make him feel a little more tired for the first week or two and that this usually settles." },
+    { "type": "para", "text": "I have asked him to stop the Amlodipine. It is no longer needed now that he is taking Ramipril, which will control his blood pressure as well as treating the heart failure, and Amlodipine can itself make ankle swelling worse. I would expect some improvement in the swelling from stopping it alone. His diabetes treatment is unchanged." },
+    { "type": "heading", "text": "Advice given" },
+    { "type": "para", "text": "I have asked him to weigh himself every morning, after going to the toilet and before dressing, and to write the weight down in a notebook so that we can see the trend at his next visit. A steady rise in weight is often the first sign that fluid is building up, before any swelling is visible." },
+    { "type": "para", "text": "We also discussed salt. He has been advised to moderate his salt intake: not to add salt at the table or in cooking, and to be careful with tinned soups, stock cubes, processed meats and takeaways, which carry far more salt than most people expect. He has been given the heart failure information booklet and his daughter has taken a copy." },
+    { "type": "heading", "text": "Follow-up" },
+    { "type": "para", "text": "We will write again within three weeks with the echocardiogram report. In the meantime please contact me directly if he becomes more breathless, if the swelling worsens rather than settles, or if you have any concerns about the new medication." },
+    { "type": "para", "text": "Thank you again for the referral. I am copying this letter to Mr Adeyemi and to his daughter, Ms Amira Adeyemi, at his request." }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Dr Helena Vasquez-Okafor",
+    "title": "MBBS MD FRCP, Consultant Cardiologist"
+  },
+  "cc": ["Mr Samuel Adeyemi", "Ms Amira Adeyemi (daughter)"],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}

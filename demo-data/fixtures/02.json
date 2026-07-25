@@ -1,0 +1,35 @@
+{
+  "doc_meta": {
+    "type": "clinic_letter",
+    "date": "2026-02-11",
+    "sender": "Cardiology, St Saviour's NHS Foundation Trust (fictional)",
+    "human_title": "Heart clinic letter"
+  },
+  "transcript_must_include": [
+    "Heart failure with reduced ejection fraction",
+    "START Ramipril 2.5 mg once daily",
+    "START Bisoprolol 2.5 mg once daily",
+    "STOP Amlodipine 5 mg once daily",
+    "10 February 2026",
+    "We will write again within three weeks with the echocardiogram report.",
+    "weigh himself every morning"
+  ],
+  "conditions": [
+    { "name": "Heart failure with reduced ejection fraction", "status": "active", "expected_confidence": "high" },
+    { "name": "Type 2 diabetes mellitus", "status": "active", "expected_confidence": "high" },
+    { "name": "Hypertension", "status": "active", "expected_confidence": "high" }
+  ],
+  "medications": [
+    { "name": "Ramipril", "dose": "2.5mg once daily", "form": "tablet", "expected_confidence": "high" },
+    { "name": "Bisoprolol", "dose": "2.5mg once daily", "form": "tablet", "expected_confidence": "high" },
+    { "name": "Amlodipine", "dose": "5mg once daily", "form": "tablet", "stopped": true, "expected_confidence": "high" }
+  ],
+  "open_loops": [
+    {
+      "type": "letter",
+      "description": "Cardiology will write again within three weeks with the echocardiogram report",
+      "expected_date": "2026-03-04",
+      "expected_confidence": "high"
+    }
+  ]
+}

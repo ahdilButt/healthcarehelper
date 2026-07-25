@@ -1,0 +1,149 @@
+{
+  "id": "05",
+  "slug": "gp-medication-review",
+  "render": "pdf",
+  "docType": "medication_review",
+  "humanTitle": "Medicines review from your GP",
+  "letterhead": {
+    "org": "Marlow Fields Medical Centre",
+    "dept": "Practice Pharmacy Team - Structured Medication Review",
+    "addressLines": ["3 Pinner Row", "Ashcombe Vale", "ZZ99 3DF"],
+    "tel": "01632 960477"
+  },
+  "meta": { "date": "2026-04-21", "ourRef": "PR/DW/SMR/210426" },
+  "recipient": {
+    "name": "Mr Samuel Adeyemi",
+    "lines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "patient": {
+    "name": "Mr Samuel Adeyemi",
+    "dob": "14 March 1952",
+    "nhsNumber": "999 471 3382",
+    "addressLines": ["12 Wreneley Gardens", "Ashcombe Vale", "ZZ99 3CZ"]
+  },
+  "salutation": "Dear Mr Adeyemi",
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "Re: Your medication review, Tuesday 21 April 2026"
+    },
+    {
+      "type": "kv",
+      "rows": [
+        ["Review carried out", "21 April 2026, at the surgery"],
+        ["Type of review", "Structured medication review, face to face"],
+        ["Reviewed by", "Mr Declan Whitmore, MPharm, Practice Pharmacist"],
+        ["Countersigned by", "Dr Priya Raman, MBBS MRCGP"],
+        ["Also present", "Ms Amira Adeyemi, daughter, by telephone"]
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Why we asked you in"
+    },
+    {
+      "type": "para",
+      "text": "Thank you for coming in on Tuesday, and thank you to your daughter Amira for joining us on the telephone. A great deal has changed for you since February, and when several medicines are started in a short space of time it is good practice to sit down and go through the whole list properly rather than add to it piecemeal. This letter is a written record of everything we discussed, so that you and Amira both have it in one place. Please keep it with your repeat prescription slip."
+    },
+    {
+      "type": "para",
+      "text": "You told us that you are managing the tablets well and that you use a weekly dosette box, which you fill on a Sunday evening. You also mentioned that you have been getting a tightness across the chest when you walk up the slope to the shops, which eases after a few minutes when you stop. We talked about this at some length, and it is the reason for the one new item described below."
+    },
+    {
+      "type": "heading",
+      "text": "The medicines we reviewed today"
+    },
+    {
+      "type": "para",
+      "text": "We went through each of the following items with you, checked the dose against the most recent hospital correspondence, and confirmed that you are taking each one as intended."
+    },
+    {
+      "type": "table",
+      "columns": ["Medicine", "Dose", "How to take it", "What it is for"],
+      "rows": [
+        ["Ramipril", "2.5mg", "One tablet once daily", "Your heart and your blood pressure"],
+        ["Bisoprolol", "2.5mg", "One tablet once daily", "Steadies and slows the heart"],
+        ["Furosemide", "40mg", "One tablet each morning", "Fluid, helps you pass extra water"],
+        ["Metformin", "1g", "One tablet twice daily, with food", "Your blood sugar"],
+        ["Glyceryl trinitrate (GTN) patch", "5mg / 24 hours", "One patch each morning, off at night. NEW today.", "Chest tightness on exertion"]
+      ],
+      "caption": "Medicines reviewed on 21 April 2026."
+    },
+    {
+      "type": "heading",
+      "text": "Your new medicine: the glyceryl trinitrate (GTN) patch"
+    },
+    {
+      "type": "para",
+      "text": "Because of the chest tightness you described when walking uphill, we have added a glyceryl trinitrate patch. This is not a tablet. It is a small, clear, sticky patch that you wear on the skin, and it releases 5 mg over 24 hours steadily through the skin rather than all at once. It is a very long established medicine and it is the same family of medicine as the small tablets or sprays people put under the tongue."
+    },
+    {
+      "type": "para",
+      "text": "How to use it. Apply one patch each morning when you get dressed, onto clean, dry skin that is not broken, hairy or sore. Press it flat with the palm of your hand for about ten seconds so that the edges stick down. Remove it at night when you go to bed, so that you have a nitrate-free interval of roughly ten hours overnight. That gap matters more than people expect: if the patch is left on around the clock the body becomes used to it within a few days and the benefit is lost. Rotate the site each day between the left hip, the right hip, the left upper arm and the right upper arm, so that the same area of skin is not used two days running. This is what keeps the skin from becoming red and irritated."
+    },
+    {
+      "type": "para",
+      "text": "The simplest way to keep track is a four day cycle, which then repeats:"
+    },
+    {
+      "type": "bullets",
+      "items": [
+        "Monday: left hip",
+        "Tuesday: right hip",
+        "Wednesday: left upper arm",
+        "Thursday: right upper arm",
+        "Friday: back to the left hip, and so on"
+      ]
+    },
+    {
+      "type": "para",
+      "text": "A headache in the first few days is common and usually settles within a week as the body adjusts; plain paracetamol is fine for it if you need something. You may also feel a little light headed if you stand up quickly, so take your time getting out of a chair or out of bed. Do not cut the patch. If a patch comes off during the day, put a fresh one on a different site and carry on as normal the next morning. Wash your hands after handling a patch, and fold a used patch in half, sticky sides together, before you throw it away."
+    },
+    {
+      "type": "heading",
+      "text": "Allergies"
+    },
+    {
+      "type": "para",
+      "text": "We checked your allergy record with you and it is correct. You are allergic to penicillin. This was first recorded in 1998, and the reaction was a widespread rash and facial swelling. Please make sure you tell any doctor, dentist, nurse or pharmacist about this before you are given any antibiotic, including out of hours and if you are ever admitted to hospital. It is also written on the front of your repeat slip."
+    },
+    {
+      "type": "heading",
+      "text": "Blood pressure"
+    },
+    {
+      "type": "para",
+      "text": "We took your blood pressure at the end of the appointment while you were sitting. BP today 152/88. That is a little above the level we would usually aim for, but one reading taken in a surgery on a warm afternoon is not the whole picture, and we have deliberately not changed any dose on the strength of it. Please do not buy a machine and start checking it hourly at home, as that tends to cause more worry than it solves. The cardiology team will look at the whole trend when they next see you."
+    },
+    {
+      "type": "heading",
+      "text": "Blood tests"
+    },
+    {
+      "type": "para",
+      "text": "Because you are now taking ramipril and furosemide together, we need to keep an eye on your kidney function and on the salts in your blood, particularly the potassium. Please telephone the surgery on 01632 960477 and book a blood test appointment with the healthcare assistant in about four weeks' time. We would like a repeat kidney function test (U and E) and a repeat HbA1c, which is the longer term measure of your blood sugar. You do not need to fast for either of them. If anything needs acting on we will contact you; if you hear nothing within ten working days of the test, please ring us rather than assume all is well."
+    },
+    {
+      "type": "heading",
+      "text": "If you have any questions"
+    },
+    {
+      "type": "para",
+      "text": "Mr Declan Whitmore, our practice pharmacist, carried out this review with me and is very happy to talk anything through, either with you or with Amira if you would prefer. He can be reached on 01632 960477. If the patches are awkward to apply, say so early rather than struggling on, as there are other ways of giving the same medicine."
+    },
+    {
+      "type": "para",
+      "text": "Items not reviewed today remain unchanged on your repeat prescription."
+    }
+  ],
+  "signoff": {
+    "closing": "Yours sincerely",
+    "name": "Dr Priya Raman",
+    "title": "MBBS MRCGP, General Practitioner, Marlow Fields Medical Centre"
+  },
+  "cc": [
+    "Dr Helena Vasquez-Okafor, Consultant Cardiologist, St Saviour's NHS Foundation Trust",
+    "Mr Declan Whitmore, Practice Pharmacist (file copy)"
+  ],
+  "footer": "FICTIONAL DEMONSTRATION DOCUMENT - NOT A REAL MEDICAL RECORD - DRAFT"
+}
