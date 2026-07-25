@@ -30,9 +30,12 @@ const ICONS: Record<TimelineItemType, typeof FileText> = {
 export function TimelineCard({
   item,
   onOpen,
+  justAdded = false,
 }: {
   item: TimelineItem
   onOpen?: (item: TimelineItem) => void
+  /** Came out of something added in this session — say so, loudly. */
+  justAdded?: boolean
 }) {
   const Icon = ICONS[item.itemType]
   const overdue = item.itemType === 'open_loop' && item.loopState === 'overdue'
@@ -67,13 +70,14 @@ export function TimelineCard({
   }
 
   return (
-    <li>
+    <li data-just-added={justAdded ? 'true' : undefined} className="scroll-mt-24">
       <button
         type="button"
         onClick={() => onOpen?.(item)}
         className={cn(
           'w-full cursor-pointer rounded-lg border p-4 text-left active:opacity-90',
-          attention ? 'border-warn/25 bg-warn-wash' : 'border-border bg-card'
+          attention ? 'border-warn/25 bg-warn-wash' : 'border-border bg-card',
+          justAdded && 'ring-2 ring-primary ring-offset-2 ring-offset-background'
         )}
       >
         <div className="flex items-center gap-3">
@@ -94,6 +98,7 @@ export function TimelineCard({
         )}
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          {justAdded && <StatusPill tone="good">Just added</StatusPill>}
           <SourceChip label={item.sourceChip.label} />
           {overdue && <StatusPill tone="warn">Overdue</StatusPill>}
           {item.edited && <EditedMark />}
