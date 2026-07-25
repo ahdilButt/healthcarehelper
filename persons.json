@@ -1,0 +1,20 @@
+{
+  "persons": [
+    {
+      "ref": "amira",
+      "display_name": "Amira",
+      "managing_note": "Managing my own care",
+      "emergency_contact": null,
+      "dnr_status": null,
+      "role": "owner"
+    },
+    {
+      "ref": "dad",
+      "display_name": "Dad",
+      "managing_note": "Managing my dad's care",
+      "emergency_contact": { "name": "Amira", "phone": "+44 7700 900123", "relationship": "daughter" },
+      "dnr_status": false,
+      "role": "carer"
+    }
+  ]
+}

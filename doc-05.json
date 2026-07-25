@@ -1,0 +1,35 @@
+{
+  "ref": "doc-05",
+  "_placeholder": true,
+  "_note": "Hand-written stand-in. Replace transcript + facts with curator-delivered content when Expert C provides doc 5. This is the 'what-changed' demo moment (C4) — keep the medication_ref 'ramipril' and old/new dose values unchanged if possible so the med_change_event still resolves correctly.",
+  "person_ref": "dad",
+  "kind": "letter_photo",
+  "doc_type": "cardiology_letter",
+  "doc_date": "2026-05-12",
+  "sender": "Dr. Osei, Cardiology, St Thomas' Hospital",
+  "status": "ready",
+  "transcript": "Dear Dr. Patel,\n\nRe: Mr. Whitfield\n\nThank you for referring this patient for review of persistently raised blood pressure. Echocardiogram shows mild left ventricular hypertrophy, likely secondary to longstanding hypertension. No other structural abnormality.\n\nAs blood pressure remains above target (148/92 at last check), I have increased Ramipril from 2.5mg to 5mg once daily. Please recheck renal function and potassium in 4-6 weeks given the CKD history, as ACE inhibitor dose increases can affect both.\n\nI will write again once we have reviewed the repeat echo in due course.\n\nDr. Osei",
+  "facts": {
+    "conditions": [
+      { "name": "Left ventricular hypertrophy (mild)", "status": "active", "confidence": 0.85 }
+    ],
+    "med_change_events": [
+      {
+        "medication_ref": "ramipril",
+        "old_dose": "2.5mg once daily",
+        "new_dose": "5mg once daily",
+        "changed_on": "2026-05-12",
+        "confidence": 0.92
+      }
+    ],
+    "open_loops": [
+      {
+        "loop_type": "letter",
+        "description": "Cardiology to write again with echo follow-up review",
+        "expected_date": "2026-06-02",
+        "state": "overdue",
+        "confidence": 0.85
+      }
+    ]
+  }
+}

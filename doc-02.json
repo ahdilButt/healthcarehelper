@@ -1,0 +1,20 @@
+{
+  "ref": "doc-02",
+  "_placeholder": true,
+  "_note": "Hand-written stand-in. Replace transcript + facts with curator-delivered content when Expert C provides doc 2. Keep the medication ref 'ramipril' and the dose value '2.5mg once daily' unchanged if possible, since doc-05 references this medication for the dose-change event.",
+  "person_ref": "dad",
+  "kind": "letter_photo",
+  "doc_type": "discharge_summary",
+  "doc_date": "2025-03-22",
+  "sender": "St Thomas' Hospital, Cardiology (Discharge Summary)",
+  "status": "ready",
+  "transcript": "DISCHARGE SUMMARY\n\nPatient attended following an episode of dizziness. Blood pressure on admission 158/96. Diagnosis: Hypertension.\n\nStarted on Ramipril 2.5mg once daily. Advised to have blood pressure checked by GP in 2 weeks.\n\nDr. Osei, Cardiology",
+  "facts": {
+    "conditions": [
+      { "name": "Hypertension", "status": "active", "confidence": 0.9 }
+    ],
+    "medications": [
+      { "ref": "ramipril", "name": "Ramipril", "current_dose": "2.5mg once daily", "form": "tablet", "confidence": 0.9 }
+    ]
+  }
+}
