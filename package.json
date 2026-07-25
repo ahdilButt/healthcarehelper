@@ -19,7 +19,8 @@
     "magic-link": "tsx scripts/magic-link.ts",
     "ask": "tsx scripts/ask-probe.ts",
     "set-phone": "tsx scripts/set-phone.ts",
-    "tick": "tsx scripts/tick-probe.ts"
+    "tick": "tsx scripts/tick-probe.ts",
+    "security-check": "tsx scripts/security-check.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
