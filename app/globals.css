@@ -12,6 +12,9 @@
   --hh-hairline: #efe7df;
   --hh-accent: #e86a33;
   --hh-accent-wash: #ffe8dc;
+  /* The brief panel sits above everything and has to hold white text at 15px,
+     which the apricot accent cannot do accessibly. Same hue, taken down. */
+  --hh-accent-deep: #a8410f;
   --hh-green: #2e7d5b;
   --hh-amber: #b77900;
   --hh-red: #c6432d;
@@ -48,6 +51,7 @@
   --color-muted-foreground: var(--hh-secondary);
   --color-accent: var(--hh-accent-wash);
   --color-accent-foreground: var(--hh-text);
+  --color-accent-deep: var(--hh-accent-deep);
   --color-border: var(--hh-hairline);
   --color-input: var(--hh-hairline);
   --color-ring: var(--hh-accent);

@@ -6,6 +6,7 @@ import { Check } from 'lucide-react'
 import { Card, CardHeader, Meta, PageTitle, StatusPill } from '@/components/ui/primitives'
 import { cn } from '@/lib/utils'
 import { BodyMap } from '@/components/ui/illustrations'
+import { TodayBrief } from './today-brief'
 
 export interface TodayGroups {
   morning: DueItem[]
@@ -72,6 +73,11 @@ export function TodayList({
       const key = `${item.routineId}@${item.dueAt}`
       setBusy(key)
       setError('')
+      // Fill the circle now, not when the server answers. A tap that does
+      // nothing for half a second reads as a tap that did not register, and
+      // the next thing a person does is tap it again.
+      setGroups((prev) => setTaken(prev, key, !item.taken))
+
       fetch('/api/taken', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -85,7 +91,10 @@ export function TodayList({
           return refresh()
         })
         .catch((e: unknown) => {
-          if (live.current) setError(e instanceof Error ? e.message : 'That did not save.')
+          if (!live.current) return
+          // Put it back: the record and the screen must not disagree.
+          setGroups((prev) => setTaken(prev, key, item.taken))
+          setError(e instanceof Error ? e.message : 'That did not save.')
         })
         .finally(() => {
           if (live.current) setBusy(null)
@@ -102,16 +111,20 @@ export function TodayList({
     <div className="pb-4">
       <div className="py-4">
         <PageTitle>Today</PageTitle>
-        <div className="mt-1 flex flex-wrap items-center gap-3">
-          <Meta>{longToday()}</Meta>
-          {all.length > 0 &&
-            (left > 0 ? (
+        {all.length > 0 && (
+          <div className="mt-1">
+            {left > 0 ? (
               <StatusPill tone="warn">{left} still to take</StatusPill>
             ) : (
               <StatusPill tone="good">All done for today</StatusPill>
-            ))}
-        </div>
+            )}
+          </div>
+        )}
       </div>
+
+      <TodayBrief personId={personId} dateLabel={longToday()} />
+
+      <div className="mt-6" />
 
       {all.length === 0 ? (
         <Card>
@@ -189,15 +202,15 @@ function MedRow({
           disabled={busy}
           aria-pressed={item.taken}
           className={cn(
-            'flex size-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors disabled:opacity-60',
+            'flex size-11 shrink-0 items-center justify-center rounded-full border-2 transition-all active:scale-95 disabled:opacity-60',
             item.taken
-              ? 'border-good bg-good text-primary-foreground'
+              ? 'border-good bg-good text-white shadow-sm'
               : missed
-                ? 'border-warn/50 text-transparent active:bg-warn/10'
-                : 'border-border text-transparent active:bg-muted'
+                ? 'border-warn/60 bg-card text-transparent active:bg-warn/10'
+                : 'border-border bg-card text-transparent active:bg-muted'
           )}
         >
-          <Check className="size-5" strokeWidth={2.6} />
+          <Check className="size-6" strokeWidth={3} />
           <span className="sr-only">
             {item.taken ? `${item.humanName} taken` : `Mark ${item.humanName} as taken`}
           </span>
@@ -223,6 +236,17 @@ function MedRow({
       </Card>
     </li>
   )
+}
+
+/** One row's taken flag, without disturbing the rest of the day. */
+function setTaken(groups: TodayGroups, key: string, taken: boolean): TodayGroups {
+  const mark = (rows: DueItem[]) =>
+    rows.map((r) => (`${r.routineId}@${r.dueAt}` === key ? { ...r, taken } : r))
+  return {
+    morning: mark(groups.morning),
+    afternoon: mark(groups.afternoon),
+    evening: mark(groups.evening),
+  }
 }
 
 /** "Saturday, 25 July" — the date, the way a person says it. */
