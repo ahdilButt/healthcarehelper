@@ -1,11 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Copy, Send } from 'lucide-react'
+import { Copy, MessageSquare, Phone, Send } from 'lucide-react'
 import type { Citation, TimelineItem } from '@/lib/types'
 import { Card, Meta, PageTitle, SourceChip, Spinner } from '@/components/ui/primitives'
 import { DetailSheet } from '@/components/timeline/detail-sheet'
 import { cn } from '@/lib/utils'
+import { CallMode } from './call-mode'
 
 export interface AskMessage {
   id: string
@@ -39,6 +40,7 @@ export function AskThread({
   const [error, setError] = useState('')
   const [copied, setCopied] = useState<string | null>(null)
   const [detail, setDetail] = useState<TimelineItem | null>(null)
+  const [calling, setCalling] = useState(false)
   const foot = useRef<HTMLDivElement>(null)
   const live = useRef(true)
 
@@ -123,6 +125,23 @@ export function AskThread({
       <div className="pt-1">
         <PageTitle>Ask about {personName}</PageTitle>
         <Meta className="mt-1">Answers come from the letters in {personName}&rsquo;s story</Meta>
+      </div>
+
+      {/* Two ways to ask the same brain. Typing is the default because it
+          leaves a record you can re-read; talking is for hands that are busy. */}
+      <div className="mt-4 grid grid-cols-2 gap-2 rounded-full bg-muted p-1">
+        <span className="flex min-h-11 items-center justify-center gap-2 rounded-full bg-card text-[15px] font-medium shadow-sm">
+          <MessageSquare className="size-4" />
+          Type
+        </span>
+        <button
+          type="button"
+          onClick={() => setCalling(true)}
+          className="flex min-h-11 items-center justify-center gap-2 rounded-full text-[15px] font-medium text-muted-foreground active:bg-card/60"
+        >
+          <Phone className="size-4" />
+          Talk
+        </button>
       </div>
 
       <div className="mt-5 flex flex-1 flex-col gap-4">
@@ -252,6 +271,9 @@ export function AskThread({
       </div>
 
       {detail && <DetailSheet item={detail} onClose={() => setDetail(null)} onChanged={() => {}} />}
+      {calling && (
+        <CallMode personId={personId} personName={personName} onClose={() => setCalling(false)} />
+      )}
     </div>
   )
 }
