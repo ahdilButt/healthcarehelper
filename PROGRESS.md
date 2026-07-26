@@ -1,168 +1,265 @@
-# PROGRESS.md — HealthcareHelper works-lane
+# PROGRESS.md — Aftercare (works-lane)
 
 *Resume a fresh session with: **"Read CLAUDE.md and PROGRESS.md, continue autopilot."***
 
-Last updated: end of Stage 10. Every feature stage is built; Stage 11's M3 "unplug" is the one thing left and it needs a decision (see **Flags**).
+The product is now called **Aftercare**. The repo, package and internal docs still
+say `healthcarehelper` — renaming the repository would break the Vercel
+connection, so that stays until after the demo.
+
+**Live: https://healthcarehelper-pi.vercel.app** — built from `master`, all
+eleven stages shipped, 46 commits.
 
 ---
 
-## Where the build is
+## 1. Read this before touching anything
 
-| Stage | State | Evidence |
-|---|---|---|
-| 0 · Dataset | ✅ done | `npm run validate:dataset` → 15 artefacts / 15 fixtures / 71 facts / 2 amber · OK |
-| 1 · Scaffold | ✅ done | `npm run build` clean |
-| 2 · Seed | ✅ done | `npm run seed:reset` → 14 documents, 48 facts |
-| 3 · Auth + persons + invites | ✅ done | routes build; no server secret in `.next/static` |
-| 4 · Ingest (Stage A + B) | ✅ done | `npm run test:extraction` → **15/15 documents, 71 checks, PASS** |
-| 5 · Narration / needs-a-look / merge | ✅ done | processing card polls; type-it-in and retake both wired; merge prompt survives a reload |
-| 6 · Timeline + corrections | ✅ done | 6 card variants, detail sheet, Fix this, view original — checked in a browser |
-| 7 · Ask + translate | ✅ done | kidneys question cites docs 6/7/8; absent topic answers honestly; doc 8 translates |
-| 8 · Routines / Today / SMS / cron | ✅ done | 7 doses, patch rotation, badge, tick sends to both members and is idempotent |
-| 9 · Capsules + `/c/[token]` | ✅ done | 3 presets verified with curl and no cookies; revoked → 410; unconfirmed facts absent |
-| 10 · Watch-cards + Chase this | ✅ done | overdue nephrology referral drafts a letter carrying the real reference number |
-| 11 · M3 self-test + runbook | ✅ done | wiped, onboarded and uploaded through the UI, 15 artefacts ingested live; 4 defects found and fixed; `RUNBOOK.md`; security checklist 10/10 |
+| Fact | Value |
+|---|---|
+| Production URL | `https://healthcarehelper-pi.vercel.app` |
+| Production branch | `master` (NOT `main` — see §6) |
+| Repo | `github.com/ahdilButt/healthcarehelper` |
+| Vercel scope/project | `healthcarehelper / healthcarehelper` |
+| Deploys on | every push to `master`, automatically |
+| Sign-in that works, with full data | `acadahdil998@gmail.com` |
+| Sign-in that works, blank | `dad@example.com` (mint a link — not a real inbox) |
 
-**Next action:** the conditions gap (flag 2), then a remote so this can deploy.
+`main` is the design lane's branch and is a **different application**. If the
+site ever shows a page titled "Healthcare Helper - AI Task Automation",
+production has reverted to `main`.
 
 ---
 
-## The M3 unplug, and what it found
+## 2. Where the build is
 
-Database wiped, onboarding walked in the browser, one letter photographed
-through the app, then all 15 artefacts ingested in document-date order through
-the real pipeline. Four defects the seeded record could never have surfaced —
-the seed writes with the service role, in one pass, in the right order:
+Every stage in CLAUDE.md's AUTOPILOT list is done and deployed.
 
-1. **Creating a person failed.** `memberships` has no insert policy; the owner
-   row was refused by RLS. Fixed on the server-side path the schema names.
-2. **Uploading a letter failed.** The bucket has no policies for authenticated
-   users. All storage now goes through `lib/storage.ts` with the service role,
-   after the membership check.
-3. **A mention became a dose.** "dose not stated" overwrote Metformin's "1 g
-   twice daily" and invented two changes.
-4. **Every dose read "quantity 28"** — the pharmacy slip is last in and its
-   wording is longer, and `richerDose` preferred length.
+| Stage | Evidence |
+|---|---|
+| 0 Dataset | `npm run validate:dataset` — 15 artefacts / 15 fixtures / 71 facts |
+| 1 Scaffold | builds clean |
+| 2 Seed | `npm run seed:reset` |
+| 3 Auth, persons, invites | magic link, sign-out, invite links, onboarding guard |
+| 4 Ingest | `npm run test:extraction` — 15/15 documents, 71 checks |
+| 5 Narration / needs-a-look / merge | processing card, type-it-in, retake, merge prompt survives reload |
+| 6 Timeline + corrections | 6 card variants, Fix this, view original |
+| 7 Ask + translate | cited answers, GP questions, honest not-in-record |
+| 8 Routines / Today / SMS / cron | schedules, patch rotation, tick idempotent |
+| 9 Capsules + `/c/[token]` | 3 presets verified with curl, revoked → 410 |
+| 10 Watch-cards + Chase this | drafts a letter carrying the real reference number |
+| 11 M3 self-test | wiped, re-ingested live, 4 defects found and fixed |
 
-End state now matches DATASET-BIBLE §4: the six current medicines at the right
-doses, Amlodipine stopped, one Ramipril 2.5→5 change on 12 May, the penicillin
-allergy, Atorvastatin amber at 0.65, and — the rule the product rests on — the
-handwritten pharmacy note left Furosemide at 40mg and raised a question.
-
----
-
-## Flags for you
-
-1. **Something else is writing to this Supabase project.** Twelve documents
-   with `storage_path` ending `placeholder.pdf`, doc types this codebase does
-   not use (`gp_letter`, `blood_test_result`, `med_label`) and 2025 dates
-   appeared mid-ingest at 19:26:34. Nothing in this repo creates them. They are
-   still in the database and they pollute every count. If that is the other
-   lane sharing one project, the two lanes need separate Supabase projects
-   before the demo — I have not deleted anyone else's rows.
-2. **Conditions come out noisy: 15 where the bible says 4.** Symptoms are being
-   recorded as conditions ("Breathlessness on exertion", "Ankle swelling"), as
-   are echo findings, and "Diabetes" sits beside "Type 2 diabetes mellitus
-   (diagnosed 2015)". Deduping on the diagnosis fixed the parenthetical
-   duplicates; the rest is a Stage B prompt tightening — say what a condition
-   is and is not — plus a fixture to hold it. Not dangerous (nothing acts on
-   conditions except display and the capsule), but it reads badly on the
-   doctor brief.
-3. **No git remote.** Twelve commits are local; nothing is pushed and Vercel
-   has not deployed. Paste a URL and I will push the history.
-4. **`EMAIL_API_KEY` is a placeholder** (`re_PAS…`). `lib/notify/send.ts` treats an unusable key as dry-run, so nothing breaks — but email fallback is not real until it is replaced.
-5. **`SMS_DRY_RUN=true`.** Twilio SID/token/number are filled; flipping the flag to `false` is all that is needed. `npm run tick -- 08:00` then sends for real.
-6. **Phone numbers live on the auth user.** The frozen schema has no phone column, so `npm run set-phone -- <email> <+44…>` writes it to `user_metadata`, which is where `lib/notify/recipients.ts` looks. Without one, a member falls back to email.
-7. **pg_cron is not scheduled.** The snippet at the bottom of `supabase/schema.sql` needs running once there is a public URL.
-8. **A fresh seed makes the next tick send a burst** of what-changed messages, because every med change is "new" within the 48-hour lookback. Harmless in dry-run; worth knowing before flipping the flag.
-9. **Routes added beyond the frozen contract** (all additions, no signature moved): `POST /api/documents/:id/transcript`, `GET /api/persons/:id/duplicates`, `GET /api/loops/:id/chase`, `PATCH /api/persons/:id`.
-10. **12 npm audit warnings** are pre-existing dev-tooling transitives from `create-next-app`.
+**Beyond the original spec, added since:** voice-note recording, an
+ElevenLabs voice, Ask-as-a-call, the Today brief panel, the Aftercare rename,
+the v0 design-lane integration, invites, sign-out, "Add someone else".
 
 ---
 
-## What exists, and where
+## 3. What is left — the actual next job
 
+The user's words: *"turn this site into a deployed website — just a playable
+demo… let those who use it upload and talk to it… then cut off all access in
+3–7 days… and cap the credits."*
+
+### 3a. Public demo mode
+Currently every route needs a sign-in. A stranger from social media cannot
+play. Decide and build one of:
+- **Guest mode** — a "Try it" button that creates a throwaway person + session,
+  seeded with the demo record so there is something to talk to.
+- **Shared demo account** — one pre-made login behind a link. Simpler; everyone
+  writes into the same record, which will get messy fast.
+
+Guest mode is the honest one. It needs: a route that provisions an anonymous
+Supabase user (Supabase supports anonymous sign-ins), copies the seed record
+for them, and an expiry.
+
+### 3b. Kill switch (3–7 days)
+**Recommended: an env var, checked in `proxy.ts`.**
 ```
-lib/
-  constants.ts          CONFIRMED_THRESHOLD, PRODUCT_LAW (verbatim in every AI prompt)
-  types.ts              domain types mirroring the frozen schema
-  person.ts             current-person resolution, re-validated against memberships
-  api/errors.ts         the universal {error:{code,message}} envelope + route() wrapper
-  api/guards.ts         requireUser / requireMember / requireOwner / requireCronSecret
-  api/tokens.ts         192-bit base64url URL tokens
-  supabase/{server,service,client}.ts    service.ts carries `server-only`
-  ai/claude.ts          one client; CLAUDE_MODEL = claude-opus-5; refusal handling
-  ingest/…              stage-a, stage-b, write-facts, medications, dedupe, pipeline
-  facts/read.ts         THE correction overlay — every surface reads facts through it
-  timeline/build.ts     the merged feed, corrections applied
-  ask/context.ts        the record written out for Claude, every fact referenced
-  ask/answer.ts         cited answers + GP questions
-  ask/translate.ts      "What this letter says"
-  ask/chase.ts          the drafted chase letter
-  routines/time.ts      Europe/London wall-clock maths (DST-correct, unit tested)
-  routines/schedule.ts  schedules built from the prescriber's own words
-  routines/today.ts     the Today view + site rotation
-  notify/{send,recipients,tick}.ts   SMS/email, who to tell, one minute of cron
-  capsules/{build,access,wallet}.ts  scope presets, token checks, the wallet PDF
-app/
-  (tabs)/timeline · today · ask · share
-  api/… documents, facts, persons, invites, ask, conversations, routines, today,
-        taken, capsules, loops, cron/tick, webhooks/twilio-status
-  c/[token]         the public clinical page · c/gone returns the real 410
-components/  timeline · today · ask · share · ui · shell
-scripts/     seed · render-demo-docs · validate-dataset · test-extraction · magic-link
-             setup-storage · check-db · ask-probe · tick-probe · set-phone · security-check
+DEMO_CLOSES_AT=2026-08-02T18:00:00Z
 ```
+`proxy.ts` already runs on every request. If the date has passed, rewrite
+everything except a static `/closed` page. No cron, no external service, and
+reversible by editing one Vercel variable. Add a banner counting down while
+it is still open.
 
-### Commands
+Belt and braces: `POST /api/cron/tick` already runs every minute — have it
+email/SMS the owner 24 hours before the date.
+
+### 3c. Credit caps
+Both AI paths need a ceiling, and neither has one:
+- **ElevenLabs** — user asked for ~5000 characters. `/api/speech` caps a single
+  request at 700 chars but nothing tracks the total.
+- **Anthropic** — `/api/ask`, `/brief`, `/translate`, `/chase` and the ingest
+  pipeline all spend, uncapped.
+
+Serverless means in-memory counters do not survive. Needs a small table
+(a new table is an addition, not a contract change):
+```sql
+create table usage_counters (
+  key text primary key,        -- 'elevenlabs:chars', 'anthropic:calls'
+  used bigint not null default 0,
+  updated_at timestamptz not null default now()
+);
+```
+Increment before spending, refuse over budget, and fall back gracefully —
+`useSpeech` already falls back to the browser voice, so a spent voice budget
+degrades rather than breaks.
+
+### 3d. Smaller, known, unfixed
+- **Conditions extract noisily** — 15 rows where DATASET-BIBLE says 4. Symptoms
+  ("Breathlessness on exertion") and echo findings are recorded as conditions.
+  A Stage B prompt tightening plus a fixture. Most visible on the doctor brief.
+- **"See the demo story"** should be a 3–5 screen guided tour per
+  ONBOARDING-PAGE-SPEC. It currently goes straight to the timeline.
+- **No delete** — a document can be merged away but never removed, and there is
+  no account deletion. Fine for a demo, not for real users.
+- **`public/healthcare-helper-logo.png`** is now unused (the lockup is text).
+
+---
+
+## 4. Flags — things that will bite
+
+1. **The service-role key is in `main`'s git history** (`demo-data/.env.local`,
+   commit `0c90373`). It bypasses every RLS policy. **Rotate before any real
+   user touches this.** Not a demo blocker; is a real-users blocker.
+2. **One Supabase project is shared with the design lane.** Their seed writes
+   into the demo record — 12 `placeholder.pdf` documents appeared mid-ingest
+   once. Separate projects before it matters.
+3. **Resend has no verified domain** (unconfirmed but likely). Consequence:
+   auth email reaches `acadahdil998@gmail.com` only. Everyone else needs a
+   minted link. Fix: Resend → Domains → add one + DNS.
+4. **`EMAIL_API_KEY` is in `.env.local` but NOT in Vercel** — production cannot
+   send reminder emails until it is added.
+5. **`SMS_DRY_RUN=true`.** Twilio credentials are filled; flip to `false` for
+   real texts. Phone numbers live on `auth.users.user_metadata` via
+   `npm run set-phone` because the frozen schema has no phone column.
+6. **pg_cron is not scheduled.** Snippet at the bottom of `supabase/schema.sql`.
+7. **A magic link IS a credential.** Opening one signs you in AS that account —
+   it does not grant access, it transfers identity. This caused a developer to
+   see the owner's record. `npm run magic-link` now refuses to guess an address
+   when targeting production.
+8. **Form links vs minted links.** A link from the sign-in form must be opened
+   in the browser that requested it (PKCE). A link from `npm run magic-link`
+   works on any device. Use the latter for anyone else's phone.
+9. **Routes added beyond the frozen contract** (additions, no signature moved):
+   `POST /api/documents/:id/transcript`, `GET /api/persons/:id/duplicates`,
+   `GET /api/loops/:id/chase`, `PATCH /api/persons/:id`, `POST /api/speech`,
+   `GET /api/today/:personId/brief`.
+
+---
+
+## 5. Accounts and data, as they stand
+
+| Email | Sees |
+|---|---|
+| `acadahdil998@gmail.com` | **Dad — 20 docs, 7 meds** (owner) · Test record (1 letter) |
+| `amira@example.com` | Dad, the same full record (owner) |
+| `zjm990826@gmail.com` | Dad (carer) · Test record (0 letters) |
+| `demo@livingrecord.app` | Amira (empty) · a different Dad, 12 docs — design lane |
+| `dad@example.com` | nothing — lands on onboarding |
+
+The demo record is **"Dad"**; the near-empty ones are renamed
+**"Test record (n letters)"** so the switcher is unambiguous on stage.
+
+Its medicines were corrected by hand to DATASET-BIBLE §4 (Ramipril 5mg,
+Bisoprolol 2.5mg, Furosemide 40mg, Metformin 1g bd, Atorvastatin 20mg nocte,
+GTN patch, Amlodipine stopped) because those rows were ingested *before*
+`richerDose` learned to prefer "once daily" over "quantity 28". The extraction
+code is correct now; a fresh ingest produces the right values.
+
+`npm run demo:appt` puts the eye screening two days out — **re-run it on the
+morning of the demo** or the diary line reads "no appointments".
+
+---
+
+## 6. Deploying — the thing that cost an afternoon
+
+The production branch setting is **Settings → Environments → Production →
+Branch Tracking**, NOT the Git page. While it read `main`, every push to
+`master` built cleanly and parked itself as a *Preview*, and production only
+moved when a deployment was promoted by hand. That looks exactly like a broken
+deploy. It now reads `master`.
+
+**Do not poll the production URL in a loop.** Vercel answers automated traffic
+with `x-vercel-mitigated: challenge`, a JS checkpoint curl cannot pass. It
+looks like an outage and is not one. Browsers are unaffected — but
+`npm run security-check` against production will fail spuriously afterwards.
+
+---
+
+## 7. Commands
 
 ```
 npm run dev
-npm run wipe -- --yes-really  # empty the record (M3)
-npm run ingest              # the 15 artefacts through the real pipeline
-npm run seed:reset          # rebuild Dad's record from the fixtures
-npm run test:extraction     # the hard gate — real pipeline vs fixtures (~£1–2)
-npm run validate:dataset    # offline dataset guard, free
-npm run tick -- 08:00       # run one minute of cron, at a time you choose
+npm run build && npm run lint && npm run typecheck && npm test   # the gates
+
+npm run magic-link -- someone@example.com --prod   # sign-in link, no email, any device
 npm run set-phone -- <email> <+44…>
-npm run security-check -- http://localhost:3000
-npm run ask -- "question"   # the Ask brain without a browser
-npm run magic-link          # sign in without an inbox
-npm run build && npm run lint && npm test
+npm run demo:appt            # eye screening 2 days out · `-- 0` for today
+npm run tick -- 08:00        # one minute of cron, at a time you choose
+npm run security-check -- https://healthcarehelper-pi.vercel.app
+npm run ask -- "question"    # the Ask brain without a browser
+
+npm run seed:reset           # rebuild Dad from fixtures
+npm run wipe -- --yes-really # empty everything (destructive)
+npm run ingest               # 15 artefacts through the real pipeline (~£1–2, 8 min)
+npm run test:extraction      # the hard gate (~£1–2)
 ```
 
 ---
 
-## Decisions worth knowing before you touch this
+## 8. Decisions worth knowing before you change anything
 
-**The seed and the pipeline share one writer.** `writeFacts()` is the only thing that inserts fact rows, so a seeded record and an ingested one are indistinguishable downstream. Do not add a second write path.
+**Every surface reads facts through `lib/facts/read.ts`.** Timeline, Today, Ask
+and capsules all apply the correction overlay, so a fix made once cannot be
+missing anywhere else. Add a surface, use this file.
 
-**Every surface reads facts through `lib/facts/read.ts`.** Timeline, Today, Ask and capsules all apply the correction overlay, so a fix made once cannot be missing anywhere else. Add a surface, use this file.
+**Correcting a fact clears its amber; confirming does not move a dose.**
+Someone typing a value is the human check the badge was asking for. But a
+one-tap *confirm* only clears the badge — `write-facts.ts` refuses to let an
+unconfirmed reading rewrite a live dose, precisely so a blurred box cannot
+become a treatment change, and confirm must not be the back door into it.
 
-**Correcting a fact clears its amber; confirming does not move a dose.** Someone typing a value is the human check the badge was asking for — without that, the one value she wrote herself would be the one the capsule left out. But a one-tap *confirm* only clears the badge: `write-facts.ts` refuses to let an unconfirmed reading rewrite a live dose precisely so a blurred box cannot become a treatment change, and confirm must not be the back door into the same thing.
+**Unconfirmed facts cannot move a dose, enter a capsule, or send a text.**
+Three separate code paths enforce the same threshold.
 
-**A correction the app would then ignore is worse than none.** Values are normalised at the route — UK-order dates, known loop states, numeric readings — and refused in plain words when unreadable. The UI offers a date picker or a chooser rather than free text.
+**The seed and the pipeline share one writer** (`writeFacts`). Do not add a
+second write path.
 
-**Unconfirmed facts cannot move a dose, enter a capsule, or send a text.** Three separate code paths enforce the same threshold. There are fixtures (12, S2) that fail if the first regresses, and a curl check in the Stage 9 commit for the second.
+**Spoken answers are written for the ear, not trimmed.** `/api/ask` takes a
+`spoken` flag; the brain then answers in the first sentence, under 35 words,
+one short citation. Truncating a written answer is not the same thing.
 
-**A dose change means the strength moved.** `lib/ingest/medications.ts` — a repeat slip restating "Ramipril 5mg" is not a change. 11 unit tests guard it.
+**Wall-clock times resolve through Europe/London properly** — "08:00" still
+means eight in the morning after the clocks change. Tested both sides of March.
 
-**Legibility crosses the stage boundary.** Stage A rates `clear|degraded|poor`; Stage B scores accordingly. Handwriting is always unconfirmed.
+**Dead capsule links answer 410.** A rendered page cannot set its own status,
+so `/c/[token]` redirects to `/c/gone`, which carries its own markup.
 
-**Wall-clock times are resolved through Europe/London properly.** "08:00" still means eight in the morning after the clocks change. Tested on both sides of the March boundary.
-
-**The patch is scheduled before its words are read.** Its instruction says "each morning and off at night"; matching on the night half put the reminder at 21:30. Caught by reading the seeded output.
-
-**One text per medicine round, with a stable key.** Five buzzes at eight in the morning is a reason to turn reminders off, and a cron that catches up after an outage must not re-send.
-
-**Dead capsule links answer 410.** A rendered page cannot set its own status, so `/c/[token]` redirects to `/c/gone`, which carries its own markup and returns the real code.
-
-**The extraction comparator is deliberately loose on names and exact on numbers**, per DATA-SHAPES §4.
-
-**Fixtures record extras as notes, not failures.** Missing an expected fact fails; finding more does not.
+**The design lane's tokens and mine are the same hex values** under different
+names; `globals.css` aliases theirs onto `--hh-*`. There are now two primitive
+files — `components/ui-bits.tsx` (theirs) and `components/ui/primitives.tsx`
+(mine). **Decide which survives** before they diverge further.
 
 ---
 
-## Cost note
+## 9. Process notes for whoever picks this up
 
-`npm run test:extraction` runs real Claude vision + extraction over 15 artefacts (~£1–2 per cold run). Stage A output is cached under `demo-data/.transcripts/` (gitignored), so iterating on the *extraction* prompt is cheap. `npm run ask` and the Chase draft are a few pence each.
+- **Never build file content with shell string-replacement.** Backticks inside
+  a bash string execute. This pasted a live magic-link token into RUNBOOK.md
+  once (consumed and removed, commit `bdfe2aa`) and mangled a component three
+  times. Use the file editor.
+- **Opus 5 with a small `max_tokens` can spend it all reasoning** and return an
+  empty text block, which looks identical to an API failure. `lib/routines/brief.ts`
+  sets `effort: 'low'` and a real budget for this reason.
+- **A silent fallback needs a log line** or the broken path looks exactly like
+  the working one.
+- Gates run before every commit; commit messages carry the reasoning.
+
+---
+
+## 10. Cost note
+
+`npm run test:extraction` and `npm run ingest` each run real Claude vision over
+15 artefacts (~£1–2). Ask, brief, translate and chase are pennies each.
+ElevenLabs bills per character — see §3c, it is currently uncapped.
