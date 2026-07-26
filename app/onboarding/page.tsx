@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { setCurrentPerson } from '@/app/actions'
 import { Button, Card, Meta, PageTitle } from '@/components/ui/primitives'
 import { ShoeboxIllustration } from '@/components/ui/illustrations'
 
@@ -29,12 +30,17 @@ export default function OnboardingPage() {
         managingNote: note.trim() || undefined,
       }),
     })
+    const body = await res.json().catch(() => null)
     if (!res.ok) {
-      const body = await res.json().catch(() => null)
       setError(body?.error?.message ?? 'Something went wrong.')
       setBusy(false)
       return
     }
+
+    // Point the app at the person just created. Without this, someone adding a
+    // second person lands back on the first one's timeline and concludes the
+    // whole thing failed.
+    if (body?.person?.id) await setCurrentPerson(body.person.id)
     setStep(2)
     setBusy(false)
   }

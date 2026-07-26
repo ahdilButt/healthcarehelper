@@ -76,6 +76,19 @@ export function PersonSwitcher({
               ))}
             </ul>
           )}
+          {/* The only way to start a second, empty record without wiping the
+              first — which is what testing from scratch otherwise costs. */}
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false)
+              router.push('/onboarding')
+            }}
+            className="block min-h-[44px] w-full border-b border-border px-4 py-3 text-left text-[15px] text-primary"
+          >
+            Add someone else
+          </button>
+
           {email && (
             <p className="truncate px-4 pt-3 text-[13px] leading-[1.4] text-muted-foreground">
               Signed in as {email}

@@ -48,7 +48,12 @@ function recogniser(): Recognition | null {
   return r
 }
 
-const OPENING = 'Ask me anything about the letters. What would you like to know?'
+/**
+ * Deliberately not "ask me about the letters". Someone opening this in a
+ * hurry does not think in terms of documents — they think in terms of a
+ * question. Say what can be done, not what it is made of.
+ */
+const OPENING = 'What can I help you with? I can look through the whole record and answer.'
 
 export function CallMode({
   personId,
