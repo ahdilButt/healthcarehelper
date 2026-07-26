@@ -7,7 +7,9 @@ say `healthcarehelper` — renaming the repository would break the Vercel
 connection, so that stays until after the demo.
 
 **Live: https://healthcarehelper-pi.vercel.app** — built from `master`, all
-eleven stages shipped, 46 commits.
+eleven stages shipped, plus the public-demo lane (§3): a kill switch, credit
+caps and guest mode. **Two manual steps stand between that and a public link
+— see §3.**
 
 ---
 
@@ -50,69 +52,95 @@ Every stage in CLAUDE.md's AUTOPILOT list is done and deployed.
 
 **Beyond the original spec, added since:** voice-note recording, an
 ElevenLabs voice, Ask-as-a-call, the Today brief panel, the Aftercare rename,
-the v0 design-lane integration, invites, sign-out, "Add someone else".
+the v0 design-lane integration, invites, sign-out, "Add someone else", and the
+public-demo lane below.
 
 ---
 
-## 3. What is left — the actual next job
+## 3. The public-demo lane — built, with two manual steps outstanding
 
 The user's words: *"turn this site into a deployed website — just a playable
 demo… let those who use it upload and talk to it… then cut off all access in
 3–7 days… and cap the credits."*
 
-### 3a. Public demo mode
-Currently every route needs a sign-in. A stranger from social media cannot
-play. Decide and build one of:
-- **Guest mode** — a "Try it" button that creates a throwaway person + session,
-  seeded with the demo record so there is something to talk to.
-- **Shared demo account** — one pre-made login behind a link. Simpler; everyone
-  writes into the same record, which will get messy fast.
+All three are built and pushed. **Two things must be done by hand before a
+link goes out** — neither is code, and `npm run demo:check` reports the first:
 
-Guest mode is the honest one. It needs: a route that provisions an anonymous
-Supabase user (Supabase supports anonymous sign-ins), copies the seed record
-for them, and an expiry.
+1. **Paste `supabase/demo-mode.sql`** into the Supabase SQL editor. Until then
+   the counters have nowhere to live and the caps are inert — the app logs
+   `[usage] counter store unavailable — SPEND IS UNCAPPED` and keeps working.
+2. **Turn on anonymous sign-ins**: Supabase → Authentication → Sign In /
+   Providers → Anonymous sign-ins. Until then "Have a look around first"
+   answers *"Guest access is not switched on for this demo"* (403).
 
-### 3b. Kill switch (3–7 days)
-**Recommended: an env var, checked in `proxy.ts`.**
-```
-DEMO_CLOSES_AT=2026-08-02T18:00:00Z
-```
-`proxy.ts` already runs on every request. If the date has passed, rewrite
-everything except a static `/closed` page. No cron, no external service, and
-reversible by editing one Vercel variable. Add a banner counting down while
-it is still open.
+Then set in Vercel: `DEMO_CLOSES_AT`, and optionally `DEMO_OWNER_EMAIL`,
+`DEMO_BUDGET_*`, `DEMO_TEMPLATE_PERSON_ID` (see `.env.example`).
 
-Belt and braces: `POST /api/cron/tick` already runs every minute — have it
-email/SMS the owner 24 hours before the date.
+### 3a. Guest mode — `POST /api/demo/guest`
+Anonymous Supabase sessions, one private copy of the demo record each. Not a
+shared login: everyone would write into the same record and the third visitor
+would find the second visitor's corrections on somebody else's father. An
+anonymous user is a real account with a real id, so every membership check and
+RLS policy behaves as it does for a family — there is no guest branch anywhere
+else in the app.
 
-### 3c. Credit caps
-Both AI paths need a ceiling, and neither has one:
-- **ElevenLabs** — user asked for ~5000 characters. `/api/speech` caps a single
-  request at 700 chars but nothing tracks the total.
-- **Anthropic** — `/api/ask`, `/brief`, `/translate`, `/chase` and the ingest
-  pipeline all spend, uncapped.
+`lib/demo/clone.ts` remaps every id it carries, so a fact can never cite a
+letter in another record. Corrections travel (the overlay *is* the current
+value); taken events, conversations and capsules do not. `storage_path` is
+shared rather than duplicated — originals are immutable and every read is a
+signed URL minted after a membership check on the row.
 
-Serverless means in-memory counters do not survive. Needs a small table
-(a new table is an addition, not a contract change):
-```sql
-create table usage_counters (
-  key text primary key,        -- 'elevenlabs:chars', 'anthropic:calls'
-  used bigint not null default 0,
-  updated_at timestamptz not null default now()
-);
-```
-Increment before spending, refuse over budget, and fall back gracefully —
-`useSpeech` already falls back to the browser voice, so a spent voice budget
-degrades rather than breaks.
+`npm run demo:clone-probe` proves it without needing the auth toggle: copies to
+a throwaway account, compares every table row-for-row, checks no fact cites a
+template document, then deletes both. Last run: 27 documents, 123 facts, 3.7s.
+
+Entry points: the welcome screen (replacing "See the demo story", which pointed
+at a sign-in wall) and `/signin`.
+
+### 3b. Kill switch — `DEMO_CLOSES_AT`
+An ISO instant, read in `proxy.ts` on every request. Past it, pages rewrite to
+`/closed` and API routes answer the 410 envelope — capsule links, `/signin` and
+the cron tick included. Editing it in Vercel takes effect on the next request,
+with no deploy, and is reversible. An unreadable date **fails open** and logs.
+
+Verified with the date moved into the past: `/`, `/timeline`, `/signin` and
+`/c/<token>` all serve the closed page; `/api/today/x` answers
+`{"error":{"code":"expired"}}` with 410.
+
+A countdown banner shows on the welcome screen and inside the shell while it is
+open, and the cron tick emails `DEMO_OWNER_EMAIL` once, about a day before.
+
+### 3c. Credit caps — `lib/usage/meter.ts`
+Counters in `usage_counters`, incremented through `bump_usage()` so two
+concurrent requests cannot lose a spend.
+
+- **Claude** — counted in money, not tokens (`anthropic:usd_micros`), because
+  an output token costs five times an input one. Every call goes through
+  `createMessage()`; `claude()` is private, so there is one metered way in.
+  Checked before, charged after, so the ceiling can overshoot by one call.
+- **ElevenLabs** — `elevenlabs:chars`, reserved up front (the length is known),
+  so 5000 characters holds exactly. Over budget degrades to the browser voice.
+- **Per visitor** — `anthropic:calls:<user>`, so one person cannot drain the
+  pot before the next arrives. The Today brief is deliberately *not* charged
+  per user: it fires on page load, and already falls back to a computed line.
+- **Guests** — `demo:guests`, refunded if provisioning fails.
+
+Fails **open** and loudly if the table is missing: refusing every paid call
+would turn one un-applied migration into a dead demo, and the kill switch
+already bounds the window. `npm run test:extraction` and `npm run ingest` set
+`USAGE_METER_OFF` — a developer's £2 gate run is not the visitors' budget.
 
 ### 3d. Smaller, known, unfixed
 - **Conditions extract noisily** — 15 rows where DATASET-BIBLE says 4. Symptoms
   ("Breathlessness on exertion") and echo findings are recorded as conditions.
   A Stage B prompt tightening plus a fixture. Most visible on the doctor brief.
-- **"See the demo story"** should be a 3–5 screen guided tour per
-  ONBOARDING-PAGE-SPEC. It currently goes straight to the timeline.
+- **The guided tour** (3–5 screens, ONBOARDING-PAGE-SPEC) still does not exist.
+  That slot on the welcome screen is now "Have a look around first", which
+  provisions a guest record and drops them on the timeline.
 - **No delete** — a document can be merged away but never removed, and there is
-  no account deletion. Fine for a demo, not for real users.
+  no account deletion. Fine for a demo, not for real users. Guest records are
+  the same: they accumulate, one person + ~27 documents each, until someone
+  removes them by hand (`delete from persons where …` cascades).
 - **`public/healthcare-helper-logo.png`** is now unused (the lockup is text).
 
 ---
@@ -144,7 +172,13 @@ degrades rather than breaks.
 9. **Routes added beyond the frozen contract** (additions, no signature moved):
    `POST /api/documents/:id/transcript`, `GET /api/persons/:id/duplicates`,
    `GET /api/loops/:id/chase`, `PATCH /api/persons/:id`, `POST /api/speech`,
-   `GET /api/today/:personId/brief`.
+   `GET /api/today/:personId/brief`, `POST /api/demo/guest`.
+10. **`usage_counters` is an addition too** — `supabase/demo-mode.sql`, a new
+    table and one function. `supabase/schema.sql` is untouched.
+11. **Every guest shares the demo record's files.** Cloned documents keep the
+    template's `storage_path`. Deleting the template's rows would leave every
+    guest copy pointing at files that are still there, but wiping the storage
+    bucket would blank all of them at once. `npm run wipe` is the one to watch.
 
 ---
 
@@ -193,6 +227,9 @@ looks like an outage and is not one. Browsers are unaffected — but
 npm run dev
 npm run build && npm run lint && npm run typecheck && npm test   # the gates
 
+npm run demo:check           # is the demo actually fenced? (date, table, spend)
+npm run demo:clone-probe     # guest mode's record copy, verified and cleaned up
+
 npm run magic-link -- someone@example.com --prod   # sign-in link, no email, any device
 npm run set-phone -- <email> <+44…>
 npm run demo:appt            # eye screening 2 days out · `-- 0` for today
@@ -224,7 +261,18 @@ become a treatment change, and confirm must not be the back door into it.
 Three separate code paths enforce the same threshold.
 
 **The seed and the pipeline share one writer** (`writeFacts`). Do not add a
-second write path.
+second write path. The same rule now covers spending: every Claude call goes
+through `createMessage()` and `claude()` is private, because a second way in
+is a hole in the ceiling.
+
+**A guest is not a special case.** They get a real account and a real record,
+so no membership check, RLS policy or capsule route needs to know about them.
+If you find yourself writing `if (isGuest)`, something has gone wrong.
+
+**The caps fail open, the kill switch fails open.** Both would rather run
+uncapped than refuse a live demo, and both say so in the log. That is only
+defensible because the two are independent: the switch bounds the window even
+if the counters are missing.
 
 **Spoken answers are written for the ear, not trimmed.** `/api/ask` takes a
 `spoken` flag; the brain then answers in the first sentence, under 35 words,
