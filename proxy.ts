@@ -13,19 +13,25 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function proxy(request: NextRequest) {
   const response = NextResponse.next({ request })
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (toSet) => {
-          for (const { name, value } of toSet) request.cookies.set(name, value)
-          for (const { name, value, options } of toSet) response.cookies.set(name, value, options)
-        },
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // Without Supabase credentials there is no session to refresh. Pass the
+  // request through untouched instead of throwing on every navigation, so the
+  // app still renders (unauthenticated) before the env vars are configured.
+  if (!url || !anonKey) {
+    return response
+  }
+
+  const supabase = createServerClient(url, anonKey, {
+    cookies: {
+      getAll: () => request.cookies.getAll(),
+      setAll: (toSet) => {
+        for (const { name, value } of toSet) request.cookies.set(name, value)
+        for (const { name, value, options } of toSet) response.cookies.set(name, value, options)
       },
-    }
-  )
+    },
+  })
 
   await supabase.auth.getUser()
   return response
