@@ -138,7 +138,7 @@ export function CallMode({
       fetch('/api/ask', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ personId, conversationId, question }),
+        body: JSON.stringify({ personId, conversationId, question, spoken: true }),
       })
         .then(async (res) => {
           const body = (await res.json().catch(() => null)) as {
@@ -152,9 +152,9 @@ export function CallMode({
           if (!live.current) return
           setConversationId(body.conversationId ?? conversationId)
 
-          // Spoken answers are shorter than read ones: the first two sentences
-          // carry the answer, and the chat tab has the rest with its sources.
-          const spoken = firstSentences(body.message.content, 2)
+          // The answer already arrived written to be heard, so it is spoken
+          // whole. The cap is a seatbelt, not the plan.
+          const spoken = firstSentences(body.message.content, 4)
           setReply(spoken)
           setPhase('speaking')
           void say(spoken, () => {

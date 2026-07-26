@@ -107,17 +107,43 @@ const stripRefs = (s: string) =>
     .replace(/[ \t]+([.,;:!?])/g, '$1')
     .trim()
 
+/**
+ * Spoken answers are a different job from written ones.
+ *
+ * Someone asking out loud is usually standing up, often in a hurry, sometimes
+ * in front of a paramedic. They cannot skim, they cannot scroll back, and they
+ * are holding the answer in their head while somebody waits. So: the answer
+ * first, in a breath, and stop.
+ *
+ * Everything above still binds. Short is not licence to guess, and a spoken
+ * answer that cannot be sourced is still one that must not be given.
+ */
+const VOICE = `THIS ANSWER WILL BE READ ALOUD, NOT SHOWN ON A SCREEN. Rewrite your instincts accordingly.
+
+- Answer the question in the FIRST sentence, in as few words as it takes. "Yes — penicillin." is a complete answer. No preamble, no restating the question, no "according to the records".
+- UNDER 35 WORDS IN TOTAL. One to three short sentences. Then stop. Anything the person did not ask for belongs in the app, not in your mouth.
+- Cite ONCE, at the end, in four words or fewer: "from the April medicines review". One source, never a list, never a reference code. If the first sentence is the whole answer, the citation can be the whole second sentence.
+- Add a second fact only when leaving it out would be unsafe — an allergy's reaction, a dose that recently changed. Otherwise the first sentence is the answer and you are finished.
+- Numbers as digits; say units in full: "5 milligrams", "eGFR 46", "the 12th of May".
+- No bullet points, no headings, no markdown, no bold. It is speech.
+- If the answer is not in the record, say so in one sentence and stop.
+- If the honest answer is a single word — a dose, a date, a yes, a no — say that word and the thing it belongs to, and nothing else.
+
+You are still forbidden from diagnosing, advising a change, or saying anything you cannot source. Brevity does not relax that; it makes it easier to break, so be careful.`
+
 export async function answerQuestion(
   record: RecordContext,
   history: Turn[],
   question: string,
-  personName: string
+  personName: string,
+  opts: { spoken?: boolean } = {}
 ): Promise<Answer> {
   const message = await claude().messages.create({
     model: CLAUDE_MODEL,
     max_tokens: 4000,
     system: [
       { type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } },
+      ...(opts.spoken ? [{ type: 'text' as const, text: VOICE }] : []),
       // The record barely changes between turns, so it is worth caching whole.
       {
         type: 'text',

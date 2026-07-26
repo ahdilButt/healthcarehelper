@@ -21,6 +21,8 @@ export const POST = route(async (req: Request) => {
     personId?: string
     conversationId?: string
     question?: string
+    /** Asked out loud: the answer is spoken, so it is written to be heard. */
+    spoken?: boolean
   }>(req)
 
   const personId = String(required(body.personId, 'personId'))
@@ -75,7 +77,9 @@ export const POST = route(async (req: Request) => {
 
   let answer
   try {
-    answer = await answerQuestion(record, history, question, personName)
+    answer = await answerQuestion(record, history, question, personName, {
+      spoken: Boolean(body.spoken),
+    })
   } catch (e) {
     if (e instanceof RefusalError) {
       throw new ApiError('processing_failed', 'That one is better asked of a clinician directly.')
