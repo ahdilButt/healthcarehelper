@@ -26,20 +26,43 @@ interface DocRow {
   doc_type: string | null
   doc_date: string | null
   sender: string | null
+  transcript: string | null
   status: string
   created_at: string
   merged_into: string | null
 }
 
 /** "from the cardiology letter · 12 May" */
-export function sourceLabel(doc: Pick<DocRow, 'doc_type' | 'sender' | 'doc_date'> | undefined): string {
+export function sourceLabel(
+  doc: Partial<Pick<DocRow, 'doc_type' | 'sender' | 'doc_date' | 'kind'>> | undefined
+): string {
   if (!doc) return 'from a document'
-  const what = humanDocName(doc.doc_type, doc.sender)
+  const what = humanDocName(doc.doc_type ?? null, doc.sender ?? null, doc.kind)
   const when = doc.doc_date ? shortDate(doc.doc_date) : null
   return when ? `from the ${what} · ${when}` : `from the ${what}`
 }
 
-export function humanDocName(docType: string | null, sender: string | null): string {
+/**
+ * How the upload arrived beats how the extractor classified it. A voice note
+ * whose type came back "other" is still a voice note — we watched it being
+ * recorded — and calling it "Letter" on the card makes the one thing the user
+ * just did look like it did not happen.
+ */
+const BY_KIND: Record<string, string> = {
+  voice_note: 'voice note',
+  box_photo: 'photo of the box',
+}
+
+export function humanDocName(docType: string | null, sender: string | null, kind?: string): string {
+  const generic = !docType || docType === 'other'
+  if (kind && (generic || BY_KIND[kind])) {
+    const known = BY_KIND[kind]
+    if (known) return known
+  }
+  return docNameFromType(docType, sender)
+}
+
+function docNameFromType(docType: string | null, sender: string | null): string {
   const byType: Record<string, string> = {
     clinic_letter: 'clinic letter',
     discharge_summary: 'hospital stay summary',
@@ -162,8 +185,8 @@ export async function buildTimeline(
       itemType: 'letter',
       id: d.id,
       personId,
-      humanTitle: capitalise(humanDocName(d.doc_type, d.sender)),
-      payloadLine: d.sender ?? 'Added to the record',
+      humanTitle: capitalise(humanDocName(d.doc_type, d.sender, d.kind)),
+      payloadLine: documentLine(d),
       date: dateOf(d, d.created_at),
       confirmed: true,
       sourceChip: chip,
@@ -243,6 +266,28 @@ export async function buildTimeline(
 }
 
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+/**
+ * What a document card says under its heading.
+ *
+ * A letter has a sender, which is the useful line. A voice note has nobody —
+ * it has words, and "Added to the record" told the person who just spoke them
+ * nothing at all. So a note quotes itself.
+ */
+const SPOKEN_KINDS = new Set(['voice_note'])
+const SNIPPET_MAX = 120
+
+function documentLine(d: DocRow): string {
+  const said = (d.transcript ?? '').trim().replace(/\s+/g, ' ')
+  if (SPOKEN_KINDS.has(d.kind) && said) return `“${snippet(said)}”`
+  return d.sender ?? said.slice(0, SNIPPET_MAX) ?? 'Added to the record'
+}
+
+function snippet(text: string): string {
+  if (text.length <= SNIPPET_MAX) return text
+  const cut = text.slice(0, SNIPPET_MAX)
+  return `${cut.slice(0, cut.lastIndexOf(' ')).trim()}…`
+}
 
 /**
  * A card header has to say what the thing IS.

@@ -37,6 +37,7 @@ export function TimelineFeed({
   const [watching, setWatching] = useState<string[]>([])
   const [duplicates, setDuplicates] = useState<Duplicate[]>([])
   const [autoOpen, setAutoOpen] = useState(autoOpenCamera)
+  const [justAdded, setJustAdded] = useState<string[]>([])
   const [tick, setTick] = useState(0)
   const live = useRef(true)
 
@@ -82,6 +83,11 @@ export function TimelineFeed({
       setAutoOpen(false)
       if (documentIds.length) {
         setWatching((prev) => [...prev, ...documentIds.filter((id) => !prev.includes(id))])
+        // The feed is ordered by the date on the letter, not the moment it was
+        // added — so a new item lands wherever its own date puts it, which for
+        // an old letter is a long way down. Without this you cannot tell that
+        // anything happened at all.
+        setJustAdded((prev) => [...new Set([...prev, ...documentIds])])
       }
       void refresh()
     },
@@ -138,6 +144,13 @@ export function TimelineFeed({
     }
   }, [watching, refresh, checkDuplicates])
 
+  // Once the new cards exist, take the reader to them.
+  useEffect(() => {
+    if (!justAdded.length) return
+    const card = document.querySelector<HTMLElement>('[data-just-added="true"]')
+    card?.scrollIntoView({ behavior: "smooth", block: "center" })
+  }, [justAdded, items])
+
   const groups: { month: string; items: TimelineItem[] }[] = []
   for (const item of items) {
     const month = monthLabel(item.date)
@@ -189,7 +202,12 @@ export function TimelineFeed({
             <MonthHeader label={g.month} />
             <ul className="mt-1 flex flex-col gap-3">
               {g.items.map((item) => (
-                <TimelineCard key={`${item.itemType}:${item.id}`} item={item} onOpen={setDetail} />
+                <TimelineCard
+                  key={`${item.itemType}:${item.id}`}
+                  item={item}
+                  onOpen={setDetail}
+                  justAdded={justAdded.includes(item.sourceChip.documentId)}
+                />
               ))}
             </ul>
           </section>
