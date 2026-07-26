@@ -5,6 +5,7 @@ import { supabaseBrowser } from '@/lib/supabase/client'
 import { Button, Card, CardHeader, Meta, PageTitle } from '@/components/ui/primitives'
 import { EnvelopeIllustration } from '@/components/ui/illustrations'
 import { PRODUCT_NAME } from '@/components/brand-lockup'
+import { TryDemoButton } from '@/components/shell/try-demo-button'
 
 /** Magic-link auth. No passwords anywhere in the product (SPEC-FINAL §9). */
 export default function SignInPage() {
@@ -102,6 +103,15 @@ export default function SignInPage() {
             )}
           </form>
         </Card>
+      )}
+
+      {/* The other way in. Anyone who lands here from a shared link has no
+          account and no reason to hand over an email to look at a prototype. */}
+      {state !== 'sent' && (
+        <div className="mt-6 flex flex-col items-center gap-2">
+          <Meta>Or try it without an account:</Meta>
+          <TryDemoButton className="w-full" />
+        </div>
       )}
 
       <Meta className="mt-6 text-center">

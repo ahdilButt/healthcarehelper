@@ -108,18 +108,21 @@ export function PersonSwitcher({
             Add someone else
           </button>
 
-          {email && (
-            <p className="truncate px-4 pt-3 text-[13px] leading-[1.4] text-muted-foreground">
-              Signed in as {email}
-            </p>
-          )}
+          {/* No email means an anonymous guest session. Saying so matters:
+              leaving is the one door that does not open again — there is no
+              address to send a link back to. */}
+          <p className="truncate px-4 pt-3 text-[13px] leading-[1.4] text-muted-foreground">
+            {email
+              ? `Signed in as ${email}`
+              : 'Looking around as a guest. This copy is only on this device.'}
+          </p>
 
           <form action={signOut}>
             <button
               type="submit"
               className="block min-h-[44px] w-full px-4 py-3 text-left text-[15px] text-muted-foreground"
             >
-              Sign out
+              {email ? 'Sign out' : 'Leave the demo (this copy is discarded)'}
             </button>
           </form>
         </div>

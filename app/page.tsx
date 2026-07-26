@@ -3,6 +3,7 @@ import { CalendarCheck, Camera, ShieldCheck, Share2, Users } from 'lucide-react'
 import { BrandLockup } from '@/components/brand-lockup'
 import { PageTitle, PillButton, TypeIcon } from '@/components/ui-bits'
 import { DemoCountdown } from '@/components/shell/demo-countdown'
+import { TryDemoButton } from '@/components/shell/try-demo-button'
 import { demoWindow } from '@/lib/demo/window'
 
 /**
@@ -120,15 +121,10 @@ export default function WelcomePage() {
         <PillButton as={Link} href="/onboarding" className="hh-rise w-full" style={delay(1150)}>
           Get started
         </PillButton>
-        <PillButton
-          as={Link}
-          href="/timeline"
-          variant="plain"
-          className="hh-rise w-full"
-          style={delay(1220)}
-        >
-          See the demo story
-        </PillButton>
+        {/* Was a link to /timeline, which sent a stranger straight to a
+            sign-in form. It now provisions them a private copy of the demo
+            record — the door this screen was already promising. */}
+        <TryDemoButton className="hh-rise w-full" style={delay(1220)} />
       </div>
 
       <p
