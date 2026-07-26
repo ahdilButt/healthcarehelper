@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import type { PersonSummary } from '@/lib/types'
 import { setCurrentPerson, signOut } from '@/app/actions'
+import { InvitePanel } from './invite-panel'
 
 /** Top-left switcher: Amira ⇄ "Dad's story", settings behind it (SPEC-FINAL §9). */
 export function PersonSwitcher({
@@ -18,6 +19,7 @@ export function PersonSwitcher({
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
+  const [inviting, setInviting] = useState(false)
 
   function choose(id: string) {
     setOpen(false)
@@ -57,6 +59,7 @@ export function PersonSwitcher({
           />
         </svg>
       </button>
+
       {open && (
         <div className="absolute left-0 z-30 mt-1 min-w-[230px] overflow-hidden rounded-[16px] border border-border bg-card shadow-sm">
           {people.length > 1 && (
@@ -76,6 +79,22 @@ export function PersonSwitcher({
               ))}
             </ul>
           )}
+
+          {/* Bringing a second person into THIS record, rather than forwarding
+              a sign-in link — which does not add them, it makes them you. */}
+          {current.role === 'owner' && (
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false)
+                setInviting(true)
+              }}
+              className="block min-h-[44px] w-full border-b border-border px-4 py-3 text-left text-[15px] text-primary"
+            >
+              Invite someone to {current.displayName}&rsquo;s story
+            </button>
+          )}
+
           {/* The only way to start a second, empty record without wiping the
               first — which is what testing from scratch otherwise costs. */}
           <button
@@ -94,6 +113,7 @@ export function PersonSwitcher({
               Signed in as {email}
             </p>
           )}
+
           <form action={signOut}>
             <button
               type="submit"
@@ -103,6 +123,14 @@ export function PersonSwitcher({
             </button>
           </form>
         </div>
+      )}
+
+      {inviting && (
+        <InvitePanel
+          personId={current.id}
+          personName={current.displayName}
+          onClose={() => setInviting(false)}
+        />
       )}
     </div>
   )
