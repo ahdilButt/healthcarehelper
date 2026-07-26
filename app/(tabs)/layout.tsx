@@ -4,6 +4,8 @@ import { supabaseServer } from '@/lib/supabase/server'
 import { buildToday } from '@/lib/routines/today'
 import { TabBar } from '@/components/shell/tab-bar'
 import { PersonSwitcher } from '@/components/shell/person-switcher'
+import { DemoCountdown } from '@/components/shell/demo-countdown'
+import { demoWindow } from '@/lib/demo/window'
 
 /**
  * The signed-in shell. Every tab renders inside it, so the person switcher and
@@ -17,9 +19,12 @@ export default async function TabsLayout({ children }: { children: React.ReactNo
   // Read-only: the badge must never be the thing that creates a schedule, or
   // every tab in the app would start writing routine rows.
   const { badgeCount } = await buildToday(await supabaseServer(), person.id)
+  const { closesAt } = demoWindow()
 
   return (
     <div className="flex min-h-dvh flex-col">
+      {closesAt && <DemoCountdown closesAt={closesAt.toISOString()} />}
+
       <header className="border-b border-border bg-background sm:order-first">
         <div className="hh-shell flex items-center justify-between px-4 py-3">
           <PersonSwitcher current={person} people={people} email={email} />

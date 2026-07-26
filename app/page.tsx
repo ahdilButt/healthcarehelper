@@ -2,6 +2,15 @@ import Link from 'next/link'
 import { CalendarCheck, Camera, ShieldCheck, Share2, Users } from 'lucide-react'
 import { BrandLockup } from '@/components/brand-lockup'
 import { PageTitle, PillButton, TypeIcon } from '@/components/ui-bits'
+import { DemoCountdown } from '@/components/shell/demo-countdown'
+import { demoWindow } from '@/lib/demo/window'
+
+/**
+ * Rendered per request rather than at build: the closing date is an
+ * environment variable someone can move in Vercel, and a prerendered copy of
+ * this page would keep promising the old one.
+ */
+export const dynamic = 'force-dynamic'
 
 /**
  * The first screen (ONBOARDING-PAGE-SPEC).
@@ -38,8 +47,18 @@ const features = [
 const delay = (ms: number) => ({ animationDelay: `${ms}ms` })
 
 export default function WelcomePage() {
+  const { closesAt } = demoWindow()
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[720px] flex-col px-5 pt-10 pb-10">
+      {/* Full-bleed inside a padded column, so it reads as a strip across the
+          top rather than a card someone might mistake for content. */}
+      {closesAt && (
+        <div className="-mx-5 -mt-10 mb-8">
+          <DemoCountdown closesAt={closesAt.toISOString()} />
+        </div>
+      )}
+
       <header className="flex flex-col items-center text-center">
         <div className="hh-settle rounded-2xl">
           <BrandLockup />

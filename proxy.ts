@@ -1,16 +1,39 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { demoWindow } from '@/lib/demo/window'
+
+/** The one path that still answers after closing time. */
+const CLOSED_PATH = '/closed'
 
 /**
  * Next 16 renamed `middleware` to `proxy` (runtime is always nodejs).
- * Its only job is refreshing the Supabase session cookie so Server Components
- * never see a stale token.
+ * It does two things: shut the demo down when its time is up, and refresh the
+ * Supabase session cookie so Server Components never see a stale token.
  *
- * It deliberately does NOT gate routes: /c/[token] is the single public path
- * and guards its own token server-side, and every API route runs its own
- * membership check (API-CONTRACTS non-negotiable #1).
+ * It deliberately does NOT gate routes by membership: /c/[token] is the single
+ * public path and guards its own token server-side, and every API route runs
+ * its own membership check (API-CONTRACTS non-negotiable #1).
+ *
+ * The kill switch lives here because this is the one place every request
+ * passes through — a page, an API route, a capsule link a clinician was given
+ * yesterday. When the demo closes, all of it closes at once.
  */
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  if (demoWindow().closed && pathname !== CLOSED_PATH) {
+    // Machines get the envelope every other route answers with; people get the
+    // page. Neither gets a session refreshed — there is nothing left to use it
+    // on until someone moves DEMO_CLOSES_AT.
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { error: { code: 'expired', message: 'This demo has closed.' } },
+        { status: 410, headers: { 'cache-control': 'no-store' } }
+      )
+    }
+    return NextResponse.rewrite(new URL(CLOSED_PATH, request.url))
+  }
+
   const response = NextResponse.next({ request })
 
   const supabase = createServerClient(
