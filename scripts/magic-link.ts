@@ -22,9 +22,20 @@ const PROD = 'https://healthcarehelper-pi.vercel.app'
 
 async function main() {
   const args = process.argv.slice(2)
-  const email = args.find((a) => a.includes('@')) ?? process.env.SEED_OWNER_EMAIL ?? 'amira@example.com'
+  const given = args.find((a) => a.includes('@'))
   const target = args.find((a) => a.startsWith('http'))
   const wantsProd = args.includes('--prod')
+
+  // Falling back to the default owner while pointed at a real deployment is
+  // how you hand somebody a link that signs them in AS YOU. Away from
+  // localhost, the address has to be said out loud.
+  if (!given && (wantsProd || target)) {
+    console.error('Name the address explicitly when targeting a deployment:')
+    console.error('  npm run magic-link -- someone@example.com --prod')
+    process.exit(1)
+  }
+
+  const email = given ?? process.env.SEED_OWNER_EMAIL ?? 'amira@example.com'
   const appUrl = (target ?? (wantsProd ? PROD : process.env.APP_URL) ?? 'http://localhost:3000').replace(/\/$/, '')
 
   const db = createClient(
@@ -56,10 +67,11 @@ async function main() {
     process.exit(1)
   }
 
-  console.log(`\n${email} -> ${appUrl}\n`)
+  console.log(`\nThis link signs the holder in AS ${email}`)
+  console.log(`on ${appUrl}\n`)
   console.log(data.properties.action_link)
   console.log(
-    `\nOpen it in a private window to test as a stranger. It signs you in once and is then spent.\n`
+    `\nOne use, then spent. Anyone who opens it becomes that account — send it only to whoever owns the address.\n`
   )
 }
 
