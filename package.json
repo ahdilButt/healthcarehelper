@@ -22,7 +22,8 @@
     "tick": "tsx scripts/tick-probe.ts",
     "security-check": "tsx scripts/security-check.ts",
     "wipe": "tsx scripts/wipe.ts",
-    "ingest": "tsx scripts/ingest-artefacts.ts"
+    "ingest": "tsx scripts/ingest-artefacts.ts",
+    "demo:appt": "tsx scripts/demo-appointment.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

@@ -87,7 +87,7 @@ export async function sendEmail(to: string, subject: string, body: string): Prom
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'HealthcareHelper <onboarding@resend.dev>',
+      from: 'Aftercare <onboarding@resend.dev>',
       to: [to],
       subject,
       text: body,

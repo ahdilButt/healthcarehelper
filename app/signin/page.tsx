@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabaseBrowser } from '@/lib/supabase/client'
 import { Button, Card, CardHeader, Meta, PageTitle } from '@/components/ui/primitives'
 import { EnvelopeIllustration } from '@/components/ui/illustrations'
+import { PRODUCT_NAME } from '@/components/brand-lockup'
 
 /** Magic-link auth. No passwords anywhere in the product (SPEC-FINAL §9). */
 export default function SignInPage() {
@@ -62,7 +63,7 @@ export default function SignInPage() {
     <main className="hh-shell flex min-h-dvh flex-col justify-center px-5 py-10">
       <div className="mb-8 flex flex-col items-center gap-4 text-center">
         <EnvelopeIllustration />
-        <PageTitle>HealthcareHelper</PageTitle>
+        <PageTitle>{PRODUCT_NAME}</PageTitle>
         <Meta className="max-w-[30ch]">
           Photograph the letters. The story assembles itself.
         </Meta>
