@@ -1,5 +1,8 @@
 import { config } from 'dotenv'
 config({ path: '.env.local', quiet: true })
+// This gate costs real money and is the developer's spend, not the public
+// demo's. Left metered, one run of it would eat the visitors' whole budget.
+process.env.USAGE_METER_OFF = 'true'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { transcribe, type Legibility } from '../lib/ingest/stage-a'

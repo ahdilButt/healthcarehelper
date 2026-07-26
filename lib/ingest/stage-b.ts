@@ -1,4 +1,4 @@
-import { CLAUDE_MODEL, claude, textOf } from '@/lib/ai/claude'
+import { CLAUDE_MODEL, createMessage, textOf } from '@/lib/ai/claude'
 import { CONFIRMED_THRESHOLD, PRODUCT_LAW } from '@/lib/constants'
 import { EXTRACTION_JSON_SCHEMA, extractedFactsSchema, type ExtractedFacts } from './schema'
 import type { Legibility } from './stage-a'
@@ -71,7 +71,7 @@ export async function extractFacts(
   transcript: string,
   legibility: Legibility = 'clear'
 ): Promise<ExtractedFacts> {
-  const message = await claude().messages.create({
+  const message = await createMessage({
     model: CLAUDE_MODEL,
     max_tokens: 16000,
     system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }],

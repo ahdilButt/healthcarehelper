@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { CLAUDE_MODEL, claude, textOf } from '@/lib/ai/claude'
+import { CLAUDE_MODEL, createMessage, textOf } from '@/lib/ai/claude'
 import { PRODUCT_LAW } from '@/lib/constants'
 import { applyCorrections, correctionsForPerson, factKey, isConfirmed } from '@/lib/facts/read'
 import { buildToday } from './today'
@@ -127,7 +127,7 @@ async function oneSentence(c: Counts): Promise<string> {
         : `${c.remaining} of ${c.total} still to take${c.nextAt ? `, next at ${c.nextAt}` : ''}.`
 
   try {
-    const message = await claude().messages.create({
+    const message = await createMessage({
       model: CLAUDE_MODEL,
       // One sentence from counts that are already true needs no deliberation,
       // and a small budget spent thinking leaves no budget to answer with —

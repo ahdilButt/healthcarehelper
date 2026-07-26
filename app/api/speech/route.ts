@@ -1,6 +1,7 @@
 import { ApiError, readJson, required, route } from '@/lib/api/errors'
 import { requireMember } from '@/lib/api/guards'
 import { SPEECH_MAX_CHARS, speak, speechConfigured } from '@/lib/speech/elevenlabs'
+import { USAGE, budgets, refund, reserve } from '@/lib/usage/meter'
 
 /**
  * POST /api/speech — say something out loud.
@@ -28,8 +29,21 @@ export const POST = route(async (req: Request) => {
     throw new ApiError('not_found', 'No voice is configured.')
   }
 
+  // ElevenLabs bills per character, and the length is known before the money
+  // is spent — so this is reserved up front and the ceiling holds exactly.
+  // Over budget is not an error worth showing: useSpeech hears any non-OK
+  // answer and speaks the same words in the browser's own voice.
+  if (!(await reserve(USAGE.speechChars, text.length, budgets().speechChars))) {
+    console.error('[speech] character budget spent — falling back to the browser voice')
+    throw new ApiError('rate_limited', 'The voice budget for this demo is spent.')
+  }
+
   const audio = await speak(text)
-  if (!audio) throw new ApiError('processing_failed', 'Could not read that out.')
+  if (!audio) {
+    // Nothing was said, so nothing should have been charged.
+    await refund(USAGE.speechChars, text.length)
+    throw new ApiError('processing_failed', 'Could not read that out.')
+  }
 
   return new Response(audio as BodyInit, {
     headers: {

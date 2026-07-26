@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { BudgetError } from '@/lib/usage/meter'
 
 /** API-CONTRACTS.md: the universal error envelope. No bare 500 texts, ever. */
 export type ApiErrorCode =
@@ -49,6 +50,17 @@ export function route<A extends unknown[]>(
       return await handler(...args)
     } catch (e) {
       if (e instanceof ApiError) return errorResponse(e.code, e.message)
+      // A spent budget is handled here rather than in each route, so every
+      // paid surface refuses in the same words. 429 because it is a ceiling,
+      // not a fault: the request was fine, there is just nothing left to
+      // spend on it.
+      if (e instanceof BudgetError) {
+        console.error(`[usage] refused — ${e.counter} is spent`)
+        return errorResponse(
+          'rate_limited',
+          'This demo has used up its AI budget. Everything already saved is still here.'
+        )
+      }
       console.error('[api] unhandled', e instanceof Error ? e.message : e)
       return errorResponse('processing_failed', 'Something went wrong. Please try again.')
     }

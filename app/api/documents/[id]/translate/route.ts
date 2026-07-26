@@ -3,6 +3,7 @@ import { ApiError, route } from '@/lib/api/errors'
 import { requireMemberOfRow } from '@/lib/api/guards'
 import { RefusalError } from '@/lib/ai/claude'
 import { translateLetter } from '@/lib/ask/translate'
+import { BudgetError, chargeUserCall } from '@/lib/usage/meter'
 
 /**
  * GET /api/documents/:id/translate — "What this letter says", on the detail
@@ -11,7 +12,8 @@ import { translateLetter } from '@/lib/ask/translate'
  */
 export const GET = route(async (_req: Request, ctx: RouteContext<'/api/documents/[id]/translate'>) => {
   const { id } = await ctx.params
-  const { row } = await requireMemberOfRow('documents', id)
+  const { membership, row } = await requireMemberOfRow('documents', id)
+  await chargeUserCall(membership.userId)
 
   const transcript = ((row.transcript as string | null) ?? '').trim()
   if (!transcript) {
@@ -21,6 +23,7 @@ export const GET = route(async (_req: Request, ctx: RouteContext<'/api/documents
   try {
     return NextResponse.json(await translateLetter(transcript))
   } catch (e) {
+    if (e instanceof BudgetError) throw e
     if (e instanceof RefusalError) {
       throw new ApiError('processing_failed', 'We could not put this one into plain words.')
     }

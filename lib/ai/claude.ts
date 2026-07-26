@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { USAGE, assertBudget, budgets, costMicros, record } from '@/lib/usage/meter'
 
 /**
  * One Claude client for the whole app.
@@ -11,13 +12,32 @@ export const CLAUDE_MODEL = 'claude-opus-5'
 
 let client: Anthropic | null = null
 
-export function claude(): Anthropic {
+/** Private on purpose — see createMessage: one metered way in, or no ceiling. */
+function claude(): Anthropic {
   if (!client) {
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) throw new Error('ANTHROPIC_API_KEY is not set')
     client = new Anthropic({ apiKey, maxRetries: 3 })
   }
   return client
+}
+
+/**
+ * Every Claude call in the app goes through here, so the demo's spend has one
+ * ceiling rather than six.
+ *
+ * The check is before and the charge is after, because the cost of a call is
+ * only known once it has been made. That allows an overshoot of one call —
+ * accepted deliberately: the alternative is asking the model to quote first,
+ * which costs a call.
+ */
+export async function createMessage(
+  params: Anthropic.MessageCreateParamsNonStreaming
+): Promise<Anthropic.Message> {
+  await assertBudget(USAGE.aiUsd, budgets().aiUsd * 1_000_000)
+  const message = await claude().messages.create(params)
+  await record(USAGE.aiUsd, costMicros(message.usage))
+  return message
 }
 
 /** Raised when Claude's safety classifiers decline a request. */

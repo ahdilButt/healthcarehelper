@@ -5,6 +5,7 @@ import { RefusalError } from '@/lib/ai/claude'
 import { applyCorrections, latestCorrections } from '@/lib/facts/read'
 import { sourceLabel } from '@/lib/timeline/build'
 import { draftChase } from '@/lib/ask/chase'
+import { BudgetError, chargeUserCall } from '@/lib/usage/meter'
 
 /**
  * GET /api/loops/:id/chase — the drafted letter behind a watch-card.
@@ -15,6 +16,7 @@ import { draftChase } from '@/lib/ask/chase'
 export const GET = route(async (_req: Request, ctx: RouteContext<'/api/loops/[id]/chase'>) => {
   const { id } = await ctx.params
   const { membership, row } = await requireMemberOfRow('open_loops', id)
+  await chargeUserCall(membership.userId)
   const db = membership.db
 
   const fixes = await latestCorrections(db, 'open_loops', id)
@@ -60,6 +62,7 @@ export const GET = route(async (_req: Request, ctx: RouteContext<'/api/loops/[id
     })
     return NextResponse.json(draft)
   } catch (e) {
+    if (e instanceof BudgetError) throw e
     if (e instanceof RefusalError) {
       throw new ApiError('processing_failed', 'We could not draft that one.')
     }

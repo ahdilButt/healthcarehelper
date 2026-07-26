@@ -5,6 +5,7 @@ import { requireMember } from '@/lib/api/guards'
 import { runPipeline } from '@/lib/ingest/pipeline'
 import { putDocument } from '@/lib/storage'
 import { supabaseService } from '@/lib/supabase/service'
+import { chargeUserCall } from '@/lib/usage/meter'
 import type { DocumentKind } from '@/lib/types'
 
 const KINDS: DocumentKind[] = ['letter_photo', 'pdf', 'voice_note', 'box_photo']
@@ -26,6 +27,10 @@ export const POST = route(async (req: Request) => {
   if (!personId) throw new ApiError('invalid_input', 'Missing personId.')
 
   const member = await requireMember(personId)
+  // An upload buys two Claude calls (transcribe, then extract) — the most
+  // expensive thing a visitor can ask for, so it is charged before the file
+  // is even read.
+  await chargeUserCall(member.userId)
 
   const kind = String(form.get('kind') ?? 'letter_photo') as DocumentKind
   if (!KINDS.includes(kind)) throw new ApiError('invalid_input', `Unknown kind: ${kind}`)

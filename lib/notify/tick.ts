@@ -5,6 +5,8 @@ import { humanDocName, shortDate } from '@/lib/timeline/build'
 import { londonDate, londonInstant, humanTime } from '@/lib/routines/time'
 import { recipientsFor, type Recipient } from './recipients'
 import { sendEmail, sendSms, type SendResult } from './send'
+import { demoWindow } from '@/lib/demo/window'
+import { reserve, used } from '@/lib/usage/meter'
 
 /**
  * One minute of work (API-CONTRACTS.md /api/cron/tick).
@@ -32,6 +34,7 @@ const DRAIN_LIMIT = 50
 const LOOKBACK_HOURS = 48
 
 export async function runTick(service: SupabaseClient, now = new Date()): Promise<TickResult> {
+  await warnDemoClosing(now)
   const loopsFlippedOverdue = await flipOverdueLoops(service)
 
   const { data: persons } = await service.from('persons').select('id, display_name')
@@ -45,6 +48,39 @@ export async function runTick(service: SupabaseClient, now = new Date()): Promis
 
   const drained = await drain(service, now)
   return { ...drained, loopsFlippedOverdue }
+}
+
+/**
+ * Belt and braces on the kill switch: a heads-up the day before it fires.
+ *
+ * The switch itself is an environment variable nobody will be looking at, and
+ * the failure it protects against — a demo closing mid-conversation with real
+ * people in it — is easier to prevent than to explain. This tick already runs
+ * every minute, so it is the cheapest place to notice.
+ *
+ * Sent exactly once: the counter table is the memory (a serverless function
+ * has none), and if it cannot be read the mail is skipped rather than sent
+ * every sixty seconds.
+ */
+const WARN_KEY = 'demo:closing_warned'
+const DAY_MS = 24 * 3600 * 1000
+
+async function warnDemoClosing(now: Date) {
+  const to = process.env.DEMO_OWNER_EMAIL?.trim()
+  const { closesAt, closed, msRemaining } = demoWindow(now)
+  if (!to || !closesAt || closed || (msRemaining ?? 0) > DAY_MS) return
+
+  if ((await used(WARN_KEY)) === null) return
+  if (!(await reserve(WARN_KEY, 1, 1))) return
+
+  const hours = Math.max(1, Math.round((msRemaining ?? 0) / 3600_000))
+  await sendEmail(
+    to,
+    'Aftercare: the demo closes in about a day',
+    `The public demo closes at ${closesAt.toISOString()} — about ${hours} hours from now.\n\n` +
+      'After that every page answers the closed notice and every API route answers 410.\n' +
+      'To move the date, edit DEMO_CLOSES_AT in Vercel; it takes effect on the next request.'
+  )
 }
 
 /**

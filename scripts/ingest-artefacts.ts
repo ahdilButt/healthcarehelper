@@ -1,5 +1,7 @@
 import { config } from 'dotenv'
 config({ path: '.env.local' })
+// A developer re-seeding the demo record is not a visitor spending its budget.
+process.env.USAGE_METER_OFF = 'true'
 
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'

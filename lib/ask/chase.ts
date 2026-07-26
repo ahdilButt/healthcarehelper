@@ -1,4 +1,4 @@
-import { CLAUDE_MODEL, claude, textOf } from '@/lib/ai/claude'
+import { CLAUDE_MODEL, createMessage, textOf } from '@/lib/ai/claude'
 import { PRODUCT_LAW } from '@/lib/constants'
 
 /**
@@ -70,7 +70,7 @@ export async function draftChase(ctx: ChaseContext): Promise<ChaseDraft> {
       ? `It is now about ${ctx.daysOverdue} days past the date it was expected by.`
       : 'It has not been heard about since.'
 
-  const message = await claude().messages.create({
+  const message = await createMessage({
     model: CLAUDE_MODEL,
     max_tokens: 1500,
     system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }],

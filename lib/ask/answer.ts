@@ -1,4 +1,4 @@
-import { CLAUDE_MODEL, claude, textOf } from '@/lib/ai/claude'
+import { CLAUDE_MODEL, createMessage, textOf } from '@/lib/ai/claude'
 import { PRODUCT_LAW } from '@/lib/constants'
 import type { Citation } from '@/lib/types'
 import type { RecordContext } from './context'
@@ -138,7 +138,7 @@ export async function answerQuestion(
   personName: string,
   opts: { spoken?: boolean } = {}
 ): Promise<Answer> {
-  const message = await claude().messages.create({
+  const message = await createMessage({
     model: CLAUDE_MODEL,
     max_tokens: 4000,
     system: [

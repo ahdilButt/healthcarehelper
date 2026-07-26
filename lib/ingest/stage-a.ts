@@ -1,5 +1,5 @@
 import type Anthropic from '@anthropic-ai/sdk'
-import { CLAUDE_MODEL, claude, mediaTypeFor, textOf } from '@/lib/ai/claude'
+import { CLAUDE_MODEL, createMessage, mediaTypeFor, textOf } from '@/lib/ai/claude'
 import { PRODUCT_LAW } from '@/lib/constants'
 
 /**
@@ -93,7 +93,7 @@ export async function transcribe(
           },
         }
 
-  const message = await claude().messages.create({
+  const message = await createMessage({
     model: CLAUDE_MODEL,
     max_tokens: 16000,
     system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }],

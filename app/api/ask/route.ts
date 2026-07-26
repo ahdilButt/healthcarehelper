@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { ApiError, readJson, required, route } from '@/lib/api/errors'
 import { requireMember } from '@/lib/api/guards'
 import { RefusalError } from '@/lib/ai/claude'
+import { BudgetError, chargeUserCall } from '@/lib/usage/meter'
 import { buildRecordContext } from '@/lib/ask/context'
 import { answerQuestion, type Turn } from '@/lib/ask/answer'
 
@@ -33,6 +34,7 @@ export const POST = route(async (req: Request) => {
   }
 
   const member = await requireMember(personId)
+  await chargeUserCall(member.userId)
   const db = member.db
 
   const { data: person } = await db
@@ -81,6 +83,9 @@ export const POST = route(async (req: Request) => {
       spoken: Boolean(body.spoken),
     })
   } catch (e) {
+    // The budget refusal has its own words in the envelope — a local catch
+    // must not flatten it into "something went wrong".
+    if (e instanceof BudgetError) throw e
     if (e instanceof RefusalError) {
       throw new ApiError('processing_failed', 'That one is better asked of a clinician directly.')
     }

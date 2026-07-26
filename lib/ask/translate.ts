@@ -1,4 +1,4 @@
-import { CLAUDE_MODEL, claude, textOf } from '@/lib/ai/claude'
+import { CLAUDE_MODEL, createMessage, textOf } from '@/lib/ai/claude'
 import { PRODUCT_LAW } from '@/lib/constants'
 
 /**
@@ -43,7 +43,7 @@ const SCHEMA = {
 } as const
 
 export async function translateLetter(transcript: string): Promise<Translation> {
-  const message = await claude().messages.create({
+  const message = await createMessage({
     model: CLAUDE_MODEL,
     max_tokens: 2000,
     system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }],
