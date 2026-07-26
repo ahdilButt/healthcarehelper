@@ -25,7 +25,7 @@ export default function OnboardingPage() {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        displayName: forSelf ? name.trim() || 'Me' : name.trim(),
+        displayName: name.trim(),
         managingNote: note.trim() || undefined,
       }),
     })
@@ -58,7 +58,6 @@ export default function OnboardingPage() {
               variant="ghost"
               onClick={() => {
                 setForSelf(true)
-                setName('Me')
                 setStep(1)
               }}
             >
@@ -74,17 +73,17 @@ export default function OnboardingPage() {
           <Card>
             <div className="flex flex-col gap-3">
               <label htmlFor="name" className="text-[15px] font-medium">
-                Name
+                {forSelf ? 'Your name' : 'Name'}
               </label>
               <input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={forSelf ? 'Me' : 'Dad'}
+                placeholder={forSelf ? 'Your first name' : 'Dad'}
                 className="min-h-[44px] rounded-xl border border-border bg-white px-3 text-[15px] outline-none focus:border-primary"
               />
               <label htmlFor="note" className="mt-2 text-[15px] font-medium">
-                What are they managing?{' '}
+                {forSelf ? 'What are you managing?' : 'What are they managing?'}{' '}
                 <span className="font-normal text-muted-foreground">(optional)</span>
               </label>
               <input
