@@ -32,7 +32,13 @@ export default function OnboardingPage() {
     })
     const body = await res.json().catch(() => null)
     if (!res.ok) {
-      setError(body?.error?.message ?? 'Something went wrong.')
+      // A session can still lapse between opening this page and submitting it.
+      // Say what to do about it rather than repeating the API's words.
+      setError(
+        res.status === 401
+          ? 'Your sign-in has expired. Open the sign-in page again and we will bring you back here.'
+          : (body?.error?.message ?? 'Something went wrong.')
+      )
       setBusy(false)
       return
     }
