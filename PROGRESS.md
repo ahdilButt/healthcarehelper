@@ -29,6 +29,12 @@ caps and guest mode. **Two manual steps stand between that and a public link
 site ever shows a page titled "Healthcare Helper - AI Task Automation",
 production has reverted to `main`.
 
+> **The original Supabase project is no longer reachable (2026-07-27).** A
+> fresh one is now the supported path and takes about ten minutes, four of the
+> six steps being one command — **[SUPABASE-SETUP.md](SUPABASE-SETUP.md)**.
+> Nothing is lost: the record rebuilds from the fixtures in this repo, by
+> machine, with no AI spend, and comes out with the right doses first time.
+
 ---
 
 ## 2. Where the build is
@@ -63,18 +69,20 @@ The user's words: *"turn this site into a deployed website — just a playable
 demo… let those who use it upload and talk to it… then cut off all access in
 3–7 days… and cap the credits."*
 
-All three are built and pushed. **Two things must be done by hand before a
-link goes out** — neither is code, and `npm run demo:check` reports the first:
+All three are built and pushed. What remains is setup, not code, and it now
+lives in **[SUPABASE-SETUP.md](SUPABASE-SETUP.md)** — `npm run setup:fresh`
+applies both SQL files, makes the bucket and seeds the record. Two things stay
+manual because they are dashboard switches:
 
-1. **Paste `supabase/demo-mode.sql`** into the Supabase SQL editor. Until then
-   the counters have nowhere to live and the caps are inert — the app logs
-   `[usage] counter store unavailable — SPEND IS UNCAPPED` and keeps working.
-2. **Turn on anonymous sign-ins**: Supabase → Authentication → Sign In /
-   Providers → Anonymous sign-ins. Until then "Have a look around first"
-   answers *"Guest access is not switched on for this demo"* (403).
+1. **Anonymous sign-ins**: Supabase → Authentication → Sign In / Providers.
+   Until then "Have a look around first" answers *"Guest access is not
+   switched on for this demo"* (403).
+2. **Auth URL configuration** — site URL and redirect URLs, so magic links
+   land back on the right host. Guests never touch it.
 
 Then set in Vercel: `DEMO_CLOSES_AT`, and optionally `DEMO_OWNER_EMAIL`,
 `DEMO_BUDGET_*`, `DEMO_TEMPLATE_PERSON_ID` (see `.env.example`).
+`npm run demo:check` answers "is this actually fenced?" in one screen.
 
 ### 3a. Guest mode — `POST /api/demo/guest`
 Anonymous Supabase sessions, one private copy of the demo record each. Not a
@@ -150,9 +158,10 @@ already bounds the window. `npm run test:extraction` and `npm run ingest` set
 1. **The service-role key is in `main`'s git history** (`demo-data/.env.local`,
    commit `0c90373`). It bypasses every RLS policy. **Rotate before any real
    user touches this.** Not a demo blocker; is a real-users blocker.
-2. **One Supabase project is shared with the design lane.** Their seed writes
-   into the demo record — 12 `placeholder.pdf` documents appeared mid-ingest
-   once. Separate projects before it matters.
+2. ~~One Supabase project is shared with the design lane~~ — moot once the new
+   project is stood up, and worth keeping that way: their seed used to write
+   into the demo record, and 12 `placeholder.pdf` documents once appeared
+   mid-ingest. Do not hand the new keys to the design lane.
 3. **Resend has no verified domain** (unconfirmed but likely). Consequence:
    auth email reaches `acadahdil998@gmail.com` only. Everyone else needs a
    minted link. Fix: Resend → Domains → add one + DNS.
@@ -226,6 +235,9 @@ looks like an outage and is not one. Browsers are unaffected — but
 ```
 npm run dev
 npm run build && npm run lint && npm run typecheck && npm test   # the gates
+
+npm run setup:fresh          # a new Supabase project, from nothing to seeded
+npm run db:apply             # just the SQL (schema.sql + demo-mode.sql)
 
 npm run demo:check           # is the demo actually fenced? (date, table, spend)
 npm run demo:clone-probe     # guest mode's record copy, verified and cleaned up
