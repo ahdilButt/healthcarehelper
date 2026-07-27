@@ -201,7 +201,7 @@ else — no design-lane placeholders, no half-ingested duplicates.
 
 | Email | Sees |
 |---|---|
-| `amira@example.com` | **Dad — 14 documents, 48 facts, 7 medicines** (owner) |
+| `amira@example.com` | **Dad — 14 documents, 48 facts, 7 medicines** (owner) · Amira (empty) |
 | `dad@example.com` | nothing — lands on onboarding |
 | anyone else | a magic link, or the guest button |
 
@@ -218,7 +218,15 @@ ingested by an older extractor.
 **Routines are created on first view**, not by the seed: `GET /api/today/:id`
 calls `ensureRoutines`. A freshly seeded record therefore has none until
 somebody opens Today, which is also true of every guest copy. Nothing to do —
-just do not read "0 routines" as a failed seed.
+just do not read "0 routines" as a failed seed. Verified on the new project:
+first call created 6 routines and returned Metformin, Ramipril and Bisoprolol
+due at 08:00 London.
+
+**Walked without a browser, against the new project (2026-07-27):** sign in as
+the owner via `auth.admin.generateLink` → `verifyOtp`, then
+`GET /api/persons` (200, two records), `GET /api/persons/:id/timeline` (200,
+30 cards), `GET /api/today/:id` (200, doses grouped by round). `/api/ask` was
+deliberately left out of that walk — it spends money.
 
 `npm run demo:appt` puts the eye screening two days out — **re-run it on the
 morning of the demo** or the diary line reads "no appointments".
