@@ -22,8 +22,9 @@ caps and guest mode. **Two manual steps stand between that and a public link
 | Repo | `github.com/ahdilButt/healthcarehelper` |
 | Vercel scope/project | `healthcarehelper / healthcarehelper` |
 | Deploys on | every push to `master`, automatically |
-| Sign-in that works, with full data | `acadahdil998@gmail.com` |
-| Sign-in that works, blank | `dad@example.com` (mint a link — not a real inbox) |
+| Supabase project | `itpdyathhuxvwbnhczgg` (eu-west-2) — new, 2026-07-27 |
+| Sign-in that works, with full data | `amira@example.com` (mint a link — not a real inbox) |
+| Sign-in that works, blank | `dad@example.com` (same) |
 
 `main` is the design lane's branch and is a **different application**. If the
 site ever shows a page titled "Healthcare Helper - AI Task Automation",
@@ -139,9 +140,11 @@ already bounds the window. `npm run test:extraction` and `npm run ingest` set
 `USAGE_METER_OFF` — a developer's £2 gate run is not the visitors' budget.
 
 ### 3d. Smaller, known, unfixed
-- **Conditions extract noisily** — 15 rows where DATASET-BIBLE says 4. Symptoms
-  ("Breathlessness on exertion") and echo findings are recorded as conditions.
-  A Stage B prompt tightening plus a fixture. Most visible on the doctor brief.
+- **Conditions extract noisily** — the seeded record now has the correct 4,
+  because the fixtures are clean; the old project's 15 came from live ingest.
+  The defect is in the Stage B prompt, not the data, so it returns the moment
+  anyone photographs a letter. Symptoms ("Breathlessness on exertion") and echo
+  findings get recorded as conditions. Most visible on the doctor brief.
 - **The guided tour** (3–5 screens, ONBOARDING-PAGE-SPEC) still does not exist.
   That slot on the welcome screen is now "Have a look around first", which
   provisions a guest record and drops them on the timeline.
@@ -193,22 +196,29 @@ already bounds the window. `npm run test:extraction` and `npm run ingest` set
 
 ## 5. Accounts and data, as they stand
 
+**Rebuilt from fixtures on the new project, 2026-07-27.** One record, nothing
+else — no design-lane placeholders, no half-ingested duplicates.
+
 | Email | Sees |
 |---|---|
-| `acadahdil998@gmail.com` | **Dad — 20 docs, 7 meds** (owner) · Test record (1 letter) |
-| `amira@example.com` | Dad, the same full record (owner) |
-| `zjm990826@gmail.com` | Dad (carer) · Test record (0 letters) |
-| `demo@livingrecord.app` | Amira (empty) · a different Dad, 12 docs — design lane |
+| `amira@example.com` | **Dad — 14 documents, 48 facts, 7 medicines** (owner) |
 | `dad@example.com` | nothing — lands on onboarding |
+| anyone else | a magic link, or the guest button |
 
-The demo record is **"Dad"**; the near-empty ones are renamed
-**"Test record (n letters)"** so the switcher is unambiguous on stage.
+The record is **"Dad"**, person id printed by the seed. Every guest gets a
+private copy of it (§3a), so it is also the template — renaming or emptying it
+changes what every future visitor arrives to.
 
-Its medicines were corrected by hand to DATASET-BIBLE §4 (Ramipril 5mg,
-Bisoprolol 2.5mg, Furosemide 40mg, Metformin 1g bd, Atorvastatin 20mg nocte,
-GTN patch, Amlodipine stopped) because those rows were ingested *before*
-`richerDose` learned to prefer "once daily" over "quantity 28". The extraction
-code is correct now; a fresh ingest produces the right values.
+The medicines come out of the fixtures correct: Ramipril 5mg, Bisoprolol
+2.5mg, Furosemide 40mg, Metformin 1g bd, Atorvastatin 20mg, GTN patch,
+Amlodipine. The hand-corrections this section used to describe are gone with
+the old project — they were only ever needed because those rows had been
+ingested by an older extractor.
+
+**Routines are created on first view**, not by the seed: `GET /api/today/:id`
+calls `ensureRoutines`. A freshly seeded record therefore has none until
+somebody opens Today, which is also true of every guest copy. Nothing to do —
+just do not read "0 routines" as a failed seed.
 
 `npm run demo:appt` puts the eye screening two days out — **re-run it on the
 morning of the demo** or the diary line reads "no appointments".
