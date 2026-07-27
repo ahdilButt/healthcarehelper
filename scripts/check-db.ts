@@ -8,7 +8,10 @@ async function main() {
   const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } })
   let missing = 0
   for (const t of TABLES) {
-    const { error } = await db.from(t).select('*', { count: 'exact', head: true })
+    // A plain select, NOT head+count: PostgREST answers a head request over a
+    // missing table without an error, so the count form reported a fully
+    // applied schema against an empty project.
+    const { error } = await db.from(t).select('*').limit(1)
     if (error) { console.log(`  MISSING ${t.padEnd(20)} ${error.message}`); missing++ }
     else console.log(`  ok      ${t}`)
   }
