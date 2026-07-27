@@ -70,20 +70,28 @@ The user's words: *"turn this site into a deployed website — just a playable
 demo… let those who use it upload and talk to it… then cut off all access in
 3–7 days… and cap the credits."*
 
-All three are built and pushed. What remains is setup, not code, and it now
-lives in **[SUPABASE-SETUP.md](SUPABASE-SETUP.md)** — `npm run setup:fresh`
-applies both SQL files, makes the bucket and seeds the record. Two things stay
-manual because they are dashboard switches:
+All three are built, pushed and **verified working end to end on the new
+project (2026-07-27)**:
 
-1. **Anonymous sign-ins**: Supabase → Authentication → Sign In / Providers.
-   Until then "Have a look around first" answers *"Guest access is not
-   switched on for this demo"* (403).
-2. **Auth URL configuration** — site URL and redirect URLs, so magic links
-   land back on the right host. Guests never touch it.
+| Proved | How |
+|---|---|
+| Guest session | `POST /api/demo/guest` → 200, own record, 30 timeline cards, 7 doses due |
+| Guest isolation | that session gets **403** on the template record |
+| Per-visitor cap | ceiling of 3 → 4th call refused, counter left at 3 (the refusal rolled back) |
+| Voice cap | 4000 chars allowed, the next 4000 refused at a 5000 ceiling |
+| Kill switch | date in the past → pages closed, API 410 |
+| Fence | `npm run demo:check` → **DEMO FENCE: READY** |
 
-Then set in Vercel: `DEMO_CLOSES_AT`, and optionally `DEMO_OWNER_EMAIL`,
-`DEMO_BUDGET_*`, `DEMO_TEMPLATE_PERSON_ID` (see `.env.example`).
-`npm run demo:check` answers "is this actually fenced?" in one screen.
+Setup lives in **[SUPABASE-SETUP.md](SUPABASE-SETUP.md)**; `npm run setup:fresh`
+does the SQL, the bucket and the seed. Anonymous sign-ins is on. What is left
+before a public link:
+
+1. **Vercel variables** — the three new Supabase values, plus `DEMO_CLOSES_AT`
+   (and optionally `DEMO_OWNER_EMAIL`, `DEMO_BUDGET_*`). **Never**
+   `SUPABASE_DB_URL`. Redeploy afterwards; env changes do not rebuild.
+2. **Auth URL configuration** — site URL and redirect URLs, so magic links land
+   back on the right host. Guests never touch it, so this only matters for
+   signing in as yourself.
 
 ### 3a. Guest mode — `POST /api/demo/guest`
 Anonymous Supabase sessions, one private copy of the demo record each. Not a
