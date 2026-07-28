@@ -12,6 +12,8 @@ export default function SignInPage() {
   const [email, setEmail] = useState('')
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [message, setMessage] = useState('')
+  /** The email form is opt-in — see the note where it is rendered. */
+  const [showEmail, setShowEmail] = useState(false)
 
   /**
    * Some magic links land as an implicit-flow fragment
@@ -79,39 +81,53 @@ export default function SignInPage() {
           </Meta>
         </Card>
       ) : (
-        <Card>
-          <form onSubmit={send} className="flex flex-col gap-3">
-            <label htmlFor="email" className="text-[15px] font-medium">
-              Your email
-            </label>
-            <input
-              id="email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="min-h-[44px] rounded-xl border border-border bg-white px-3 text-[15px] outline-none focus:border-primary"
-            />
-            <Button type="submit" disabled={state === 'sending'}>
-              {state === 'sending' ? 'Sending…' : 'Email me a link'}
-            </Button>
-            {state === 'error' && (
-              <p className="text-[13px] text-alert">{message}</p>
-            )}
-          </form>
-        </Card>
-      )}
+        <>
+          <Card>
+            <CardHeader>Have a look around</CardHeader>
+            <Meta className="mt-2 mb-4">
+              You get your own copy of a made-up family&apos;s records — real letters, real
+              medicines, nothing to sign up for. Add a letter of your own if you like.
+            </Meta>
+            <TryDemoButton className="w-full" onFailure={() => setShowEmail(true)} />
+          </Card>
 
-      {/* The other way in. Anyone who lands here from a shared link has no
-          account and no reason to hand over an email to look at a prototype. */}
-      {state !== 'sent' && (
-        <div className="mt-6 flex flex-col items-center gap-2">
-          <Meta>Or try it without an account:</Meta>
-          <TryDemoButton className="w-full" />
-        </div>
+          {/* Deliberately not offered by default: this sends a magic link, and
+              the sending domain is unverified — so for anyone who is not the
+              owner it is a form that quietly does nothing. Kept for the people
+              who do have accounts, one tap away. */}
+          {showEmail ? (
+            <Card className="mt-4">
+              <form onSubmit={send} className="flex flex-col gap-3">
+                <label htmlFor="email" className="text-[15px] font-medium">
+                  Your email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="min-h-[44px] rounded-xl border border-border bg-white px-3 text-[15px] outline-none focus:border-primary"
+                />
+                <Button type="submit" disabled={state === 'sending'}>
+                  {state === 'sending' ? 'Sending…' : 'Email me a link'}
+                </Button>
+                {state === 'error' && <p className="text-[13px] text-alert">{message}</p>}
+              </form>
+            </Card>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowEmail(true)}
+              className="mt-5 min-h-11 text-center text-[13px] text-muted-foreground underline underline-offset-4"
+            >
+              I already have an account
+            </button>
+          )}
+        </>
       )}
 
       <Meta className="mt-6 text-center">

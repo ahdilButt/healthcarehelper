@@ -117,14 +117,22 @@ export default function WelcomePage() {
         family — not just you.
       </p>
 
+      {/* One door, and it opens. "Get started" used to lead to /onboarding,
+          which redirects to a sign-in form that can only email the owner —
+          so for everyone arriving from a shared link it was a wall with a
+          button painted on it. Anyone who does have an account can still get
+          in through the quiet link underneath. */}
       <div className="mt-10 flex flex-col gap-3">
-        <PillButton as={Link} href="/onboarding" className="hh-rise w-full" style={delay(1150)}>
-          Get started
+        <TryDemoButton className="hh-rise w-full" style={delay(1150)} />
+        <PillButton
+          as={Link}
+          href="/signin"
+          variant="plain"
+          className="hh-rise w-full"
+          style={delay(1220)}
+        >
+          I already have an account
         </PillButton>
-        {/* Was a link to /timeline, which sent a stranger straight to a
-            sign-in form. It now provisions them a private copy of the demo
-            record — the door this screen was already promising. */}
-        <TryDemoButton className="hh-rise w-full" style={delay(1220)} />
       </div>
 
       <p
